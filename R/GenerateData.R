@@ -1,6 +1,6 @@
 #' GenerateData
 #'
-#' Simulate longitudinal data as specified in the paper. Note that the data is of the following format:
+#' Simulate longitudinal data as specified in the description. Note that the data is of the following format:
 #' O={W1 W2 C1 A1 LA1 Z1 LZ1 Y1 C2 A2 LA2 Z2 LZ2 Y2 ... }
 #'
 #' @param n Sample size
@@ -8,12 +8,17 @@
 #' @param abar Set intervention
 #' @param abar.prime Control intervention
 #'
+#' @return Returns a dataframe with simulated covariates as described in the description.
 #'
+#' @export GenerateData
 
 GenerateData <- function(n, end.time, abar=NULL,abar.prime=NULL) {
 
   if(is.null(abar) != is.null(abar.prime)){stop('abar and abar.prime either both given or both not given')}
   if((!is.null(abar) & length(abar)!=end.time) | (!is.null(abar.prime) & length(abar.prime)!=end.time)){stop('abar and abar.prime both need to be length of end.time')}
+
+  #Define some functions:
+  rexpit <- function(x) rbinom(n=length(x), size=1, prob=plogis(x))
 
   CalcY <- function(W1,W2,A,LA,Z,LZ,prevLA=NULL) {
     lin <- .2 +1.5*W2+1*LA + .2*LZ -.3*A-.3*Z  - .2*A*Z
@@ -95,6 +100,6 @@ GenerateData <- function(n, end.time, abar=NULL,abar.prime=NULL) {
     uncensored.alive <- uncensored.alive & (!Y[,t])
   }
 
-  return(CreateDataFrame.matchdata(W1, W2, C = C,A = A,Z = Z,LA = LA,LZ = LZ,Y =  Y,end.time =  end.time))
+  return(.CreateDataFrame(W1, W2, C = C,A = A,Z = Z,LA = LA,LZ = LZ,Y =  Y,end.time =  end.time))
 
 }

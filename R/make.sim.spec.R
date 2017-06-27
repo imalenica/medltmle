@@ -4,7 +4,9 @@
 #'
 #' @param timepoint Specifies the final time point.
 #'
+#' @return Returns a list with models for each time point.
 #'
+#' @export make.sim.spec
 
 make.sim.spec <- function(timepoint){
   spec <- list(
