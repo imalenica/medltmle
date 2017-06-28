@@ -2,94 +2,140 @@
 #'
 #' Error checking for inputs.
 #'
+#' @param data Dataframe containing the data in a wide format.
+#' @param nodes list of nodes.
+#' @param survivalOutcome logical variable specifying if the outcome is survival.
+#' @param QLform Q forms for L covariates.
+#' @param QZform Q forms for Z covariates.
+#' @param gform g form for intervention (if there is a censoring variable, include C as well).
+#' @param qzform g form for Z covariates.
+#' @param qLform g form for L covariates.
+#' @param gbounds Bounds for the propensity score.
+#' @param deterministic.g.function Logical specifying if g is a deterministic function.
+#' @param stratify Logical enabling stratified outcome.
+#' @param SL.library SuperLearner library for estimation.
+#' @param deterministic.Q.function Logical specifying if Q is a deterministic function.
+#' @param gcomp gcomp formula.
+#' @param IC.variance.only Only estimate variance through the influence curve
+#' @param observation.weights Provide weight for observations
+#' @param Yrange Specify range for the outcome.
+#' @param regimes Regimes for abar as output by the RegimesFromAbar function.
+#' @param regimes.prime Regimes for abar.prime as output by the RegimesFromAbar function.
+#' @param working.msm Working MSM as output by the GetMediationMSMInputsForLtmle function.
+#' @param summary.measures Summary measures as output by the GetMediationMSMInputsForLtmle function.
+#' @param final.Ynodes Final Y node(s).
+#' @param msm.weights MSM weights.
+#'
+#' @return Checks if the input is valid for further analysis.
+#'
+#' @export CheckMediationInputs
+#'
 
 ##########################################
 # TO DO: Will need to fix this function.
 ##########################################
 
-# Return the left hand side variable of formula f as a character
-LhsVars <- function(f) {
-  f <- as.formula(f)
-  return(as.character(f[[2]]))
-}
-
-# Return the right hand side variables of formula f as a character vector
-RhsVars <- function(f) {
-  f <- as.formula(f)
-  return(all.vars(f[[3]]))
-}
-
-# Calc logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
-CalcUncensoredMatrix <- function(data, Cnodes) {
-  uncensored <- matrix(nrow=nrow(data), ncol=length(Cnodes))
-  cum.uncensored <- rep(TRUE, nrow(data))
-  for (Cnode.index in seq_along(Cnodes)) {
-    cum.uncensored <- cum.uncensored & (data[, Cnodes[Cnode.index]] %in% c("uncensored", NA))
-    uncensored[, Cnode.index] <- cum.uncensored
-  }
-  return(uncensored)
-}
-
-# Determine which patients are uncensored
-#return vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node
-# note: if calling from outside ltmle:::, cur.node needs to be the node index, not a string!
-IsUncensored <- function(uncensored.matrix, Cnodes, cur.node) {
-  index <- which.max(Cnodes[Cnodes < cur.node])
-  if (length(index) == 0) return(rep(TRUE, nrow(uncensored.matrix)))
-  return(uncensored.matrix[, index])
-}
-
-# Determine which patients have died or have Q set deterministically by user function before cur.node
-# return list:
-#    is.deterministic: vector of [numObservations x 1] - true if patient is already dead before cur.node or set by deterministic.Q.function
-#    Q.value: vector of [which(is.deterministic) x 1] - value of Q
-IsDeterministic <- function(data, cur.node, deterministic.Q.function, nodes, called.from.estimate.g, survivalOutcome) {
-  #set Q.value to 1 if previous y node is 1
-  if (survivalOutcome && any(nodes$Y < cur.node)) {
-    last.Ynode <- max(nodes$Y[nodes$Y < cur.node])
-    is.deterministic <- data[, last.Ynode] %in% TRUE
-  } else {
-    is.deterministic <- rep(FALSE, nrow(data))
-  }
-
-  #get Q values from deterministic.Q.function
-  default <- list(is.deterministic=is.deterministic, Q.value=1)
-  if (is.null(deterministic.Q.function)) return(default)
-  #put this in a try-catch?
-  det.list <- deterministic.Q.function(data=data, current.node=cur.node, nodes=nodes, called.from.estimate.g=called.from.estimate.g)
-  if (is.null(det.list)) return(default)
-  if (called.from.estimate.g) {
-    #it's ok if Q.value isn't returned if called.from.estimate.g
-    if (!is.list(det.list) || !("is.deterministic" %in% names(det.list)) || !(length(det.list) %in% 1:2)) stop("deterministic.Q.function should return a list with names: is.deterministic, Q.value")
-  } else {
-    if (!is.list(det.list) || !setequal(names(det.list), c("is.deterministic", "Q.value")) || length(det.list) != 2) stop("deterministic.Q.function should return a list with names: is.deterministic, Q.value")
-  }
-
-  if (! length(det.list$Q.value) %in% c(1, length(which(det.list$is.deterministic)))) stop("the length of the 'Q.value' element of deterministic.Q.function's return argument should be either 1 or length(which(det.list$is.deterministic))")
-
-  #check that these observations where Q.value is 1 due to death (previous y is 1) aren't set to anything conflicting by deterministic.Q.function
-  Q.value.from.function <- rep(NA, nrow(data))
-  Q.value.from.function[det.list$is.deterministic] <- det.list$Q.value
-  set.by.function.and.death <- is.deterministic & det.list$is.deterministic
-  if (any(Q.value.from.function[set.by.function.and.death] != 1)) {
-    stop(paste("inconsistent deterministic Q at node:", names(data)[cur.node]))
-  }
-  finalY <- data[, max(nodes$Y)]
-  inconsistent.rows <- (det.list$Q.value %in% c(0,1)) & (det.list$Q.value != finalY[det.list$is.deterministic]) & !is.na(finalY[det.list$is.deterministic])
-  if (any(inconsistent.rows)) stop(paste("At node:",names(data)[cur.node], "deterministic.Q.function is inconsistent with data - Q.value is either 0 or 1 but this does not match the final Y node value\nCheck data rows:", paste(head(rownames(data)[det.list$is.deterministic][inconsistent.rows]), collapse=" ")))
-
-  #return combined values
-  Q.value <- rep(NA, nrow(data))
-  Q.value[is.deterministic] <- 1
-  Q.value[det.list$is.deterministic] <- det.list$Q.value
-  is.deterministic <- is.deterministic | det.list$is.deterministic
-  Q.value <- Q.value[is.deterministic]
-  if (anyNA(is.deterministic) || anyNA(Q.value)) stop("NA in is.deterministic or Q.value")
-  return(list(is.deterministic=is.deterministic, Q.value=Q.value))
-}
+###################################################################################################
+# Note to myself:
+#
+# CheckMediationInputs contains the following functions within it:
+#
+# LhsVars()
+# RhsVars()
+# IsDeterministic()
+# IsUncensored()
+# CalcUncensoredMatrix()
+###################################################################################################
 
 #Error checking for inputs
 CheckMediationInputs <- function(data, nodes, survivalOutcome, QLform, QZform, qLform, qzform, gform, gbounds, Yrange, deterministic.g.function, SL.library, regimes,regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, deterministic.Q.function, observation.weights, gcomp, IC.variance.only) {
+
+  #Some functions:
+  # Return the left hand side variable of formula f as a character
+  LhsVars <- function(f) {
+    f <- as.formula(f)
+    return(as.character(f[[2]]))
+  }
+
+  # Return the right hand side variables of formula f as a character vector
+  RhsVars <- function(f) {
+    f <- as.formula(f)
+    return(all.vars(f[[3]]))
+  }
+
+  # Determine which patients have died or have Q set deterministically by user function before cur.node
+  # return list:
+  #    is.deterministic: vector of [numObservations x 1] - true if patient is already dead before cur.node or set by deterministic.Q.function
+  #    Q.value: vector of [which(is.deterministic) x 1] - value of Q
+
+  IsDeterministic <- function(data, cur.node, deterministic.Q.function, nodes, called.from.estimate.g, survivalOutcome) {
+    #set Q.value to 1 if previous y node is 1
+    if (survivalOutcome && any(nodes$Y < cur.node)) {
+      last.Ynode <- max(nodes$Y[nodes$Y < cur.node])
+      is.deterministic <- data[, last.Ynode] %in% TRUE
+    } else {
+      is.deterministic <- rep(FALSE, nrow(data))
+    }
+
+    #get Q values from deterministic.Q.function
+    default <- list(is.deterministic=is.deterministic, Q.value=1)
+    if (is.null(deterministic.Q.function)) return(default)
+    #put this in a try-catch?
+    det.list <- deterministic.Q.function(data=data, current.node=cur.node, nodes=nodes, called.from.estimate.g=called.from.estimate.g)
+    if (is.null(det.list)) return(default)
+    if (called.from.estimate.g) {
+      #it's ok if Q.value isn't returned if called.from.estimate.g
+      if (!is.list(det.list) || !("is.deterministic" %in% names(det.list)) || !(length(det.list) %in% 1:2)) stop("deterministic.Q.function should return a list with names: is.deterministic, Q.value")
+    } else {
+      if (!is.list(det.list) || !setequal(names(det.list), c("is.deterministic", "Q.value")) || length(det.list) != 2) stop("deterministic.Q.function should return a list with names: is.deterministic, Q.value")
+    }
+
+    if (! length(det.list$Q.value) %in% c(1, length(which(det.list$is.deterministic)))) stop("the length of the 'Q.value' element of deterministic.Q.function's return argument should be either 1 or length(which(det.list$is.deterministic))")
+
+    #check that these observations where Q.value is 1 due to death (previous y is 1) aren't set to anything conflicting by deterministic.Q.function
+    Q.value.from.function <- rep(NA, nrow(data))
+    Q.value.from.function[det.list$is.deterministic] <- det.list$Q.value
+    set.by.function.and.death <- is.deterministic & det.list$is.deterministic
+    if (any(Q.value.from.function[set.by.function.and.death] != 1)) {
+      stop(paste("inconsistent deterministic Q at node:", names(data)[cur.node]))
+    }
+    finalY <- data[, max(nodes$Y)]
+    inconsistent.rows <- (det.list$Q.value %in% c(0,1)) & (det.list$Q.value != finalY[det.list$is.deterministic]) & !is.na(finalY[det.list$is.deterministic])
+    if (any(inconsistent.rows)) stop(paste("At node:",names(data)[cur.node], "deterministic.Q.function is inconsistent with data - Q.value is either 0 or 1 but this does not match the final Y node value\nCheck data rows:", paste(head(rownames(data)[det.list$is.deterministic][inconsistent.rows]), collapse=" ")))
+
+    #return combined values
+    Q.value <- rep(NA, nrow(data))
+    Q.value[is.deterministic] <- 1
+    Q.value[det.list$is.deterministic] <- det.list$Q.value
+    is.deterministic <- is.deterministic | det.list$is.deterministic
+    Q.value <- Q.value[is.deterministic]
+    if (anyNA(is.deterministic) || anyNA(Q.value)) stop("NA in is.deterministic or Q.value")
+    return(list(is.deterministic=is.deterministic, Q.value=Q.value))
+  }
+
+  # Determine which patients are uncensored
+  #return vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node
+  # note: if calling from outside ltmle:::, cur.node needs to be the node index, not a string!
+  IsUncensored <- function(uncensored.matrix, Cnodes, cur.node) {
+    index <- which.max(Cnodes[Cnodes < cur.node])
+    if (length(index) == 0) return(rep(TRUE, nrow(uncensored.matrix)))
+    return(uncensored.matrix[, index])
+  }
+
+  # Calc logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
+  CalcUncensoredMatrix <- function(data, Cnodes) {
+    uncensored <- matrix(nrow=nrow(data), ncol=length(Cnodes))
+    cum.uncensored <- rep(TRUE, nrow(data))
+    for (Cnode.index in seq_along(Cnodes)) {
+      cum.uncensored <- cum.uncensored & (data[, Cnodes[Cnode.index]] %in% c("uncensored", NA))
+      uncensored[, Cnode.index] <- cum.uncensored
+    }
+    return(uncensored)
+  }
+
+  ###################################################################################################
+  # End of helper functions.
+  ###################################################################################################
 
   stopifnot(length(dim(regimes)) == 3)
   num.regimes <- dim(regimes)[3]

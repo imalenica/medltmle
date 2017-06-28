@@ -4,7 +4,7 @@
 #'
 #' @param timepoint Specifies the final time point.
 #'
-#' @return Returns a list with models for each time point.
+#' @return Returns a list with models for each time point and covariate.
 #'
 #' @export make.sim.spec
 
