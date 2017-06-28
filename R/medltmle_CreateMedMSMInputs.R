@@ -16,31 +16,10 @@
 ###################################################################################################
 # Note to myself:
 #
-# CreateMedMSMInputs contains the following functions within it:
-#
-# RegimesFromAbar()
+# CreateMedMSMInputs needs functions from medltmle_HelperFun()
 ###################################################################################################
 
 CreateMedMSMInputs <- function(data, abar, abar.prime, rule, gform) {
-
-  RegimesFromAbar <- function(data, abar, rule) {
-    if (!is.null(rule)) {
-      if (!(missing(abar) || is.null(abar))) stop("'abar' should not be specified when using a 'rule' function")
-      abar <- t(apply(data, 1, rule))
-    }
-    if (is.vector(abar)) {
-      abar <- matrix(rep(abar, each=nrow(data)), nrow=nrow(data))
-    } else if (is.null(abar)) {
-      abar <- matrix(nrow=nrow(data), ncol=0)
-    }
-    regimes <- abar
-    dim(regimes) <- c(nrow(regimes), ncol(regimes), 1)
-    return(regimes)
-  }
-
-  ###################################################################################################
-  # End of helper functions.
-  ###################################################################################################
 
   #Options for specified rule.
   if ((!missing(abar) && is.list(abar)) || is.list(rule)) {
