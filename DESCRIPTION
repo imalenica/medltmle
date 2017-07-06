@@ -3,7 +3,7 @@ Title: Longitudinal Mediation Analysis with Time-varying Mediators
 Version: 0.0.0.9000
 Authors@R: person("Ivana", "Malenica", email = "imalenica@berkeley.edu", role = c("aut", "cre"))
 Description: Estimates natural direct and indirect mediation effect for a longitudinal setting with time-varying mediators.
-Depends: R (>= 3.4.0), SuperLearner, speedglm, matrixStats, parallel 
+Depends: R (>= 3.4.0), SuperLearner, speedglm, matrixStats, parallel, pracma 
 License: MIT
 Encoding: UTF-8
 LazyData: true
