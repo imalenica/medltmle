@@ -277,8 +277,12 @@ GetLibrary <- function(SL.library, estimate.type) {
 #' @return Returns cleaned data.
 #'
 
+data <- CleanData(data, all.nodes, deterministic.Q.function, survivalOutcome)
+
 CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, showMessage=TRUE) {
   #make sure binaries have already been converted before calling this function
+  options(warn=-1)
+
   is.nan.df <- function (x) {
     y <- if (length(x)) {
       do.call("cbind", lapply(x, "is.nan"))
@@ -289,12 +293,16 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
 
   is.na.strict <- function (x) is.na(x) & !is.nan.df(x)  #only for data.frames
   changed <- FALSE
-  ua <- rep(TRUE, nrow(data))  #uncensored and alive
+
+  #uncensored and alive
+  ua <- rep(TRUE, nrow(data))
   if (ncol(data) == 1) return(data)
+
   deterministic.Q.function.depends.on.called.from.estimate.g <- length(grep("called.from.estimate.g", as.character(body(deterministic.Q.function)))) > 0
 
   #ISSUE sometimes.
   for (i in 1:(ncol(data)-1)) {
+
     if (anyNA(data[ua, 1:i])) stop("NA values are not permitted in data except after censoring or a survival event")
     is.deterministic <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=TRUE, survivalOutcome=survivalOutcome)$is.deterministic #check determinisitic including node i
     #is.deterministic <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=TRUE, survivalOutcome=survivalOutcome)
@@ -306,25 +314,33 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
     }
 
     ua[ua] <- !is.deterministic[ua]
-    if (anyNA(ua)) stop("internal ltmle error - ua should not be NA in CleanData")
-    if (! all(is.na.strict(data[is.deterministic, setdiff((i+1):ncol(data), nodes$Y), drop=FALSE]))) {
-      data[is.deterministic, setdiff((i+1):ncol(data), nodes$Y)] <- NA #if deterministic, set all nodes except Y to NA
+
+    if (anyNA(ua)) stop("internal medltmle error - ua should not be NA in CleanData")
+
+    if ( !all(is.na.strict( data[is.deterministic, setdiff((i+1):ncol(data), nodes$Y), drop=FALSE])) ) {
+      #if deterministic, set all nodes except Y to NA
+      data[is.deterministic, setdiff((i+1):ncol(data), nodes$Y)] <- NA
       changed <- TRUE
     }
 
     if (i %in% nodes$C) {
+      #ua: uncensored and alive
       censored <- data[, i] == "censored" & ua
+
+      #If not already set to NA, set to NA for all censored samples (including Y).
       if (! all(is.na.strict(data[censored, (i+1):ncol(data), drop=FALSE]))) {
-        data[censored, (i+1):ncol(data)] <- NA  #if censored, set all nodes (including Y) to NA
+        data[censored, (i+1):ncol(data)] <- NA
         changed <- TRUE
       }
+
       ua[ua] <- !censored[ua]
-      if (anyNA(ua)) stop("internal ltmle error - ua should not be NA in CleanData")
+
+      if (anyNA(ua)) stop("internal medltmle error - ua should not be NA in CleanData")
     }
   }
 
   if (changed && showMessage) {
-    message("Note: for internal purposes, all nodes after a censoring event are set to NA and \n all nodes (except Ynodes) are set to NA after Y=1 if survivalFunction is TRUE (or if specified by deterministic.Q.function).\n Your data did not conform and has been adjusted. This may be relevant if you are \n writing your own deterministic function(s) or debugging ltmle.")
+    message("Note: for internal purposes, all nodes after a censoring event are set to NA and \n all nodes (except Ynodes) are set to NA after Y=1 if survivalFunction is TRUE (or if specified by deterministic.Q.function).\n Your data did not conform and has been adjusted. This may be relevant if you are \n writing your own deterministic function(s) or debugging medltmle.")
   }
   return(data)
 }
@@ -335,18 +351,21 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
 
 #' TransformOutcomes
 #'
-#'
+#' Get the range of Y. Transform outcome to be in the 0-1 range, if necessary.
 #'
 #' @param data TO DO
 #' @param nodes TO DO
 #' @param Yrange TO DO
 #'
-#' @return Returns data with transfored outcome.
+#' @return Returns data with outcome in the 0-1 range.
 #'
+TransformOutcomes(data, all.nodes, Yrange)
 
 TransformOutcomes <- function(data, nodes, Yrange) {
+
   all.Y <- unlist(data[, nodes$Y])
   transformOutcome <- FALSE
+
   if (!is.null(Yrange)) {
     #if Yrange was specified
     rng <- range(all.Y, na.rm=TRUE)
@@ -359,18 +378,20 @@ TransformOutcomes <- function(data, nodes, Yrange) {
     #Then transform
     transformOutcome <- TRUE
   } else {
-    #if Yrange was not specified, get it
+    #if Yrange was not specified, get it:
     Yrange <- range(all.Y, na.rm=TRUE)
     if (min(Yrange) < 0 || max(Yrange) > 1) {
-      #And see if we need to transform
+      #Will need to transform outcome if outside the 0-1 range.
       transformOutcome <- TRUE
       message("Some Ynodes are not in [0, 1], and Yrange was NULL, so all Y nodes are being\ntransformed to (Y-min.of.all.Ys)/range.of.all.Ys")
     }
   }
+
   if (transformOutcome) {
     attr(transformOutcome, 'Yrange') <- Yrange
     data[,nodes$Y] <- (data[, nodes$Y]-min(Yrange))/diff(Yrange)
   }
+
   return(list(data=data, transformOutcome=transformOutcome))
 }
 
@@ -429,7 +450,7 @@ ConvertToMainTerms <- function(data, msm, summary.measures, nodes) {
 #'
 #' @param data TO DO
 #' @param regimes TO DO
-#' @param Anodes TO DO
+#' @param Anodes Index of A nodes. Can be easily derived from \code{all.nodes$A}.
 #'
 #' @return Returns intervention that matches the array.
 #'
@@ -438,7 +459,9 @@ CalcInterventionMatchArray <- function(data, regimes, Anodes) {
   num.regimes <- dim(regimes)[3]
   intervention.match <- array(dim=c(nrow(data), length(Anodes), num.regimes))
   cum.intervention.match <- matrix(TRUE, nrow(data), num.regimes)
+
   for (Anode.index in seq_along(Anodes)) {
+    #Check if A as in data equals the regime. NA will count as a match as well.
     cum.intervention.match <- cum.intervention.match & ((data[, Anodes[Anode.index]] == regimes[, Anode.index, ]) %in% c(TRUE, NA)) #recycles regimes
     intervention.match[, Anode.index, ] <- cum.intervention.match
   }

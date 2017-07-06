@@ -1,6 +1,6 @@
 #' CreateMedInputs
 #'
-#' Create Mediation Inputs for ltmle.
+#' Create Mediation Inputs for ltmleMediation.
 #'
 #' @param data Dataframe containing the data in a wide format.
 #' @param Anodes names of columns containing A covariates.
@@ -32,21 +32,14 @@
 #' @param final.Ynodes Final Y node(s).
 #' @param msm.weights MSM weights.
 #'
-#' @return Returns output ready for ltmleMed.
+#' @return Returns output ready for ltmleMediation.
+#'
 #'
 #' @export CreateMedInputs
 #'
 
-###################################################################################################
-# Note to myself:
-#
-# CreateMedInputs needs functions from medltmle_HelperFun()!
-
-###################################################################################################
-
 CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, survivalOutcome, QLform, QZform, gform, qzform,qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights) {
 
-  #Many checks:
   if (is.list(regimes)) {
 
     if (!all(do.call(c, lapply(regimes, is.function)))) stop("If 'regimes' is a list, then all elements should be functions.")
@@ -56,7 +49,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
 
   if (is.list(regimes.prime)) {
 
-    if (!all(do.call(c, lapply(regimes.prime, is.function)))) stop("If 'regimes.prme' is a list, then all elements should be functions.")
+    if (!all(do.call(c, lapply(regimes.prime, is.function)))) stop("If 'regimes.prime' is a list, then all elements should be functions.")
     regimes.prime <- aperm(simplify2array(lapply(regimes.prime, function(rule) apply(data, 1, rule)), higher=TRUE), c(2, 1, 3))
 
     }
@@ -107,10 +100,14 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
 
   }
 
-  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes = Znodes)
-  QLform <- CreateLYNodes(data, all.nodes, check.Qform=TRUE, Qform=QLform)$Qform  ### remove blocks
+  #Sort nodes
+  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes)
+  #remove blocks
+  QLform <- CreateLYNodes(data, all.nodes, check.Qform=TRUE, Qform=QLform)$Qform
+  #Convert censoring nodes into factors
   data <- ConvertCensoringNodes(data, Cnodes, has.deterministic.functions=!is.null(deterministic.g.function) && is.null(deterministic.Q.function))
 
+  #Set final Y node, if not specified:
   if (is.null(final.Ynodes)) {
     final.Ynodes <- max(all.nodes$Y)
   } else {
@@ -122,6 +119,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
   SL.library.Q <- GetLibrary(SL.library, "Q")
   SL.library.g <- GetLibrary(SL.library, "g")
 
+  #Set summary.measures if not already set:
   if (is.null(summary.measures)) {
     summary.measures <- matrix(nrow=dim(regimes)[3], ncol=0)
   }
@@ -131,10 +129,11 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
     summary.measures <- array(repmat(summary.measures, m=1, n=num.final.Ynodes), dim=c(nrow(summary.measures), ncol(summary.measures), num.final.Ynodes), dimnames=list(rownames(summary.measures), colnames(summary.measures), NULL))
   }
 
+  #Set observation weights; if not specified, assign equal weight to all.
   if (is.null(observation.weights)) observation.weights <- rep(1, nrow(data))
 
   #error checking (also get value for survivalOutcome if NULL)
-  #Need to fix later:
+  #TO DO: fix
   #check.results <- CheckMediationInputs(data, all.nodes, survivalOutcome, QLform=QLform, QZform = QZform,gform=gform,qLform=qLform,qzform=qzform, gbounds, Yrange, deterministic.g.function, SL.library, regimes=regimes,regimes.prime = regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, deterministic.Q.function, observation.weights, gcomp, IC.variance.only)
 
   #survivalOutcome <- check.results$survivalOutcome
@@ -143,29 +142,114 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
     data <- CleanData(data, all.nodes, deterministic.Q.function, survivalOutcome)
   }
 
+  #Transform the output to be in the 0-1 range. Get the Y range, if not specified.
   transform.list <- TransformOutcomes(data, all.nodes, Yrange)
   data <- transform.list$data
   transformOutcome <- transform.list$transformOutcome
   #binaryOutcome <- check.results$binaryOutcome
+  #Check if binary, as expected.
   binaryOutcome <- all(unlist(data[, all.nodes$Y]) %in% c(0, 1, NA))
 
+  #If QLform, QZform, qzform and gform are not specified, return default form.
+  #Each formula will consist of all parent nodes except censoring and event nodes.
   if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
 
-  # Several functions in the pooled version are only written to accept main terms MSM
-  # Ex: If working.msm is "Y ~ X1*X2", convert to "Y ~ -1 + S1 + S1 + S3 + S4" where
+  # Convert to main terms MSM.
+  # Ex: If working.msm is "Y ~ X1*X2", convert to "Y ~ -1 + S1 + S2 + S3 + S4" where
   # S1 is 1 (intercept), S2 is X1, S3 is X2, S4 is X1:X2
   main.terms <- ConvertToMainTerms(data, working.msm, summary.measures, all.nodes)
 
+  #Does A observed in the data match the regime?
   intervention.match <- CalcInterventionMatchArray(data, regimes, all.nodes$A)
   intervention.match.prime <- CalcInterventionMatchArray(data, regimes.prime  , all.nodes$A)
 
+  #Check if the patient is censored at one of the C nodes.
   uncensored.array <- CalcUncensoredMatrix(data, all.nodes$C)
 
   #inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=check.results$uncensored, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime)
   inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=uncensored.array, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime)
   class(inputs) <- "ltmleInputs"
   return(inputs)
+}
+
+################################
+# GetDefaultFormMediation
+################################
+
+#' GetDefaultFormMediation
+#'
+#' Get the default Q or g formula, if not specified.
+#' Each formula consists of all parent nodes except censoring and event nodes.
+#' If \code{stratify}=TRUE, do not include A nodes.
+#'
+#' @param data TO DO
+#' @param nodes TO DO
+#' @param is.Qform TO DO
+#' @param is.QLform TO DO
+#' @param is.qzform TO DO
+#' @param stratify TO DO
+#' @param survivalOutcome TO DO
+#' @param showMessage TO DO
+#'
+#' @return Returns default Q or g formula.
+#'
+
+GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, stratify, survivalOutcome, showMessage) {
+
+  if (is.Qform) {
+    if(is.QLform){
+      lhs <- rep("Q.kplus1", length(nodes$LY))
+      node.set <- nodes$LY
+    }else{
+      lhs <- rep("Q.kplus1", length(nodes$Z))
+      node.set <- nodes$Z
+    }
+  } else {
+    if(is.qzform){
+      lhs <- names(data)[nodes$Z]
+      node.set <- nodes$Z
+    }else{
+      lhs <- names(data)[nodes$AC]
+      node.set <- nodes$AC
+    }
+  }
+  if (stratify) {
+    stratify.nodes <- c(nodes$C, nodes$A)
+  } else {
+    stratify.nodes <- c(nodes$C)
+  }
+  if (survivalOutcome) {
+    stratify.nodes <- c(stratify.nodes, nodes$Y)
+  }
+  form <- NULL
+  for (i in seq_along(node.set)) {
+    cur.node <- node.set[i]
+    if (cur.node == 1) {
+      form[i] <- paste(lhs[i], "~ 1")  #no parent nodes
+    } else {
+      parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+      if (length(parent.node.names) == 0) {
+        form[i] <- paste(lhs[i], "~ 1")
+      } else {
+        form[i] <- paste(lhs[i], "~", paste(parent.node.names, collapse=" + "))
+      }
+    }
+    names(form)[i] <- names(data)[cur.node]
+  }
+
+  if (showMessage) {
+    #Prints formulas with automatic wrapping thanks to print.formula
+    message(ifelse(is.Qform, "Qform", "gform"),
+            " not specified, using defaults:")
+    lapply(seq_along(form), function(i, names) {
+      message("formula for ", names[i], ":")
+      #Using print on a formula because it nicely wraps
+      message(capture.output(print(as.formula(form[i]), showEnv=FALSE)))
+    }, names=names(form))
+    message("")
+  }
+  return(form)
 }

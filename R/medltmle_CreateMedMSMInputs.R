@@ -8,21 +8,16 @@
 #' @param rule Specify rule for the intervention.
 #' @param gform g form for intervention (if there is a censoring variable, include C as well).
 #'
-#' @return Returns regimes for abar and abar.prime, working MSM and MSM weights, summary measures, gform and final Y nodes.
+#' @return Returns regimes for abar and abar.prime in proper format, working MSM and MSM weights, summary measures, gform and final Y nodes.
 #'
 #' @export CreateMedMSMInputs
 #'
 
-###################################################################################################
-# Note to myself:
-#
-# CreateMedMSMInputs needs functions from medltmle_HelperFun()
-###################################################################################################
-
 CreateMedMSMInputs <- function(data, abar, abar.prime, rule, gform) {
 
-  #Options for specified rule.
+  #Options for specified rule. Not yet implemented.
   if ((!missing(abar) && is.list(abar)) || is.list(rule)) {
+
     if (is.list(rule)) {
 
       if (length(rule) != 2) stop("If rule is a list, it must be of length 2")
@@ -64,11 +59,13 @@ CreateMedMSMInputs <- function(data, abar, abar.prime, rule, gform) {
   }
 
   if (is.numeric(gform)) {
+
     stopifnot(is.matrix(gform))
     dim(gform) <- c(nrow(gform), ncol(gform), 1)
 
   }
 
-  msm.inputs <- list(regimes=regimes,regimes.prime=regimes.prime, working.msm=working.msm, summary.measures=summary.measures, gform=gform, final.Ynodes=NULL, msm.weights=msm.weights)
+  msm.inputs <- list(regimes=regimes, regimes.prime=regimes.prime, working.msm=working.msm, summary.measures=summary.measures, gform=gform, final.Ynodes=NULL, msm.weights=msm.weights)
   return(msm.inputs)
+
 }
