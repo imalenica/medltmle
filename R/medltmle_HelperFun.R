@@ -117,7 +117,7 @@ CalcUncensoredMatrix <- function(data, Cnodes) {
 
 #' RhsVars
 #'
-#' Determine which patients have died or have Q set deterministically by user function before cur.node.
+#' Returns the right hand side variables of a formula.
 #'
 #' @param f TO DO
 #'
@@ -293,11 +293,11 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
   if (ncol(data) == 1) return(data)
   deterministic.Q.function.depends.on.called.from.estimate.g <- length(grep("called.from.estimate.g", as.character(body(deterministic.Q.function)))) > 0
 
-  #ISSUEEEE
+  #ISSUE sometimes.
   for (i in 1:(ncol(data)-1)) {
     if (anyNA(data[ua, 1:i])) stop("NA values are not permitted in data except after censoring or a survival event")
     is.deterministic <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=TRUE, survivalOutcome=survivalOutcome)$is.deterministic #check determinisitic including node i
-    #is.deterministic <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=TRUE, survivalOutcome=survivalOutcome) #check determinisitic including node i
+    #is.deterministic <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=TRUE, survivalOutcome=survivalOutcome)
 
     if (deterministic.Q.function.depends.on.called.from.estimate.g) {
       is.deterministic.Q <- ua & IsDeterministic(data, cur.node=i + 1, deterministic.Q.function=deterministic.Q.function, nodes=nodes, called.from.estimate.g=FALSE, survivalOutcome=survivalOutcome)$is.deterministic
@@ -510,4 +510,213 @@ RegimesFromAbar <- function(data, abar, rule) {
   return(regimes)
 }
 
+################################
+# IsDeterministicG()
+################################
 
+#' IsDeterministicG
+#'
+#' Determines which patients have an Anode value which is deterministic. For example, deterministic.g.function may be used to
+#' specify that once a patient starts treatment, they stay on treatment and this should be taken into
+#' consideration during estimation of G.
+#'
+#' @param data TO DO
+#' @param cur.node TO DO
+#' @param deterministic.g.function TO DO
+#' @param nodes TO DO
+#' @param using.newdata TO DO
+#'
+#' @return Returns TRUE for patients that have a deterministic Anode value.
+#'
+
+IsDeterministicG <- function(data, cur.node, deterministic.g.function, nodes, using.newdata) {
+  default <- list(is.deterministic=rep(FALSE, nrow(data)), prob1=NULL)
+  if (is.null(deterministic.g.function)) return(default)
+  #put this in a try-catch?
+  det.list <- deterministic.g.function(data=data, current.node=cur.node, nodes=nodes)
+  if (is.null(det.list)) return(default)
+  if (!is.list(det.list) || !setequal(names(det.list), c("is.deterministic", "prob1")) || length(det.list) != 2) stop("deterministic.g.function should return a list with names: is.deterministic, prob1")
+  if (! length(det.list$prob1) %in% c(1, length(which(det.list$is.deterministic)))) stop("the length of the 'prob1' element of deterministic.g.function's return argument should be either 1 or length(which(det.list$is.deterministic))")
+
+  inconsistent.rows <- (det.list$prob1 %in% c(0,1)) & (det.list$prob1 != data[det.list$is.deterministic, cur.node]) & !is.na(data[det.list$is.deterministic, cur.node])
+  if (any(inconsistent.rows)) {
+    err.msg <- paste("At node:",names(data)[cur.node], "deterministic.g.function is inconsistent with data - prob1 is either 0 or 1 but this does not match the node value.\nCheck data rows:", paste(head(rownames(data)[det.list$is.deterministic][inconsistent.rows]), collapse=" "))
+    if (using.newdata) {
+      err.msg <- paste(err.msg, "\n This error occured while calling deterministic.g.function on data where Anodes are set to abar.")
+      cat("deterministic.g.function is inconsistent with data.\nAfter setting Anodes to abar, the data looks like this:\n")
+      print(head(data[det.list$is.deterministic[inconsistent.rows], ]))
+    }
+    stop(err.msg)
+  }
+  return(det.list)
+}
+
+################################
+# InterventionMatch()
+################################
+
+#' InterventionMatch
+#'
+#' Determine which patients are following specified treatment regime.
+#'
+#' @param intervention.match.array TO DO
+#' @param Anodes TO DO
+#' @param cur.node TO DO
+#'
+#' @return Returns matrix of [numObservations x numRegimes] I(A==abar) from Anodes[1] to the Anode just before cur.node.
+#'
+
+# note: if calling from outside ltmle:::, cur.node needs to be the node index, not a string!
+InterventionMatch <- function(intervention.match.array, Anodes, cur.node) {
+  index <- which.max(Anodes[Anodes < cur.node])
+  if (length(index) == 0) return(matrix(TRUE, nrow(intervention.match.array), dim(intervention.match.array)[3]))
+  return(as.matrix(intervention.match.array[, index, ]))
+}
+
+################################
+# ConvertCensoringNodesToBinary()
+################################
+
+#' ConvertCensoringNodesToBinary
+#'
+#' Before passing data to SuperLearner, convert factors to binary.
+#'
+#' @param data TO DO
+#' @param Cnodes TO DO
+#'
+#' @return Returns data with censoring nodes converted to binary.
+#'
+
+ConvertCensoringNodesToBinary <- function(data, Cnodes) {
+  CensoringToBinary <- function(x) {
+    if (! all(levels(x) %in% c("censored", "uncensored"))) {
+      stop("all levels of data[, Cnodes] should be in censored, uncensored (NA should not be a level)")
+    }
+    b <- rep(NA_integer_, length(x))
+    b[x == "censored"] <- 0L
+    b[x == "uncensored"] <- 1L
+    return(b)
+  }
+
+  error.msg <- "in data, all Cnodes should be factors with two levels, 'censored' and 'uncensored' \n (binary is also accepted, where 0=censored, 1=uncensored, but is not recommended)"
+  for (i in Cnodes) {
+    col <- data[, i]
+    if (is.numeric(col)) {
+      if (! all(col %in% c(0, 1, NA))) stop(error.msg)
+    } else if (is.factor(col)) {
+      data[, i] <- CensoringToBinary(col)
+    } else {
+      stop(error.msg)
+    }
+  }
+  return(data)
+}
+
+################################
+# SetA()
+################################
+
+#' SetA
+#'
+#' Set the Anodes of data to regime[, , regime.index] up to cur.node
+#'
+#' @param data TO DO
+#' @param regimes TO DO
+#' @param Anodes TO DO
+#' @param regime.index TO DO
+#' @param cur.node TO DO
+#'
+#' @return Returns data with Anodes set to regime.
+#'
+
+SetA <- function(data, regimes, Anodes, regime.index, cur.node) {
+  Anode.index <- which(Anodes < cur.node)
+  data[, Anodes[Anode.index]] <- regimes[, Anode.index, regime.index]
+  return(data)
+}
+
+################################
+# SuppressGivenWarnings
+################################
+
+SuppressGivenWarnings <- function(expr, warningsToIgnore) {
+  h <- function (w) {
+    if (w$message %in% warningsToIgnore) invokeRestart( "muffleWarning" )
+  }
+  withCallingHandlers(expr, warning = h )
+}
+
+################################
+# safe.solve
+################################
+
+#Strange errors were reported on solaris-sparc, this attempts to avoid them
+safe.solve <- function(a, b) {
+  if (missing(b)) {
+    try.result <- try(x <- solve(a))
+  } else {
+    try.result <- try(x <- solve(a, b))
+  }
+  if (inherits(try.result, "try-error")) {
+    if (missing(b)) {
+      x <- matrix(nrow = nrow(a), ncol = ncol(a))
+    } else {
+      x <- matrix(nrow = ncol(a), ncol = ncol(AsMatrix(b)))
+    }
+    warning("Error in solve(), standard errors not available")
+  }
+  return(x)
+}
+
+################################
+# AsMatrix
+################################
+
+# If x is a matrix, keep it; if x is a vector, make it a 1 column matrix
+AsMatrix <- function(x) {
+  if (is.matrix(x)) {
+    return(x)
+  } else if (is.vector(x)) {
+    dim(x) <- c(length(x), 1)
+    return(x)
+  } else {
+    stop("AsMatrix input should be a matrix or vector") # nocov (should never occur - ignore in code coverage checks)
+  }
+}
+
+################################
+# drop3
+################################
+
+#if x is an array with 3 dimensions and third dimension has one level, return a matrix with it dropped; otherwise error
+drop3 <- function(x) {
+
+  return(dropn(x, 3))
+}
+
+################################
+# dropn
+################################
+
+#if x is an array with n dimensions and nth dimension has one level, return a matrix with it dropped; otherwise error
+dropn <- function(x, n) {
+
+  stopifnot(length(dim(x))==n)
+  stopifnot(dim(x)[n]==1)
+  dn <- dimnames(x)
+  dim(x) <- dim(x)[1:(n-1)]
+  dimnames(x) <- dn[1:(n-1)]
+  return(x)
+
+}
+
+################################
+# Bound
+################################
+
+Bound <- function(x, bounds) {
+  stopifnot(length(bounds) == 2 && !anyNA(bounds))
+  x[x < min(bounds)] <- min(bounds)
+  x[x > max(bounds)] <- max(bounds)
+  return(x)
+}
