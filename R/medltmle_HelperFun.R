@@ -14,7 +14,8 @@
 #' @param Cnodes TO DO
 #' @param cur.node TO DO
 #'
-#' @return Returns vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node
+#' @return Returns vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node.
+#' Note that if the current node is first C node, it will return that all samples are uncensored.
 #'
 
 # note: if calling from outside ltmle:::, cur.node needs to be the node index, not a string!
@@ -99,7 +100,7 @@ IsDeterministic <- function(data, cur.node, deterministic.Q.function, nodes, cal
 #' @param data TO DO
 #' @param Cnodes TO DO
 #'
-#' @return Calc logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
+#' @return Returns a logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
 
 CalcUncensoredMatrix <- function(data, Cnodes) {
   uncensored <- matrix(nrow=nrow(data), ncol=length(Cnodes))
@@ -446,13 +447,13 @@ ConvertToMainTerms <- function(data, msm, summary.measures, nodes) {
 
 #' CalcInterventionMatchArray
 #'
-#' Calculates a logical array - n x num.Anodes x num.regimes = follows regime[j] up to and including Anode[i]
+#' Check if A as in data equals the regime.
 #'
 #' @param data TO DO
 #' @param regimes TO DO
 #' @param Anodes Index of A nodes. Can be easily derived from \code{all.nodes$A}.
 #'
-#' @return Returns intervention that matches the array.
+#' @return Returns a logical array, n x num.Anodes x num.regimes = follows regime[j] up to and including Anode[i]. NA will count as a match as well.
 #'
 
 CalcInterventionMatchArray <- function(data, regimes, Anodes) {
@@ -553,17 +554,24 @@ RegimesFromAbar <- function(data, abar, rule) {
 #'
 
 IsDeterministicG <- function(data, cur.node, deterministic.g.function, nodes, using.newdata) {
+
   default <- list(is.deterministic=rep(FALSE, nrow(data)), prob1=NULL)
+
+  #If deterministic.g.function is already set to NULL, return FALSE for all.
   if (is.null(deterministic.g.function)) return(default)
-  #put this in a try-catch?
+  #TO DO: put this in a try-catch
   det.list <- deterministic.g.function(data=data, current.node=cur.node, nodes=nodes)
+
   if (is.null(det.list)) return(default)
   if (!is.list(det.list) || !setequal(names(det.list), c("is.deterministic", "prob1")) || length(det.list) != 2) stop("deterministic.g.function should return a list with names: is.deterministic, prob1")
   if (! length(det.list$prob1) %in% c(1, length(which(det.list$is.deterministic)))) stop("the length of the 'prob1' element of deterministic.g.function's return argument should be either 1 or length(which(det.list$is.deterministic))")
 
   inconsistent.rows <- (det.list$prob1 %in% c(0,1)) & (det.list$prob1 != data[det.list$is.deterministic, cur.node]) & !is.na(data[det.list$is.deterministic, cur.node])
+
   if (any(inconsistent.rows)) {
+
     err.msg <- paste("At node:",names(data)[cur.node], "deterministic.g.function is inconsistent with data - prob1 is either 0 or 1 but this does not match the node value.\nCheck data rows:", paste(head(rownames(data)[det.list$is.deterministic][inconsistent.rows]), collapse=" "))
+
     if (using.newdata) {
       err.msg <- paste(err.msg, "\n This error occured while calling deterministic.g.function on data where Anodes are set to abar.")
       cat("deterministic.g.function is inconsistent with data.\nAfter setting Anodes to abar, the data looks like this:\n")
@@ -742,4 +750,66 @@ Bound <- function(x, bounds) {
   x[x < min(bounds)] <- min(bounds)
   x[x > max(bounds)] <- max(bounds)
   return(x)
+}
+
+################################
+# deterministic.g.function
+################################
+
+#Note: needs better implementation.
+
+deterministic.g.function <- function(data, current.node, nodes) {
+
+    if (names(data)[current.node] == "A1") {
+       det <- (data$L1 < -2 | data$L1 > 2) & !is.na(data$L1)
+       prob1 <- ((data$L1 < -2) * 1 + (data$L1 > 2) * 0.1)[det]
+     } else if (names(data)[current.node] == "A2") {
+       det <- data$A1 == 1 & !is.na(data$A1)
+       prob1 <- 1
+      } else if (names(data[current.node]) %in% c("C1", "C2")){
+       return(NULL)  #this returns the default of no deterministic links
+       #note that it is not necessary to specify that prior censoring indicates future censoring
+     } else {
+       stop("unexpected current.node")
+     }
+     return(list(is.deterministic=det, prob1=prob1))
+   }
+
+################################
+# SetSeedIfRegressionTesting
+################################
+
+#if comparing outputs between different versions of medltmle, we need to sync random numbers
+#before calling SuperLearner or FixScoreEquation since these use random numbers
+
+SetSeedIfRegressionTesting <- function() {
+
+  seed <- Sys.getenv("MEDLTMLE.REGRESSION.TESTING.SEED")
+  stopifnot(length(seed) == 1)
+
+  if (seed != "") {
+    seed <- as.numeric(seed)
+    stopifnot(is.finite(seed))
+    set.seed(seed)
+  }
+
+  invisible(NULL)
+}
+
+################################
+# IsBinary
+################################
+
+IsBinary <- function(mat) {
+  identical(mat, as.numeric(as.logical(mat)))
+}
+
+################################
+# sseq
+################################
+
+#like seq, but returns integer(0) if from > to   (always increments by 1)
+sseq <- function(from, to) {
+  if (from > to) return(integer(0))
+  seq(from, to)
 }
