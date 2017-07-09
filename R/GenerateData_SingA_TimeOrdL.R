@@ -34,16 +34,16 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
 
   #Belong to the second group of baseline covariates:
   L2.1 <- rexpit(1.2-.7*L1.1)
-  L2.2 <- rexpit(5-.7*L1.2)
+  L2.2 <- rexpit(0.4-.7*L1.2)
 
   #Belong to the third group of baseline covariates:
   L3.1 <- rexpit(1.2-.7*L1.1+0.1*L2.2)
 
   #Belong to the fourth group of baseline covariates:
-  L4.1 <- rexpit(2.3-.3*L1.2+L3.1+0.5*L2.1)
+  L4.1 <- rexpit(0.3-.3*L1.2+0.4*L3.1+0.5*L2.1)
 
   #Belong to the fifth group of baseline covariates:
-  L5.1 <- rexpit(4.1+0.3*L2.2+L4.1-1.5*L1.1+0.2*L3.1)
+  L5.1 <- rexpit(4.1+0.3*L2.2+L4.1-4.5*L1.1+0.2*L3.1)
   L5.2 <- rexpit(2.1-0.3*L2.2+0.3*L4.1-2*L1.1+2*L3.1)
 
   #Possibly an exposure from a randomized trial.
@@ -75,16 +75,16 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
     if(est.psi0){
       C[uncensored.alive,t] <- 1
     }else{
-      if(t==1) C[uncensored.alive,t] <- rexpit(0.5-0.2*covs_order$L1.1.W1[uncensored.alive]-0.3*covs_order$L2.1.W1[uncensored.alive])
-      else C[uncensored.alive,t] <- rexpit(0.5-0.2*covs_order$L1.1.W1[uncensored.alive]+0.2*covs_order$A[uncensored.alive]-0.3*LZ[uncensored.alive,t-1])
+      if(t==1) C[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.1.W1[uncensored.alive]-0.3*covs_order$L2.1.W1[uncensored.alive])
+      else C[uncensored.alive,t] <-rexpit(4-0.2*covs_order$L1.1.W1[uncensored.alive]+0.2*covs_order$A[uncensored.alive]-0.01*LZ[uncensored.alive,t-1])
     }
 
     ### D
     if(est.psi0){
       D[uncensored.alive,t] <- 1
     }else{
-      if(t==1) D[uncensored.alive,t] <- rexpit(0.5-0.2*covs_order$L1.2.W1[uncensored.alive]-0.3*covs_order$L3.1.W1[uncensored.alive])
-      else D[uncensored.alive,t] <- rexpit(0.5-0.2*covs_order$L1.2.W1[uncensored.alive]+0.1*covs_order$A[uncensored.alive]-0.8*LZ[uncensored.alive,t-1])
+      if(t==1) D[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.2.W1[uncensored.alive]-0.3*covs_order$L3.1.W1[uncensored.alive])
+      else D[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.2.W1[uncensored.alive]+0.1*covs_order$A[uncensored.alive]-0.08*LZ[uncensored.alive,t-1])
     }
 
     #Update who died (note more might have died from outcome Y1 to now):
@@ -116,10 +116,11 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
     ## Y: deterministic function of LZ.
     if(t==end.time){
 
-      Y[uncensored.alive]<-ifelse(LZ[uncensored.alive,t]<12.2,1,0)
+      Y[uncensored.alive]<-ifelse(LZ[uncensored.alive,t]<8.5,1,0)
 
     }
-  }
+
+    }
 
   .BinaryToCensoring <- function(is.censored, is.uncensored) {
     if (! xor(missing(is.censored), missing(is.uncensored))) stop("exactly one of is.censored and is.uncensored must be passed")
@@ -141,19 +142,31 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
     d=baseline
 
     for (t in 1:(end.time)) {
-      d <- data.frame(d, .BinaryToCensoring(is.uncensored=C[, t]), D[, t], LA[,t],Z[,t],LZ[,t],Y)
-      names(d)[ncol(d) - 5] <- paste0("C_", t)
-      names(d)[ncol(d) - 4] <- paste0("D_", t)
-      names(d)[ncol(d) - 3] <- paste0("LA_", t)
-      names(d)[ncol(d) - 2] <- paste0("Z_", t)
-      names(d)[ncol(d) - 1] <- paste0("LZ_", t)
-      names(d)[ncol(d)] <- paste0("Y_", t)
+
+      if(t!=end.time){
+
+        d <- data.frame(d, .BinaryToCensoring(is.uncensored=C[, t]), D[, t], LA[,t],Z[,t],LZ[,t])
+        names(d)[ncol(d) - 4] <- paste0("C_", t)
+        names(d)[ncol(d) - 3] <- paste0("D_", t)
+        names(d)[ncol(d) - 2] <- paste0("LA_", t)
+        names(d)[ncol(d) - 1] <- paste0("Z_", t)
+        names(d)[ncol(d)] <- paste0("LZ_", t)
+
+      }else{
+
+        d <- data.frame(d, .BinaryToCensoring(is.uncensored=C[, t]), D[, t], LA[,t],Z[,t],LZ[,t],Y)
+        names(d)[ncol(d) - 5] <- paste0("C_", t)
+        names(d)[ncol(d) - 4] <- paste0("D_", t)
+        names(d)[ncol(d) - 3] <- paste0("LA_", t)
+        names(d)[ncol(d) - 2] <- paste0("Z_", t)
+        names(d)[ncol(d) - 1] <- paste0("LZ_", t)
+        names(d)[ncol(d)] <- paste0("Y_", t)
+
+      }
     }
     return(d)
   }
 
-  test<-.CreateDataFrame(covs_order, C = C,D = D,Z = Z,LA = LA,LZ = LZ, Y =  Y,end.time =  end.time)
-
-  return(.CreateDataFrame(W1, W2, C = C,A = A,Z = Z,LA = LA,LZ = LZ,Y =  Y,end.time =  end.time))
+  return(.CreateDataFrame(baseline=covs_order, C = C,D = D,Z = Z,LA = LA,LZ = LZ, Y =  Y,end.time =  end.time))
 
 }
