@@ -5,6 +5,10 @@ export(CreateMedInputs)
 export(CreateMedMSMInputs)
 export(GenerateData)
 export(GenerateData_SingA_TimeOrdL)
+<<<<<<< HEAD
+=======
+export(MainCalcsMediation)
+>>>>>>> master
 export(ltmleMediation)
 export(medltmle)
 export(timeOrder_baseline)

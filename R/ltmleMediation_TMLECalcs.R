@@ -8,10 +8,11 @@
 #'
 #' @param inputs Output of \code{CreateMedInputs}
 #'
-#' @return Returns
+#' @return Returns the influence curve for TMLE and IPTW estimators, marginal structural model fit, cumulative conditional density estimates for Qs and g,
+#' separate fits for each node, variance estimate if specified, IPTW estimate and final Qstar.
 #'
+#' @export MainCalcsMediation
 
-# Loop over final Ynodes, run main calculations...
 MainCalcsMediation <- function(inputs) {
 
   # not doing Estimate Var in this implementation. TO DO.
@@ -722,7 +723,6 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
 
        if (is.null(fit.and.predict) || multiple.Qstar || multiple.subs) {
 
-        #Here
         fit.and.predict <- FitAndPredict()
         m <- fit.and.predict$m
         predicted.values[, regime.index] <- fit.and.predict$predicted.values

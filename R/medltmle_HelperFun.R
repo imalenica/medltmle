@@ -887,3 +887,8 @@ timeOrder_baseline<-function(data, A){
   return(data)
 
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> master

@@ -10,8 +10,11 @@ ltmleMediation(inputs)
 \item{inputs}{Output of \code{CreateMedInputs}}
 }
 \value{
-Returns estimate of $E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]$
+Returns $\psi^{IPW}_n$, $\psi^{TMLE}_n$ and if specified $\psi^{NTsub}_n$ estimates,
+corresponding influence curve, cumulative conditional density with abar and abar.prime rule for g, QL and QZ (bounded and unbounded),
+fits for Q and Qstar and corresponding formulas, final Qstar estimates, logical indicating binary and/or transformed outcome.
 }
 \description{
-Longitudinal Mediation Analysis with Time-varying Mediators.
+Prepares output obtained from \code{LtmleMediationMSMFromInputs} and \code{MainCalcsMediation} for final report by
+\code{medltmle}.
 }

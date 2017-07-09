@@ -10,7 +10,8 @@ MainCalcsMediation(inputs)
 \item{inputs}{Output of \code{CreateMedInputs}}
 }
 \value{
-Returns
+Returns the influence curve for TMLE and IPTW estimators, marginal structural model fit, cumulative conditional density estimates for Qs and g,
+separate fits for each node, variance estimate if specified, IPTW estimate and final Qstar.
 }
 \description{
 Main TMLE calculations.

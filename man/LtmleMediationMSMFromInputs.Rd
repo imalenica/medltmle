@@ -7,11 +7,12 @@
 LtmleMediationMSMFromInputs(inputs)
 }
 \arguments{
-\item{inputs}{Output of \code{CreateMedInputs}}
+\item{inputs}{Output of \code{CreateMedInputs}.}
 }
 \value{
-Returns
+Returns results from \code{MainCalcsMediation}, and adds Gcomp, formulas,
+biinary outcome, transformed outcome and survival outcome logical to the results from \code{CreateMedInputs}.
 }
 \description{
-run ltmleMSM from ltmleInputs object
+Calls \code{MainCalcsMediation} and edits the results obtained.
 }
