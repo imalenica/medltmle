@@ -14,7 +14,8 @@ IsUncensored(uncensored.matrix, Cnodes, cur.node)
 \item{cur.node}{TO DO}
 }
 \value{
-Returns vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node
+Returns vector of [numDataRows x 1] I(C=uncensored) from Cnodes[1] to the Cnode just before cur.node.
+Note that if the current node is first C node, it will return that all samples are uncensored.
 }
 \description{
 Determine which patients are uncensored

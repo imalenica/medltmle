@@ -10,17 +10,17 @@ CalcIPTWMediation(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime,
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
 
-\item{cum.g.abar}{TO DO}
+\item{cum.g.abar}{Cumulative g obtained from \code{CalcCumG}  with regime abar.}
 
-\item{cum.qz.abar}{TO DO}
+\item{cum.qz.abar}{Cumulative Q for Z obtained from \code{CalcCumG} with regime abar.}
 
-\item{cum.qz.abar.prime}{TO DO}
+\item{cum.qz.abar.prime}{Cumulative Q for Z obtained from \code{CalcCumG} with regime abar.prime.}
 
-\item{msm.weights}{}
+\item{msm.weights}{Marginal Structural Model weights for each sample.}
 }
 \value{
-Returns estimate of L densities.
+Returns IPTW estimate and normalized influence curve for IPTW.
 }
 \description{
-If not is.Z.dens, estimating L densities
+Calculates IPTW estimate.
 }

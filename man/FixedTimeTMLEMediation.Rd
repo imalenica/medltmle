@@ -11,23 +11,23 @@ FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
 
-\item{nodes}{TO DO}
+\item{nodes}{All nodes in the data.}
 
-\item{msm.weights}{TO DO}
+\item{msm.weights}{Marginal structural model weights.}
 
 \item{combined.summary.measures}{TO DO}
 
-\item{g.abar.list}{TO DO}
+\item{g.abar.list}{g estimate from \code{EstimateG} with regime abar.}
 
-\item{g.abar.prime.list}{TO DO}
+\item{g.abar.prime.list}{g estimate from \code{EstimateG} with regime abar.prime.}
 
-\item{cum.qz.abar}{TO DO}
+\item{cum.qz.abar}{Cumulative estimate for Z nodes under abar regime.}
 
-\item{cum.qz.abar.prime}{TO DO}
+\item{cum.qz.abar.prime}{Cumulative estimate for Z nodes under abar.prime regime.}
 
-\item{cum.qL.abar}{TO DO}
+\item{cum.qL.abar}{Cumulative estimate for L nodes under abar regime.}
 
-\item{cum.qL.abar.prime}{TO DO}
+\item{cum.qL.abar.prime}{Cumulative estimate for L nodes under abar.prime regime.}
 }
 \value{
 

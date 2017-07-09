@@ -278,8 +278,6 @@ GetLibrary <- function(SL.library, estimate.type) {
 #' @return Returns cleaned data.
 #'
 
-data <- CleanData(data, all.nodes, deterministic.Q.function, survivalOutcome)
-
 CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, showMessage=TRUE) {
   #make sure binaries have already been converted before calling this function
   options(warn=-1)
@@ -360,7 +358,6 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
 #'
 #' @return Returns data with outcome in the 0-1 range.
 #'
-TransformOutcomes(data, all.nodes, Yrange)
 
 TransformOutcomes <- function(data, nodes, Yrange) {
 

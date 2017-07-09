@@ -12,7 +12,7 @@ CalcUncensoredMatrix(data, Cnodes)
 \item{Cnodes}{TO DO}
 }
 \value{
-Calc logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
+Returns a logical matrix - n x numCnodes = is uncensored up to and including Cnode[i]
 }
 \description{
 Determine which patients have died or have Q set deterministically by user function before cur.node.

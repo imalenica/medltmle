@@ -8,21 +8,21 @@ NormalizeIC(IC, combined.summary.measures, m.beta, msm.weights,
   observation.weights, g.ratio)
 }
 \arguments{
-\item{IC}{TO DO}
+\item{IC}{Estimate of the influence curve.}
 
-\item{combined.summary.measures}{TO DO}
+\item{combined.summary.measures}{Combined summary measure of (n x num.measures x num.regimes x num.final.Ynodes) dimension. Note that num.measures is equal to num.summary.measures + num.baseline.covariates.}
 
-\item{m.beta}{TO DO}
+\item{m.beta}{Estimate of betas.}
 
-\item{msm.weights}{TO DO}
+\item{msm.weights}{Marginal structural model weights.}
 
-\item{observation.weights}{TO DO}
+\item{observation.weights}{Observation weights.}
 
-\item{g.ratio}{TO DO}
+\item{g.ratio}{\code{g.unbounded} / \code{g.bounded} ratio of dimensions: n x num.regimes x num.final.Ynodes. If \code{IC.variance.only}, g.ratio should be NULL.}
 }
 \value{
-Returns
+Returns normalized influence curve.
 }
 \description{
-Normalize the influence curve matrix
+Normalize the influence curve matrix.
 }

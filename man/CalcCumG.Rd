@@ -7,13 +7,13 @@
 CalcCumG(g, gbounds)
 }
 \arguments{
-\item{g}{TO DO}
+\item{g}{Estimate of \code{g} derived from \code{EstimateG()}.}
 
-\item{gbounds}{TO DO}
+\item{gbounds}{Lower and upper bounds for g.}
 }
 \value{
 Returns G.
 }
 \description{
-Calculate bounded cumulative G
+Calculate bounded cumulative G.
 }

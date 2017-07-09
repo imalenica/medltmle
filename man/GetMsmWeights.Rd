@@ -7,7 +7,7 @@
 GetMsmWeights(inputs)
 }
 \arguments{
-\item{inputs}{Output of \code{CreateMedInputs}}
+\item{inputs}{Output of \code{CreateMedInputs}.}
 }
 \value{
 Returns weights for the Marginal Structural Model.

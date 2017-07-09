@@ -15,15 +15,15 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
 
-\item{Anodes}{names of columns containing A covariates.}
+\item{Anodes}{names of columns containing A covariates (character).}
 
-\item{Znodes}{names of columns containing Z covariates.}
+\item{Znodes}{names of columns containing Z covariates (character).}
 
-\item{Cnodes}{names of columns containing C covariates.}
+\item{Cnodes}{names of columns containing C covariates (character).}
 
-\item{Lnodes}{names of columns containing L covariates.}
+\item{Lnodes}{names of columns containing L covariates (character).}
 
-\item{Ynodes}{names of columns containing Y covariates.}
+\item{Ynodes}{names of columns containing Y covariates (character).}
 
 \item{survivalOutcome}{logical variable specifying if the outcome is survival.}
 
@@ -37,9 +37,9 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 
 \item{qLform}{g form for L covariates.}
 
-\item{abar}{Intervention. Dimensions should correspond to the dimension of time points available.}
+\item{abar}{Intervention. Dimension should correspond to the number of intervention nodes available.}
 
-\item{abar.prime}{Control for the exposure. Dimensions should correspond to the dimension of time points available.}
+\item{abar.prime}{Control for the exposure. Dimension should correspond to the number of intervention nodes available.}
 
 \item{rule}{Specify rule for the intervention.}
 
@@ -57,7 +57,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 
 \item{estimate.time}{Measure time to fun function.}
 
-\item{gcomp}{gcomp formula.}
+\item{gcomp}{Logical indicating whether to use Gcomp instead (no updating if TRUE).}
 
 \item{iptw.only}{Use IPTW estimator only}
 

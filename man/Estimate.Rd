@@ -34,8 +34,8 @@ Estimate(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node,
 \item{regimes.with.positive.weight}{Defaults to \code{1:num.regimes}.}
 }
 \value{
-Returns
+Returns predicted values for the fit.
 }
 \description{
-Run GLM or SuperLearner
+Run GLM or SuperLearner to obtain an estimate for the current node.
 }

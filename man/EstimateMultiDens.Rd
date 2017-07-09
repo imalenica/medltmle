@@ -16,8 +16,8 @@ EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens)
 \item{is.Z.dens}{TO DO}
 }
 \value{
-Returns estimate of L densities.
+Returns estimate of Z and L conditional densities given the regime.
 }
 \description{
-If not is.Z.dens, estimating L densities
+Estimates conditional densities of Z and L.
 }

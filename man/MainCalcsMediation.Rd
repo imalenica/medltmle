@@ -10,8 +10,8 @@ MainCalcsMediation(inputs)
 \item{inputs}{Output of \code{CreateMedInputs}}
 }
 \value{
-Returns estimate of $E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]$
+Returns
 }
 \description{
-Main TMLE calculations
+Main TMLE calculations.
 }

@@ -11,11 +11,11 @@ CalcInterventionMatchArray(data, regimes, Anodes)
 
 \item{regimes}{TO DO}
 
-\item{Anodes}{TO DO}
+\item{Anodes}{Index of A nodes. Can be easily derived from \code{all.nodes$A}.}
 }
 \value{
-Returns intervention that matches the array.
+Returns a logical array, n x num.Anodes x num.regimes = follows regime[j] up to and including Anode[i]. NA will count as a match as well.
 }
 \description{
-Calculates a logical array - n x num.Anodes x num.regimes = follows regime[j] up to and including Anode[i]
+Check if A as in data equals the regime.
 }

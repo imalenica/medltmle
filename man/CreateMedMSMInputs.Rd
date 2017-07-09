@@ -18,7 +18,7 @@ CreateMedMSMInputs(data, abar, abar.prime, rule, gform)
 \item{gform}{g form for intervention (if there is a censoring variable, include C as well).}
 }
 \value{
-Returns regimes for abar and abar.prime, working MSM and MSM weights, summary measures, gform and final Y nodes.
+Returns regimes for abar and abar.prime in proper format, working MSM and MSM weights, summary measures, gform and final Y nodes.
 }
 \description{
 Create Mediation MSM Inputs for ltmle.

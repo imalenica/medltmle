@@ -70,8 +70,8 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, survivalOutcome,
 \item{observation.weights}{Provide weight for observations}
 }
 \value{
-Returns output ready for ltmleMed.
+Returns output ready for ltmleMediation.
 }
 \description{
-Create Mediation Inputs for ltmle.
+Create Mediation Inputs for ltmleMediation.
 }

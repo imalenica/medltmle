@@ -14,8 +14,8 @@ TransformOutcomes(data, nodes, Yrange)
 \item{Yrange}{TO DO}
 }
 \value{
-Returns data with transfored outcome.
+Returns data with outcome in the 0-1 range.
 }
 \description{
-TransformOutcomes
+Get the range of Y. Transform outcome to be in the 0-1 range, if necessary.
 }

@@ -18,10 +18,12 @@ ltmleMediation <- function(inputs) {
   msm.result <- LtmleMediationMSMFromInputs(inputs)
   num.regimes <- dim(inputs$regimes)[3]
   stopifnot(num.regimes %in% 1:2)
+
   if (num.regimes == 2) {
     class(msm.result) <- "ltmleEffectMeasures"
     return(msm.result)
   }
+
   names(msm.result$beta.iptw) <- names(msm.result$beta) <- NULL
   iptw <- plogis(msm.result$beta.iptw)
   iptw.list <- list(iptw.estimate=iptw, iptw.IC=iptw*(1-iptw)*msm.result$IC.iptw[, 1])

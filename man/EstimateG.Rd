@@ -12,8 +12,8 @@ EstimateG(inputs, regimes.use)
 \item{regimes.use}{}
 }
 \value{
-Returns
+Returns estimate of conditional density for each A nodes, bounded and unbounded cumulative g.
 }
 \description{
-Parametric estimation of each g-factor.
+Estimation of conditional densities of A nodes (g)
 }
