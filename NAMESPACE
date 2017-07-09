@@ -3,7 +3,6 @@
 export(CheckMediationInputs)
 export(CreateMedInputs)
 export(CreateMedMSMInputs)
-export(GenerateData)
+export(MainCalcsMediation)
 export(ltmleMediation)
-export(make.sim.spec)
 export(medltmle)

@@ -33,7 +33,7 @@
 #' @param rule Specify rule for the intervention.
 #' @param Yrange Specify range for the outcome.
 #'
-#' @return Returns estimate of $E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]$
+#' @return Returns estimate of \deqn{latex}{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
 #' @export medltmle
 
