@@ -1,5 +1,5 @@
 ##############################
-# Test out medltmle functions
+# Test main medltmle functions
 ##############################
 library(here)
 library(SuperLearner)
@@ -9,15 +9,17 @@ library(speedglm)
 library(Matrix)
 library(pracma)
 
+context("Overall Test for medltmle")
+
 #Load all scripts
-setwd(here("R"))
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+#setwd(here("R"))
+#file.sources = list.files(pattern="*.R")
+#sapply(file.sources,source,.GlobalEnv)
 
 #Load all scripts to generate data
-setwd(here("simulation"))
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+#setwd(here("simulation"))
+#file.sources = list.files(pattern="*.R")
+#sapply(file.sources,source,.GlobalEnv)
 
 #Set seed:
 set.seed(2)
@@ -61,7 +63,13 @@ result.c <- medltmle(data=data,
                            observation.weights=NULL
                            )
 
+#Test TMLE
+test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],
+                                                                            0.9611661, tolerance = 0.01))
 
+#Test IPW
+test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
+                                                                           0.9566909, tolerance = 0.01))
 
 
 
