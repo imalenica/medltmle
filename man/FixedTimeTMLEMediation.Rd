@@ -30,7 +30,7 @@ FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
 \item{cum.qL.abar.prime}{Cumulative estimate for L nodes under abar.prime regime.}
 }
 \value{
-
+Return...
 }
 \description{
 TMLE Mediation

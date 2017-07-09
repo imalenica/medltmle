@@ -413,8 +413,6 @@ EstimateG <- function(inputs,regimes.use) {
 
 Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node, calc.meanL, called.from.estimate.g, regimes.meanL, regimes.with.positive.weight) {
 
-  library(speedglm)
-
   #Fit and predict using GLM or SuperLearner.
   FitAndPredict <- function() {
 
@@ -1045,7 +1043,7 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
 #' @param cum.qL.abar Cumulative estimate for L nodes under abar regime.
 #' @param cum.qL.abar.prime Cumulative estimate for L nodes under abar.prime regime.
 #'
-#' @return
+#' @return Return...
 #'
 
 FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.measures, g.abar.list , g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar, cum.qL.abar.prime){
@@ -1533,10 +1531,6 @@ CalcIC <- function(Qstar.kplus1, Qstar, h.g.ratio, uncensored, intervention.matc
 #Qstar: n x num.regimes x num.final.Ynodes
 #combined.summary.measures: n x num.measures x num.regimes x num.final.Ynodes   (num.measures=num.summary.measures + num.baseline.covariates)
 #msm.weights: n x num.regimes x num.final.Ynodes
-
-working.msm=inputs$working.msm
-combined.summary.measures=inputs$combined.summary.measures
-msm.weights=all.msm.weights * inputs$observation.weights
 
 FitPooledMSM <- function(working.msm, Qstar, combined.summary.measures, msm.weights) {
 
