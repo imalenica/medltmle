@@ -1,6 +1,10 @@
+################################
+# medltmle
+################################
+
 #' medltmle
 #'
-#' Longitudinal Mediation Analysis with Time-varying Mediators.
+#' Estimates parameters for longitudinal mediation analysis with time-varying mediators.
 #'
 #' @param data Dataframe containing the data in a wide format.
 #' @param Anodes names of columns containing A covariates (character).
@@ -64,6 +68,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes,
   result <- ltmleMediation(inputs)
   result$call <- match.call()
   return(result)
+
 }
 
 
