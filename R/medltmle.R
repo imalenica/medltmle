@@ -12,6 +12,7 @@
 #' @param Cnodes names of columns containing C covariates (character).
 #' @param Lnodes names of columns containing L covariates (character).
 #' @param Ynodes names of columns containing Y covariates (character).
+#' @param W2nodes names of columns containing W2 covariates (character).
 #' @param survivalOutcome logical variable specifying if the outcome is survival.
 #' @param QLform Q forms for L covariates.
 #' @param QZform Q forms for Z covariates.
@@ -33,11 +34,11 @@
 #' @param rule Specify rule for the intervention.
 #' @param Yrange Specify range for the outcome.
 #'
-#' @return Returns estimate of \deqn{latex}{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
+#' @return Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
 #' @export medltmle
 
-medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes,
+medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2nodes=NULL,
                            survivalOutcome=NULL,
                            QLform=NULL, QZform=NULL,gform=NULL, qzform=NULL, qLform=NULL,
                            abar, abar.prime,  rule=NULL, gbounds=c(0.01, 1), Yrange=NULL,

@@ -810,3 +810,82 @@ sseq <- function(from, to) {
   if (from > to) return(integer(0))
   seq(from, to)
 }
+
+################################
+# timeOrder_baseline
+################################
+
+#' timeOrder_baseline
+#'
+#' Function to group baseline covariates according to time ordering, in case there is time dependence.
+#'
+#' @param data data.frame object containing all the baseline covariates and possibly an exposure.
+#' @param A Numeric value indicating the column number of exposure. Must be within (1,ncol(data)) range.
+#'
+#' @return Returns data with set exposure A and ordered baseline covariates. All baseline covariates before A
+#' are W1, whereas all after A are W2 covariates. This part is necessary later for TMLE fluctuation.
+#'
+#' @export timeOrder_baseline
+
+timeOrder_baseline<-function(data, A){
+
+  #How many unique groups of covariates:
+  num_uniqe<-length(unique(unlist(lapply(strsplit(names(data),split='[.]'),`[[`, 1))))
+
+  #First, get ordering and possibly subordering of A:
+  if(!grepl('[.]', names(data)[A])){
+
+    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"L"))[2],'[.]'))[1]
+
+  }else{
+
+    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"L"))[2],'[.]'))[1]
+    subord_A<- unlist(strsplit(names(data)[A],'[.]'))[2]
+
+  }
+
+  if(ord_A==num_uniqe){
+
+    #A belongs to the last group; assign all baseline covariates to W1, none in W2.
+    names(data)[A]<-"A"
+    names(data)[-A]<-paste(names(data)[-A],"W1",sep=".")
+
+  }else{
+
+    #A is not part of the last group; assign all baseline covariates before A to W1, and all after A to W2.
+    names(data)[A]<-"A"
+
+    #Get order for all baseline covariates:
+    ord<-sapply(strsplit(sapply(strsplit(names(data[,-A]),"L"), "[[", 2),'[.]'),"[[", 1)
+    data_temp<-data[,-A]
+
+    for(i in 1:length(ord)){
+
+      if(ord[i]<ord_A){
+
+        names(data_temp)[i]<-paste(names(data_temp)[i],"W1",sep=".")
+
+      }else if(ord[i]>ord_A){
+
+        names(data_temp)[i]<-paste(names(data_temp)[i],"W2",sep=".")
+
+      }else{
+        #A and baseline covariate have the same order.Check suborder.
+
+        subord_cov<- unlist(strsplit(names(data_temp)[i],'[.]'))[2]
+
+        if(subord_cov<subord_A){
+          names(data_temp)[i]<-paste(names(data_temp)[i],"W1",sep=".")
+        }else{
+          names(data_temp)[i]<-paste(names(data_temp)[i],"W2",sep=".")
+        }
+      }
+    }
+    data<-cbind.data.frame(data_temp,A=data$A)
+  }
+
+  return(data)
+
+}
+
+

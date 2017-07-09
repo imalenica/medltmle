@@ -66,7 +66,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 \item{observation.weights}{Provide weight for observations}
 }
 \value{
-Returns estimate of \deqn{latex}{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
+Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 }
 \description{
 Estimates parameters for longitudinal mediation analysis with time-varying mediators.

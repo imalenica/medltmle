@@ -71,6 +71,3 @@ test_that("TMLE estimate for the simulation matches expected", expect_equal(resu
 test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
                                                                            0.9566909, tolerance = 0.01))
 
-
-
-
