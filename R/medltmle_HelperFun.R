@@ -49,7 +49,12 @@ IsDeterministic <- function(data, cur.node, deterministic.Q.function, nodes, cal
   if (survivalOutcome && any(nodes$Y < cur.node)) {
     last.Ynode <- max(nodes$Y[nodes$Y < cur.node])
     is.deterministic <- data[, last.Ynode] %in% TRUE
-  } else {
+  } else if (!is.null(nodes$D) && any(nodes$D < cur.node)) {
+
+    #Add option to split C into death and censoring due to other reasons.
+    last.Dnode <- max(nodes$D[nodes$D < cur.node])
+    is.deterministic <- data[, last.Dnode] %in% TRUE
+  } else{
     is.deterministic <- rep(FALSE, nrow(data))
   }
 
@@ -68,6 +73,7 @@ IsDeterministic <- function(data, cur.node, deterministic.Q.function, nodes, cal
 
   if (! length(det.list$Q.value) %in% c(1, length(which(det.list$is.deterministic)))) stop("the length of the 'Q.value' element of deterministic.Q.function's return argument should be either 1 or length(which(det.list$is.deterministic))")
 
+  #TO DO: Add D option as well
   #check that these observations where Q.value is 1 due to death (previous y is 1) aren't set to anything conflicting by deterministic.Q.function
   Q.value.from.function <- rep(NA, nrow(data))
   Q.value.from.function[det.list$is.deterministic] <- det.list$Q.value
@@ -211,30 +217,40 @@ CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
 #'
 #' Get all the nodes from input data.
 #'
-#' @param data TO DO
-#' @param Anodes TO DO
-#' @param Cnodes TO DO
-#' @param Lnodes TO DO
-#' @param Ynodes TO DO
-#' @param Znodes TO DO
+#' @param data Available data in a wide format.
+#' @param Anodes Character variable with exposure nodes.
+#' @param Cnodes Character variable with censoring nodes.
+#' @param Lnodes Character variable with covariate nodes.
+#' @param Ynodes Character variable with outcome nodes.
+#' @param Znodes Character variable with mediator nodes.
+#' @param Dnodes Character variable with death as censoring nodes.
+#' @param W2nodes Character variable with baseline nodes after treatment that need to be fluctuated during the TMLE procedure.
 #'
-#' @return Returns all nodes.
+#' @return Returns all nodes in a format necessary for further functions.
 #'
 
-CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes=NULL) {
+CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes=NULL,Dnodes=NULL,W2nodes=NULL) {
+
   Anodes <- NodeToIndex(data, Anodes)
   Cnodes <- NodeToIndex(data, Cnodes)
   Lnodes <- NodeToIndex(data, Lnodes)
   Ynodes <- NodeToIndex(data, Ynodes)
-  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, AC=sort(c(Anodes, Cnodes)))
+  Dnodes <- NodeToIndex(data, Dnodes)
+  W2nodes <- NodeToIndex(data, W2nodes)
+
+  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, D=Dnodes, W2=W2nodes, AC=sort(c(Anodes, Cnodes)), ACD=sort(c(Anodes, Cnodes, Dnodes)))
+
   if(!is.null(Znodes)){
     Znodes <- NodeToIndex(data, Znodes)
     nodes$Z <- Znodes
   }
+
   nodes$ACZ <- sort(c(Anodes, Cnodes, Znodes))
   nodes$baseline <- seq(1, min(c(nodes$A, nodes$L, nodes$C, nodes$Y,nodes$Z)) - 1)
+  #if there are no A/C nodes between two or more LY nodes, only the first LY node in the block is considered an LY node
   nodes$LY <- CreateLYNodes(data, nodes, check.Qform=FALSE)
   return(nodes)
+
 }
 
 ################################
@@ -326,7 +342,7 @@ CleanData <- function(data, nodes, deterministic.Q.function, survivalOutcome, sh
       #ua: uncensored and alive
       censored <- data[, i] == "censored" & ua
 
-      #If not already set to NA, set to NA for all censored samples (including Y).
+      #If not already set to NA, set to NA for all censored samples (including Y and D).
       if (! all(is.na.strict(data[censored, (i+1):ncol(data), drop=FALSE]))) {
         data[censored, (i+1):ncol(data)] <- NA
         changed <- TRUE
@@ -835,11 +851,11 @@ timeOrder_baseline<-function(data, A){
   #First, get ordering and possibly subordering of A:
   if(!grepl('[.]', names(data)[A])){
 
-    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"L"))[2],'[.]'))[1]
+    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"B"))[2],'[.]'))[1]
 
   }else{
 
-    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"L"))[2],'[.]'))[1]
+    ord_A<-unlist(strsplit(unlist(strsplit(names(data)[A],"B"))[2],'[.]'))[1]
     subord_A<- unlist(strsplit(names(data)[A],'[.]'))[2]
 
   }
@@ -856,7 +872,7 @@ timeOrder_baseline<-function(data, A){
     names(data)[A]<-"A"
 
     #Get order for all baseline covariates:
-    ord<-sapply(strsplit(sapply(strsplit(names(data[,-A]),"L"), "[[", 2),'[.]'),"[[", 1)
+    ord<-sapply(strsplit(sapply(strsplit(names(data[,-A]),"B"), "[[", 2),'[.]'),"[[", 1)
     data_temp<-data[,-A]
 
     for(i in 1:length(ord)){
@@ -887,8 +903,3 @@ timeOrder_baseline<-function(data, A){
   return(data)
 
 }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> master
