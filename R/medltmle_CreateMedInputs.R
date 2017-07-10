@@ -39,7 +39,7 @@
 #' @export CreateMedInputs
 #'
 
-CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform,qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights) {
+CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights) {
 
   if (is.list(regimes)) {
 
@@ -154,10 +154,11 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
   #If QLform, QZform, qzform and gform are not specified, return default form.
   #Each formula will consist of all parent nodes except censoring (both C and D, if available) and event nodes.
 
-  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
 
   # Convert to main terms MSM.
   # Ex: If working.msm is "Y ~ X1*X2", convert to "Y ~ -1 + S1 + S2 + S3 + S4" where
@@ -211,6 +212,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 #' @param is.Qform Logical indicating whether to specify general Q formula.
 #' @param is.QLform Logical indicating whether to specify Q formula for covariates.
 #' @param is.qzform Logical indicating whether to specify general Q formula for Z.
+#' @param is.qLform Logical indicating whether to specify general Q formula for L.
 #' @param stratify Logical indicating whether to straify.
 #' @param survivalOutcome Logical indicating if the outcome a survival outcome.
 #' @param showMessage Logical indicating whether to show comments while executing.
@@ -218,7 +220,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 #' @return Returns default Q or g formula if not specified.
 #'
 
-GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, stratify, survivalOutcome, showMessage) {
+GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform, stratify, survivalOutcome, showMessage) {
 
   if (is.Qform) {
     if(is.QLform){
@@ -232,6 +234,9 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
     if(is.qzform){
       lhs <- names(data)[nodes$Z]
       node.set <- nodes$Z
+    }else if(is.qLform){
+      lhs <- names(data)[nodes$L]
+      node.set <- nodes$L
     }else{
       lhs <- names(data)[nodes$AC]
       node.set <- nodes$AC
