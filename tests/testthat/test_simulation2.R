@@ -10,16 +10,13 @@ library(Matrix)
 library(pracma)
 
 context("Overall Test for medltmle for simulation with a single exposure")
+#More specifically, we want to test the code when there is a single exposure and outcome, and baseline is time-dependent.
+#W2 will need to be fluctuated as well.
 
 #Load all scripts
-#setwd(here("R"))
-#file.sources = list.files(pattern="*.R")
-#sapply(file.sources,source,.GlobalEnv)
-
-#Load all scripts to generate data
-#setwd(here("simulation"))
-#file.sources = list.files(pattern="*.R")
-#sapply(file.sources,source,.GlobalEnv)
+setwd(here("R"))
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
 
 #Set seed:
 set.seed(2)
@@ -28,7 +25,7 @@ set.seed(2)
 data<-GenerateData_SingA_TimeOrdL(n=400, end.time=2, abar=NULL, abar.prime=NULL)
 
 #Generate appropriate models:
-spec<-make.sim.spec(2)
+#spec<-make.sim.spec_SingA_TimeOrdL(2)
 
 #Some parameters:
 end.time=2
@@ -38,17 +35,19 @@ abar.prime <- 0
 result.c <- medltmle(data=data,
                      Anodes=names(data)[grep('^A',names(data))],
                      Cnodes=names(data)[grep('^C',names(data))],
+                     Dnodes=names(data)[grep('^D',names(data))],
                      Znodes=names(data)[grep('^Z',names(data))],
                      Lnodes=names(data)[grep('^L',names(data))],
                      Ynodes=names(data)[grep('^Y',names(data))],
-                     survivalOutcome = T,
-                     QLform=spec$QL.c,
-                     QZform=spec$QZ.c,
-                     gform=spec$g.c,
-                     qzform=spec$qz.c,
-                     qLform=spec$qL.c,
-                     abar=rep(abar,end.time),
-                     abar.prime=rep(abar.prime,end.time),
+                     W2nodes=names(data)[grep('W2',names(data))],
+                     survivalOutcome = F,
+                     QLform=NULL,
+                     QZform=NULL,
+                     gform=NULL,
+                     qzform=NULL,
+                     qLform=NULL,
+                     abar=abar,
+                     abar.prime=abar.prime,
                      gbounds=c(.01,.99),
                      deterministic.g.function = NULL,
                      stratify=FALSE,
@@ -59,14 +58,14 @@ result.c <- medltmle(data=data,
                      Yrange=NULL,
                      gcomp=FALSE,
                      iptw.only=FALSE,
-                     IC.variance.only=FALSE,
+                     IC.variance.only=TRUE,
                      observation.weights=NULL
 )
 
 #Test TMLE
-test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],
+#test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],
                                                                             0.9611661, tolerance = 0.01))
 
 #Test IPW
-test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
+#test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
                                                                            0.9566909, tolerance = 0.01))

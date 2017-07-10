@@ -16,11 +16,6 @@ context("Overall Test for medltmle")
 #file.sources = list.files(pattern="*.R")
 #sapply(file.sources,source,.GlobalEnv)
 
-#Load all scripts to generate data
-#setwd(here("simulation"))
-#file.sources = list.files(pattern="*.R")
-#sapply(file.sources,source,.GlobalEnv)
-
 #Set seed:
 set.seed(2)
 

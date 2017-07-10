@@ -7,12 +7,13 @@
 #' Estimates parameters for longitudinal mediation analysis with time-varying mediators.
 #'
 #' @param data Dataframe containing the data in a wide format.
-#' @param Anodes names of columns containing A covariates (character).
-#' @param Znodes names of columns containing Z covariates (character).
-#' @param Cnodes names of columns containing C covariates (character).
-#' @param Lnodes names of columns containing L covariates (character).
-#' @param Ynodes names of columns containing Y covariates (character).
-#' @param W2nodes names of columns containing W2 covariates (character).
+#' @param Anodes names of columns containing A covariates (exposure) (character).
+#' @param Znodes names of columns containing Z covariates (mediator) (character).
+#' @param Cnodes names of columns containing C covariates (censoring) (character).
+#' @param Lnodes names of columns containing L covariates (covariate) (character).
+#' @param Ynodes names of columns containing Y covariates (outcome) (character).
+#' @param W2nodes names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).
+#' @param Dnodes names of columns containing D covariates (death indicator) (character).
 #' @param survivalOutcome logical variable specifying if the outcome is survival.
 #' @param QLform Q forms for L covariates.
 #' @param QZform Q forms for Z covariates.
@@ -38,7 +39,7 @@
 #'
 #' @export medltmle
 
-medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2nodes=NULL,
+medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2nodes=NULL,Dnodes=NULL,
                            survivalOutcome=NULL,
                            QLform=NULL, QZform=NULL,gform=NULL, qzform=NULL, qLform=NULL,
                            abar, abar.prime,  rule=NULL, gbounds=c(0.01, 1), Yrange=NULL,
@@ -54,7 +55,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
   #Note that MSM is not implemented, yet. TO DO.
   msm.inputs <- CreateMedMSMInputs(data, abar=abar, abar.prime = abar.prime, rule = rule, gform=gform)
 
-  inputs <- CreateMedInputs(data=data, Anodes=Anodes, Cnodes=Cnodes, Lnodes=Lnodes, Ynodes=Ynodes, Znodes=Znodes,
+  inputs <- CreateMedInputs(data=data, Anodes=Anodes, Cnodes=Cnodes, Lnodes=Lnodes, Ynodes=Ynodes, Znodes=Znodes, Dnodes=Dnodes,W2nodes=W2nodes,
                                   QLform=QLform, QZform=QZform, gform=msm.inputs$gform, qLform=qLform, qzform=qzform,
                                   Yrange=Yrange, gbounds=gbounds, SL.library=SL.library, stratify=stratify,
                                   regimes=msm.inputs$regimes,regimes.prime=msm.inputs$regimes.prime,

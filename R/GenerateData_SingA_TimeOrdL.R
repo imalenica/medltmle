@@ -14,6 +14,11 @@
 #'
 #' @export GenerateData_SingA_TimeOrdL
 
+n=400
+end.time=2
+abar=NULL
+abar.prime=NULL
+
 GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) {
 
   if(is.null(abar) != is.null(abar.prime)){stop('abar and abar.prime either both given or both not given')}
@@ -29,31 +34,31 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
   #Note, baseline covariates are now not independent.
 
   #Belong to the first group of baseline covariates:
-  L1.1 <- rbinom(n,1,.4)
-  L1.2 <- rbinom(n,1,.6)
+  B1.1 <- rbinom(n,1,0.4)
+  B1.2 <- rbinom(n,1,0.6)
 
   #Belong to the second group of baseline covariates:
-  L2.1 <- rexpit(1.2-.7*L1.1)
-  L2.2 <- rexpit(0.4-.7*L1.2)
+  B2.1 <- rexpit(1.2-0.7*B1.1)
+  B2.2 <- rexpit(0.4-0.7*B1.2)
 
   #Belong to the third group of baseline covariates:
-  L3.1 <- rexpit(1.2-.7*L1.1+0.1*L2.2)
+  B3.1 <- rexpit(1.2-0.7*B1.1+0.1*B2.2)
 
   #Belong to the fourth group of baseline covariates:
-  L4.1 <- rexpit(0.3-.3*L1.2+0.4*L3.1+0.5*L2.1)
+  B4.1 <- rexpit(0.3-0.3*B1.2+0.4*B3.1+0.5*B2.1)
 
   #Belong to the fifth group of baseline covariates:
-  L5.1 <- rexpit(4.1+0.3*L2.2+L4.1-4.5*L1.1+0.2*L3.1)
-  L5.2 <- rexpit(2.1-0.3*L2.2+0.3*L4.1-2*L1.1+2*L3.1)
+  B5.1 <- rexpit(4.1+0.3*B2.2+B4.1-4.5*B1.1+0.2*B3.1)
+  B5.2 <- rexpit(2.1-0.3*B2.2+0.3*B4.1-2*B1.1+2*B3.1)
 
   #Possibly an exposure from a randomized trial.
-  L6 <- rbinom(n,1,.5)
+  B6 <- rbinom(n,1,.5)
 
   #Group all covariates.
-  covs<-cbind.data.frame(L1.1,L1.2,L2.1,L2.2,L3.1,L4.1,L5.1,L5.2,L6)
+  covs<-cbind.data.frame(B1.1,B1.2,B2.1,B2.2,B3.1,B4.1,B5.1,B5.2,B6)
 
   #Set A and order the baseline covariates.
-  covs_order<-timeOrder_baseline(data=covs,A=9)
+  covs_order<-timeOrder_baseline(data=covs,A=6)
 
   LA <- LZ <- C <- Z <- D <- matrix(NA, nrow=n, ncol=end.time)
   Y<-matrix(NA, nrow=n, ncol=1)
@@ -75,24 +80,24 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
     if(est.psi0){
       C[uncensored.alive,t] <- 1
     }else{
-      if(t==1) C[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.1.W1[uncensored.alive]-0.3*covs_order$L2.1.W1[uncensored.alive])
-      else C[uncensored.alive,t] <-rexpit(4-0.2*covs_order$L1.1.W1[uncensored.alive]+0.2*covs_order$A[uncensored.alive]-0.01*LZ[uncensored.alive,t-1])
+      if(t==1) C[uncensored.alive,t] <- rexpit(4-0.2*covs_order$B1.1.W1[uncensored.alive]-0.3*covs_order$B2.1.W1[uncensored.alive])
+      else C[uncensored.alive,t] <-rexpit(4-0.2*covs_order$B1.1.W1[uncensored.alive]+0.2*covs_order$A[uncensored.alive]-0.01*LZ[uncensored.alive,t-1])
     }
 
     ### D
     if(est.psi0){
       D[uncensored.alive,t] <- 1
     }else{
-      if(t==1) D[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.2.W1[uncensored.alive]-0.3*covs_order$L3.1.W1[uncensored.alive])
-      else D[uncensored.alive,t] <- rexpit(4-0.2*covs_order$L1.2.W1[uncensored.alive]+0.1*covs_order$A[uncensored.alive]-0.08*LZ[uncensored.alive,t-1])
+      if(t==1) D[uncensored.alive,t] <- 1-rexpit(4-0.2*covs_order$B1.2.W1[uncensored.alive]-0.3*covs_order$B3.1.W1[uncensored.alive])
+      else D[uncensored.alive,t] <- 1-rexpit(4-0.2*covs_order$B1.2.W1[uncensored.alive]+0.1*covs_order$A[uncensored.alive]-0.08*LZ[uncensored.alive,t-1])
     }
 
     #Update who died (note more might have died from outcome Y1 to now):
-    uncensored.alive <- uncensored.alive & C[,t] & D[,t]
+    uncensored.alive <- uncensored.alive & C[,t] & !D[,t]
 
     ## LA
     if(t==1){
-      LA[uncensored.alive,t] <- rexpit(-.8+.1*covs_order$L3.1.W1[uncensored.alive]+.3*covs_order$L5.1.W1[uncensored.alive]+covs_order$A[uncensored.alive])
+      LA[uncensored.alive,t] <- rexpit(-.8+.1*covs_order$B3.1.W1[uncensored.alive]+.3*covs_order$B5.2.W2[uncensored.alive]+covs_order$A[uncensored.alive])
     }else{
       LA[uncensored.alive, t] <- rexpit(-.8+.1*LZ[uncensored.alive,t-1]+.3*LA[uncensored.alive,t-1]+covs_order$A[uncensored.alive])
     }
@@ -104,13 +109,13 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
       useA  <- covs_order$A[uncensored.alive]
     }
 
-    Z[uncensored.alive, t] <- CalcZ(W=covs_order$L4.1.W1[uncensored.alive],LA_n=LA[uncensored.alive,t],A = useA)
+    Z[uncensored.alive, t] <- CalcZ(W=covs_order$B3.1.W1[uncensored.alive],LA_n=LA[uncensored.alive,t],A = useA)
 
     ## LZ: should be continous.
     if(t==1) {
-      LZ[uncensored.alive,t] <- 10+3*covs_order$L2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t]
+      LZ[uncensored.alive,t] <- 10+3*covs_order$B2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t]
     }else {
-      LZ[uncensored.alive,t] <- 10+3*covs_order$L2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t] -0.2*LZ[uncensored.alive,t-1]
+      LZ[uncensored.alive,t] <- 10+3*covs_order$B2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t] -0.2*LZ[uncensored.alive,t-1]
     }
 
     ## Y: deterministic function of LZ.
