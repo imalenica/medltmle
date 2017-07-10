@@ -14,11 +14,6 @@
 #'
 #' @export GenerateData_SingA_TimeOrdL
 
-n=400
-end.time=2
-abar=NULL
-abar.prime=NULL
-
 GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) {
 
   if(is.null(abar) != is.null(abar.prime)){stop('abar and abar.prime either both given or both not given')}
