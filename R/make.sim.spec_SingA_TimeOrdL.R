@@ -1,3 +1,7 @@
+################################
+# make.sim.spec_SingA_TimeOrdL
+################################
+
 #' make.sim.spec_SingA_TimeOrdL
 #'
 #' This function creates functions corresponding to the second simulation, as coded in \code{GenerateData_SingA_TimeOrdL}.

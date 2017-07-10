@@ -63,9 +63,7 @@ result.c <- medltmle(data=data,
 )
 
 #Test TMLE
-#test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],
-                                                                            0.9611661, tolerance = 0.01))
+#test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],0.9611661, tolerance = 0.01))
 
 #Test IPW
-#test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
-                                                                           0.9566909, tolerance = 0.01))
+#test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],0.9566909, tolerance = 0.01))

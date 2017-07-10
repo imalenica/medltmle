@@ -52,6 +52,7 @@ MainCalcsMediation <- function(inputs) {
   #Estimate p_z(z|past)
   cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T)
   #Estimate p_l(l|past)
+  #PROBLEM: with the second node. Check out
   cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
 
   if(!setequal(inputs$regimes,inputs$regimes.prime)){
@@ -236,7 +237,7 @@ GetMsmWeights <- function(inputs) {
 #' Estimation of conditional densities of A nodes (g)
 #'
 #' @param inputs Output of \code{CreateMedInputs}
-#' @param regimes.use
+#' @param regimes.use Indicate which regime to follow.
 #'
 #' @return Returns estimate of conditional density for each A nodes, bounded and unbounded cumulative g.
 #'
@@ -328,7 +329,7 @@ EstimateG <- function(inputs,regimes.use) {
 
       #assume all regimes have positive weight for some final.Ynode
       #Will return estimated values for each sample, fit, and which samples are deterministic at the current node (no estimation there).
-      g.est <- Estimate(inputs, form=form, Qstar.kplus1=NULL, subs=subs, family=quasibinomial(), type="response", nodes=nodes, called.from.estimate.g=TRUE, calc.meanL=!inputs$IC.variance.only, cur.node=cur.node, regimes.meanL=regimes.meanL, regimes.with.positive.weight=1:num.regimes)
+       g.est <- Estimate(inputs, form=form, Qstar.kplus1=NULL, subs=subs, family=quasibinomial(), type="response", nodes=nodes, called.from.estimate.g=TRUE, calc.meanL=!inputs$IC.variance.only, cur.node=cur.node, regimes.meanL=regimes.meanL, regimes.with.positive.weight=1:num.regimes)
       prob.A.is.1[, i, ] <- g.est$predicted.values
       fit[[i]] <- g.est$fit
 
@@ -437,7 +438,7 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
         #Evaluate the fitted function at the observed mediator and covariates histories and the intervened exposure = estimate of Q.k
         predicted.values <- predict(m, newdata=newdata, type=type)
 
-      }, GetWarningsToSuppress())
+      }, c("Speedglm warnings..."))
 
     } else {
 
@@ -772,6 +773,12 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
 #' @return Returns estimate of Z and L conditional densities given the regime.
 #'
 
+#Note:
+#Estimating L density might be a problem: make more general. For the Jivita study we have that Y is a deterministic
+#function of the last LZ, so don't need it in the likelihood function.
+
+EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
+
 EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.dens){
 
   #Specify regime
@@ -788,8 +795,11 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     dens.nodes <- nodes$Z
     dens.forms <- inputs$qzform
   }else{
-    dens.nodes <- sort(c(nodes$L,nodes$Y))
+    #Make more general!
+    #dens.nodes <- sort(c(nodes$L,nodes$Y))
+    dens.nodes <- sort(c(nodes$LY))
     dens.forms <- inputs$qLform
+
   }
 
   fit <- vector('list',length(dens.nodes))
@@ -849,8 +859,10 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     #prob.Z.is.1 is prob(a=1), gmat is prob(a=abar)
     #cur.abar can be NA after censoring/death if treatment is dynamic
     cur.vals <- AsMatrix(inputs$data[,cur.node])
+    #HERE
     g[, i, ] <- CalcG(AsMatrix(prob.is.1[, i, ]), cur.vals, g.est$is.deterministic)
   }
+
 
   for (regime.index in 1:num.regimes) {
     #Cumulative g: bounded and unbounded
