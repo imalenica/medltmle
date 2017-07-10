@@ -3,11 +3,13 @@
 #' Create Mediation Inputs for ltmleMediation.
 #'
 #' @param data Dataframe containing the data in a wide format.
-#' @param Anodes names of columns containing A covariates.
-#' @param Znodes names of columns containing Z covariates.
-#' @param Cnodes names of columns containing C covariates.
-#' @param Lnodes names of columns containing L covariates.
-#' @param Ynodes names of columns containing Y covariates.
+#' @param Anodes names of columns containing A covariates (exposure) (character).
+#' @param Znodes names of columns containing Z covariates (mediator) (character).
+#' @param Cnodes names of columns containing C covariates (censoring) (character).
+#' @param Lnodes names of columns containing L covariates (covariate) (character).
+#' @param Ynodes names of columns containing Y covariates (outcome) (character).
+#' @param W2nodes names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).
+#' @param Dnodes names of columns containing D covariates (death indicator) (character).
 #' @param survivalOutcome logical variable specifying if the outcome is survival.
 #' @param QLform Q forms for L covariates.
 #' @param QZform Q forms for Z covariates.
@@ -34,11 +36,10 @@
 #'
 #' @return Returns output ready for ltmleMediation.
 #'
-#'
 #' @export CreateMedInputs
 #'
 
-CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, survivalOutcome, QLform, QZform, gform, qzform,qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights) {
+CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform,qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights) {
 
   if (is.list(regimes)) {
 
@@ -101,7 +102,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
   }
 
   #Sort nodes
-  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes)
+  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes)
   #remove blocks
   QLform <- CreateLYNodes(data, all.nodes, check.Qform=TRUE, Qform=QLform)$Qform
   #Convert censoring nodes into factors
@@ -139,7 +140,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
   #survivalOutcome <- check.results$survivalOutcome
 
   if (!isTRUE(attr(data, "called.from.estimate.variance", exact=TRUE))) {
-    data <- CleanData(data, all.nodes, deterministic.Q.function, survivalOutcome)
+    data <- CleanData(data, all.nodes, deterministic.Q.function, survivalOutcome, showMessage = FALSE)
   }
 
   #Transform the output to be in the 0-1 range. Get the Y range, if not specified.
@@ -151,7 +152,8 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
   binaryOutcome <- all(unlist(data[, all.nodes$Y]) %in% c(0, 1, NA))
 
   #If QLform, QZform, qzform and gform are not specified, return default form.
-  #Each formula will consist of all parent nodes except censoring and event nodes.
+  #Each formula will consist of all parent nodes except censoring (both C and D, if available) and event nodes.
+
   if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, stratify, survivalOutcome, showMessage=TRUE)
@@ -173,6 +175,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
   inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=uncensored.array, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime)
   class(inputs) <- "medltmleInputs"
   return(inputs)
+
 }
 
 ################################
@@ -181,20 +184,20 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, surviv
 
 #' GetDefaultFormMediation
 #'
-#' Get the default Q or g formula, if not specified.
+#' If QLform, QZform, qzform and gform are not specified, return default form.
 #' Each formula consists of all parent nodes except censoring and event nodes.
 #' If \code{stratify}=TRUE, do not include A nodes.
 #'
-#' @param data TO DO
-#' @param nodes TO DO
-#' @param is.Qform TO DO
-#' @param is.QLform TO DO
-#' @param is.qzform TO DO
-#' @param stratify TO DO
-#' @param survivalOutcome TO DO
-#' @param showMessage TO DO
+#' @param data Available data in a \code{Data.Frame} format.
+#' @param nodes List of available nodes, as created by \code{CreateNodes}.
+#' @param is.Qform Logical indicating whether to specify general Q formula.
+#' @param is.QLform Logical indicating whether to specify Q formula for covariates.
+#' @param is.qzform Logical indicating whether to specify general Q formula for Z.
+#' @param stratify Logical indicating whether to straify.
+#' @param survivalOutcome Logical indicating if the outcome a survival outcome.
+#' @param showMessage Logical indicating whether to show comments while executing.
 #'
-#' @return Returns default Q or g formula.
+#' @return Returns default Q or g formula if not specified.
 #'
 
 GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, stratify, survivalOutcome, showMessage) {
@@ -216,19 +219,30 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
       node.set <- nodes$AC
     }
   }
+
   if (stratify) {
     stratify.nodes <- c(nodes$C, nodes$A)
   } else {
     stratify.nodes <- c(nodes$C)
   }
+
   if (survivalOutcome) {
     stratify.nodes <- c(stratify.nodes, nodes$Y)
   }
+
+  #Even if not survival outcome, in case there is survival-type node D, remove it.
+  if(!is.null(nodes$D)){
+    stratify.nodes <- c(stratify.nodes, nodes$D)
+  }
+
   form <- NULL
+
   for (i in seq_along(node.set)) {
+
     cur.node <- node.set[i]
     if (cur.node == 1) {
-      form[i] <- paste(lhs[i], "~ 1")  #no parent nodes
+      #no parent nodes
+      form[i] <- paste(lhs[i], "~ 1")
     } else {
       parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
       if (length(parent.node.names) == 0) {

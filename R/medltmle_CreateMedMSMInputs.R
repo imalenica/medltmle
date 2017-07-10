@@ -50,6 +50,7 @@ CreateMedMSMInputs <- function(data, abar, abar.prime, rule, gform) {
 
   } else {
 
+    #No.
     regimes <- RegimesFromAbar(data, abar, rule)
     regimes.prime <- RegimesFromAbar(data, abar.prime, rule)
     working.msm <- "Y ~ 1"
