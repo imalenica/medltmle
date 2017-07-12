@@ -903,3 +903,68 @@ timeOrder_baseline<-function(data, A){
   return(data)
 
 }
+
+################################
+# GetWarningsToSuppress
+################################
+
+GetWarningsToSuppress <- function(update.step=FALSE) {
+  warnings.to.suppress <- c("glm.fit: fitted probabilities numerically 0 or 1 occurred",
+                            "prediction from a rank-deficient fit may be misleading",
+                            "non-integer #successes in a binomial glm!",
+                            "the matrix is either rank-deficient or indefinite")
+  if (update.step) {
+    warnings.to.suppress <- c(warnings.to.suppress, "glm.fit: algorithm did not converge")
+  }
+  return(warnings.to.suppress)
+}
+
+################################
+# dataConvert()
+################################
+
+#' dataConvert
+#'
+#' Function to convert wide to long, or long to wide dataframe.
+#'
+#' @param data Dataframe object in a wide format.
+#' @param nBCov number of baseline covariates. They must the listed before C,A,Z,LA,LZ,Y,D nodes.
+#' @param type Which format to convert the current data to, long or wide.
+#'
+#' @return Dataframe object of the original data in a long or wide format.
+#'
+#' @export dataConvert
+
+dataConvert<-function(data,nBCov,type){
+
+  if(type=="long"){
+
+    #Adds ID identifier as needed by stremr
+    data<-cbind.data.frame(row.names(data),data)
+    names(data)[1]<-"ID"
+
+    newdata<-reshape(data, idvar="ID", varying=(nBCov+2):length(data), sep="_", direction="long")
+    newdata$ID<-as.numeric(levels(newdata$ID))[newdata$ID]
+    newdata<-cbind.data.frame(newdata$ID,newdata[,grep("time", colnames(newdata))],newdata[,2:(grep("t", colnames(newdata))-1)],newdata[,(grep("t", colnames(newdata))+1):ncol(newdata)])
+    names(newdata)[1:2]<-c("ID","t")
+
+    #Remove all NA from C node:
+    newdata<-newdata[!is.na(newdata$C),]
+
+  }else if(type=="wide"){
+
+    setDT(data)
+    newdata<-dcast(data, ID ~ t, value.var=names(data)[(3):ncol(data)])
+
+    #Remove duplicate baseline covariates.
+    row.names(newdata)<-newdata$ID
+
+    #Need to finish when more time
+
+  }else{
+    print("Can convert data to either long or wide format, no other options.")
+  }
+
+  return(newdata)
+
+}
