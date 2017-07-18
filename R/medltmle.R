@@ -34,6 +34,7 @@
 #' @param observation.weights Provide weight for observations
 #' @param rule Specify rule for the intervention.
 #' @param Yrange Specify range for the outcome.
+#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
 #' @return Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
@@ -46,7 +47,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                            deterministic.g.function=NULL, deterministic.Q.function=NULL,
                            stratify=FALSE, SL.library=NULL,
                            estimate.time=TRUE, gcomp=FALSE,
-                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL) {
+                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, estimand="SE") {
 
   #Implement rule and deterministic g function option. TO DO.
   if(!is.null(rule))stop('rule option not implemented yet')
@@ -64,7 +65,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                                   estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only,
                                   deterministic.Q.function=deterministic.Q.function, deterministic.g.function=deterministic.g.function,
                                   IC.variance.only=IC.variance.only,
-                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome)
+                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, estimand=estimand)
   #fixme
   print(tracemem(inputs))
   result <- ltmleMediation(inputs)
