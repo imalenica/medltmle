@@ -953,13 +953,7 @@ dataConvert<-function(data,nBCov,type){
 
   }else if(type=="wide"){
 
-    setDT(data)
-    newdata<-dcast(data, ID ~ t, value.var=names(data)[(3):ncol(data)])
-
-    #Remove duplicate baseline covariates.
-    row.names(newdata)<-newdata$ID
-
-    #Need to finish when more time
+    #Just use Oleg's convert.to.wide() function
 
   }else{
     print("Can convert data to either long or wide format, no other options.")

@@ -13,7 +13,14 @@ Install the most recent _stable release_ from GitHub:
   ```
   devtools::install_github("podTockom/medltmle")
   ```
-  
+
+For optimal performance, we also recommend installing the latest version of `data.table` package:
+  ```
+  remove.packages("data.table")                       # First remove the current version
+  install.packages("data.table", type = "source",
+    repos = "http://Rdatatable.github.io/data.table") # Then install devel version
+  ```
+
 ---
 
 ## License
