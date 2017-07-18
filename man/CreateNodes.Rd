@@ -4,23 +4,28 @@
 \alias{CreateNodes}
 \title{CreateNodes}
 \usage{
-CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes = NULL)
+CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes = NULL,
+  Dnodes = NULL, W2nodes = NULL)
 }
 \arguments{
-\item{data}{TO DO}
+\item{data}{Available data in a wide format.}
 
-\item{Anodes}{TO DO}
+\item{Anodes}{Character variable with exposure nodes.}
 
-\item{Cnodes}{TO DO}
+\item{Cnodes}{Character variable with censoring nodes.}
 
-\item{Lnodes}{TO DO}
+\item{Lnodes}{Character variable with covariate nodes.}
 
-\item{Ynodes}{TO DO}
+\item{Ynodes}{Character variable with outcome nodes.}
 
-\item{Znodes}{TO DO}
+\item{Znodes}{Character variable with mediator nodes.}
+
+\item{Dnodes}{Character variable with death as censoring nodes.}
+
+\item{W2nodes}{Character variable with baseline nodes after treatment that need to be fluctuated during the TMLE procedure.}
 }
 \value{
-Returns all nodes.
+Returns all nodes in a format necessary for further functions.
 }
 \description{
 Get all the nodes from input data.

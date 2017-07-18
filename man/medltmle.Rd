@@ -5,25 +5,30 @@
 \title{medltmle}
 \usage{
 medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
-  survivalOutcome = NULL, QLform = NULL, QZform = NULL, gform = NULL,
-  qzform = NULL, qLform = NULL, abar, abar.prime, rule = NULL,
-  gbounds = c(0.01, 1), Yrange = NULL, deterministic.g.function = NULL,
-  deterministic.Q.function = NULL, stratify = FALSE, SL.library = NULL,
-  estimate.time = TRUE, gcomp = FALSE, iptw.only = FALSE,
-  IC.variance.only = FALSE, observation.weights = NULL)
+  W2nodes = NULL, Dnodes = NULL, survivalOutcome = NULL, QLform = NULL,
+  QZform = NULL, gform = NULL, qzform = NULL, qLform = NULL, abar,
+  abar.prime, rule = NULL, gbounds = c(0.01, 1), Yrange = NULL,
+  deterministic.g.function = NULL, deterministic.Q.function = NULL,
+  stratify = FALSE, SL.library = NULL, estimate.time = TRUE,
+  gcomp = FALSE, iptw.only = FALSE, IC.variance.only = FALSE,
+  observation.weights = NULL, estimand = "SE")
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
 
-\item{Anodes}{names of columns containing A covariates (character).}
+\item{Anodes}{names of columns containing A covariates (exposure) (character).}
 
-\item{Znodes}{names of columns containing Z covariates (character).}
+\item{Znodes}{names of columns containing Z covariates (mediator) (character).}
 
-\item{Cnodes}{names of columns containing C covariates (character).}
+\item{Cnodes}{names of columns containing C covariates (censoring) (character).}
 
-\item{Lnodes}{names of columns containing L covariates (character).}
+\item{Lnodes}{names of columns containing L covariates (covariate) (character).}
 
-\item{Ynodes}{names of columns containing Y covariates (character).}
+\item{Ynodes}{names of columns containing Y covariates (outcome) (character).}
+
+\item{W2nodes}{names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).}
+
+\item{Dnodes}{names of columns containing D covariates (death indicator) (character).}
 
 \item{survivalOutcome}{logical variable specifying if the outcome is survival.}
 
@@ -64,6 +69,8 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 \item{IC.variance.only}{Only estimate variance through the influence curve}
 
 \item{observation.weights}{Provide weight for observations}
+
+\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}

@@ -9,32 +9,33 @@ Estimate(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node,
   regimes.with.positive.weight)
 }
 \arguments{
-\item{inputs}{Output of \code{CreateMedInputs}}
+\item{inputs}{Output of \code{CreateMedInputs}.}
 
 \item{form}{Q form for current node.}
 
-\item{subs}{Subset of samples for stratify option.}
+\item{subs}{Logical indicating uncensored and non-deterministic samples.}
 
-\item{family}{TO DO}
+\item{family}{a description of the error distribution and link function to be used in the model.}
 
-\item{type}{Two options, "response" or "link".}
+\item{type}{"response" or "link"}
 
-\item{nodes}{TO DO}
+\item{nodes}{List with index for each node subset. Output of \code{CreateNodes}.}
 
-\item{Qstar.kplus1}{TO DO}
+\item{Qstar.kplus1}{Estimate of the expectation with respect to the distribution of the node one ahead of the current node given the past (dimension: n x num.regimes).}
 
-\item{cur.node}{TO DO}
+\item{cur.node}{Node being estimated.}
 
-\item{calc.meanL}{Defaults to \code{!IC.variance.only}.}
+\item{calc.meanL}{Estimate conditional density of A using mean of covariates. This is a useful option if there are NAs in the regime, or want to estimate variance.}
 
-\item{called.from.estimate.g}{TO DO}
+\item{called.from.estimate.g}{Logical TO DO}
 
 \item{regimes.meanL}{TO DO}
 
-\item{regimes.with.positive.weight}{Defaults to \code{1:num.regimes}.}
+\item{regimes.with.positive.weight}{Regimes with positve weights. Defaults to \code{1:num.regimes}.}
 }
 \value{
-Returns predicted values for the fit.
+Returns predicted values for the fit as well as the fit as well as indicators for which samples are deterministic and their values.
+If specified, it also returns the probability of A=1 given mean L.
 }
 \description{
 Run GLM or SuperLearner to obtain an estimate for the current node.

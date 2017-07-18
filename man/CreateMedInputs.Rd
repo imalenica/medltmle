@@ -4,24 +4,29 @@
 \alias{CreateMedInputs}
 \title{CreateMedInputs}
 \usage{
-CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, survivalOutcome,
-  QLform, QZform, gform, qzform, qLform, gbounds, Yrange,
+CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
+  survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange,
   deterministic.g.function, SL.library, regimes, regimes.prime, working.msm,
   summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp,
-  iptw.only, deterministic.Q.function, IC.variance.only, observation.weights)
+  iptw.only, deterministic.Q.function, IC.variance.only, observation.weights,
+  estimand)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
 
-\item{Anodes}{names of columns containing A covariates.}
+\item{Anodes}{names of columns containing A covariates (exposure) (character).}
 
-\item{Cnodes}{names of columns containing C covariates.}
+\item{Cnodes}{names of columns containing C covariates (censoring) (character).}
 
-\item{Lnodes}{names of columns containing L covariates.}
+\item{Lnodes}{names of columns containing L covariates (covariate) (character).}
 
-\item{Ynodes}{names of columns containing Y covariates.}
+\item{Ynodes}{names of columns containing Y covariates (outcome) (character).}
 
-\item{Znodes}{names of columns containing Z covariates.}
+\item{Znodes}{names of columns containing Z covariates (mediator) (character).}
+
+\item{Dnodes}{names of columns containing D covariates (death indicator) (character).}
+
+\item{W2nodes}{names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).}
 
 \item{survivalOutcome}{logical variable specifying if the outcome is survival.}
 
@@ -68,6 +73,8 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, survivalOutcome,
 \item{IC.variance.only}{Only estimate variance through the influence curve}
 
 \item{observation.weights}{Provide weight for observations}
+
+\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Returns output ready for ltmleMediation.

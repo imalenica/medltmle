@@ -4,31 +4,37 @@
 \alias{GetDefaultFormMediation}
 \title{GetDefaultFormMediation}
 \usage{
-GetDefaultFormMediation(data, nodes, is.Qform, is.QLform, is.qzform, stratify,
-  survivalOutcome, showMessage)
+GetDefaultFormMediation(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform,
+  past, time.end, stratify, survivalOutcome, showMessage)
 }
 \arguments{
-\item{data}{TO DO}
+\item{data}{Available data in a \code{Data.Frame} format.}
 
-\item{nodes}{TO DO}
+\item{nodes}{List of available nodes, as created by \code{CreateNodes}.}
 
-\item{is.Qform}{TO DO}
+\item{is.Qform}{Logical indicating whether to specify general Q formula.}
 
-\item{is.QLform}{TO DO}
+\item{is.QLform}{Logical indicating whether to specify Q formula for covariates.}
 
-\item{is.qzform}{TO DO}
+\item{is.qzform}{Logical indicating whether to specify general Q formula for Z.}
 
-\item{stratify}{TO DO}
+\item{is.qLform}{Logical indicating whether to specify general Q formula for L.}
 
-\item{survivalOutcome}{TO DO}
+\item{past}{Number indicating Markov order for the conditional densities.}
 
-\item{showMessage}{TO DO}
+\item{time.end}{Total number of time points.}
+
+\item{stratify}{Logical indicating whether to straify.}
+
+\item{survivalOutcome}{Logical indicating if the outcome a survival outcome.}
+
+\item{showMessage}{Logical indicating whether to show comments while executing.}
 }
 \value{
-Returns default Q or g formula.
+Returns default Q or g formula if not specified.
 }
 \description{
-Get the default Q or g formula, if not specified.
+If QLform, QZform, qzform and gform are not specified, return default form.
 Each formula consists of all parent nodes except censoring and event nodes.
 If \code{stratify}=TRUE, do not include A nodes.
 }

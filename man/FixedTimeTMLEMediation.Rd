@@ -5,8 +5,8 @@
 \title{FixedTimeTMLEMediation}
 \usage{
 FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
-  g.abar.list, g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar,
-  cum.qL.abar.prime)
+  g.abar.list, g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime,
+  cum.qL.abar = NULL, cum.qL.abar.prime = NULL, estimand)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
@@ -28,6 +28,8 @@ FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
 \item{cum.qL.abar}{Cumulative estimate for L nodes under abar regime.}
 
 \item{cum.qL.abar.prime}{Cumulative estimate for L nodes under abar.prime regime.}
+
+\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Return...

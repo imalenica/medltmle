@@ -5,7 +5,7 @@
 \title{CalcIPTWMediation}
 \usage{
 CalcIPTWMediation(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime,
-  msm.weights)
+  msm.weights, estimand)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
@@ -17,6 +17,8 @@ CalcIPTWMediation(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime,
 \item{cum.qz.abar.prime}{Cumulative Q for Z obtained from \code{CalcCumG} with regime abar.prime.}
 
 \item{msm.weights}{Marginal Structural Model weights for each sample.}
+
+\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Returns IPTW estimate and normalized influence curve for IPTW.

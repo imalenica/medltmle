@@ -7,11 +7,11 @@
 CalcG(prob.A.is.1, cur.abar, deterministic.newdata)
 }
 \arguments{
-\item{prob.A.is.1}{TO DO}
+\item{prob.A.is.1}{Probability A is 1.}
 
-\item{cur.abar}{TO DO}
+\item{cur.abar}{Regime for the exposure.}
 
-\item{deterministic.newdata}{TO DO}
+\item{deterministic.newdata}{Logical for whether samples are deterministic.}
 }
 \value{
 Returns G.

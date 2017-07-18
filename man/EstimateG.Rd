@@ -4,12 +4,14 @@
 \alias{EstimateG}
 \title{EstimateG}
 \usage{
-EstimateG(inputs, regimes.use)
+EstimateG(inputs, regimes.use, estimand)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
 
-\item{regimes.use}{}
+\item{regimes.use}{Indicate which regime to follow.}
+
+\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Returns estimate of conditional density for each A nodes, bounded and unbounded cumulative g.
