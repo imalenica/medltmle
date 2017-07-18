@@ -214,6 +214,8 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 #' @param is.QLform Logical indicating whether to specify Q formula for covariates.
 #' @param is.qzform Logical indicating whether to specify general Q formula for Z.
 #' @param is.qLform Logical indicating whether to specify general Q formula for L.
+#' @param past Number indicating Markov order for the conditional densities.
+#' @param time.end Total number of time points.
 #' @param stratify Logical indicating whether to straify.
 #' @param survivalOutcome Logical indicating if the outcome a survival outcome.
 #' @param showMessage Logical indicating whether to show comments while executing.
@@ -221,7 +223,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 #' @return Returns default Q or g formula if not specified.
 #'
 
-GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform, stratify, survivalOutcome, showMessage) {
+GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform, past, time.end, stratify, survivalOutcome, showMessage) {
 
   if (is.Qform) {
     if(is.QLform){
@@ -261,20 +263,57 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
 
   form <- NULL
 
+  #First, separate the baseline covariates:
+  base<-length(nodes$baseline)
+  baseline.node.names<-names(data)[1:base]
+
+  #Check out how many unique nodes per time:
+  group<-length(grep("_1",names(data)[(base+1):ncol(data)]))
+
   for (i in seq_along(node.set)) {
 
     cur.node <- node.set[i]
+
     if (cur.node == 1) {
       #no parent nodes
       form[i] <- paste(lhs[i], "~ 1")
-    } else {
-      parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+    } else if(past!=time.end){
+
+      if((base+group) >= cur.node){
+
+        parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+
+      }else{
+
+        parent.node.names <- names(data)[setdiff((cur.node - 1):(cur.node-group+1), stratify.nodes)]
+
+        #Check for A:
+        if(length(grep("/^A", parent.node.names))==0){
+
+          #Pick the closest A
+          Anode.index <- which(nodes$A < cur.node)
+          parent.node.names<-c(names(data[nodes$A[Anode.index]]), parent.node.names)
+
+        }
+      }
+
       if (length(parent.node.names) == 0) {
         form[i] <- paste(lhs[i], "~ 1")
       } else {
         form[i] <- paste(lhs[i], "~", paste(parent.node.names, collapse=" + "))
       }
-    }
+
+      #Include all covariates.
+      }else if(past == time.end){
+      parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+
+      if (length(parent.node.names) == 0) {
+        form[i] <- paste(lhs[i], "~ 1")
+      } else {
+        form[i] <- paste(lhs[i], "~", paste(parent.node.names, collapse=" + "))
+      }
+      }
+
     names(form)[i] <- names(data)[cur.node]
   }
 
