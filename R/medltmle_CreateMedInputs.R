@@ -34,13 +34,16 @@
 #' @param final.Ynodes Final Y node(s).
 #' @param msm.weights MSM weights.
 #' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
+#' @param past Number indicating Markov order for the conditional densities.
+#' @param time.end Total number of time points.
+#'
 #'
 #' @return Returns output ready for ltmleMediation.
 #'
 #' @export CreateMedInputs
 #'
 
-CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights, estimand) {
+CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights, estimand, past, time.end) {
 
   if (is.list(regimes)) {
 
@@ -155,11 +158,11 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
   #If QLform, QZform, qzform and gform are not specified, return default form.
   #Each formula will consist of all parent nodes except censoring (both C and D, if available) and event nodes.
 
-  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
 
   # Convert to main terms MSM.
   # Ex: If working.msm is "Y ~ X1*X2", convert to "Y ~ -1 + S1 + S2 + S3 + S4" where
@@ -227,8 +230,8 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
 
   if (is.Qform) {
     if(is.QLform){
-      lhs <- rep("Q.kplus1", length(nodes$LY))
-      node.set <- nodes$LY
+      lhs <- rep("Q.kplus1", length(nodes$L))
+      node.set <- nodes$L
     }else{
       lhs <- rep("Q.kplus1", length(nodes$Z))
       node.set <- nodes$Z
@@ -239,7 +242,7 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
       node.set <- nodes$Z
     }else if(is.qLform){
       lhs <- names(data)[nodes$LY]
-      node.set <- nodes$L
+      node.set <- nodes$LY
     }else{
       lhs <- names(data)[nodes$AC]
       node.set <- nodes$AC
@@ -285,10 +288,10 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
 
       }else{
 
-        parent.node.names <- names(data)[setdiff((cur.node - 1):(cur.node-group+1), stratify.nodes)]
+        parent.node.names <- names(data)[setdiff((cur.node - 1):(cur.node-group), stratify.nodes)]
 
         #Check for A:
-        if(length(grep("/^A", parent.node.names))==0){
+        if(length(grep("^A", parent.node.names))==0){
 
           #Pick the closest A
           Anode.index <- which(nodes$A < cur.node)

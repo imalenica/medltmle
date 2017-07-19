@@ -8,6 +8,7 @@ library(parallel)
 library(speedglm)
 library(Matrix)
 library(pracma)
+library(stremr)
 
 context("Overall Test for medltmle for simulation with a single exposure")
 #More specifically, we want to test the code when there is a single exposure and outcome, and baseline is time-dependent.
@@ -23,6 +24,10 @@ set.seed(2)
 
 #Generate some simulated data:
 data<-GenerateData_SingA_TimeOrdL(n=400, end.time=2, abar=NULL, abar.prime=NULL)
+
+#Y is already a deterministic function of LZ, so for the sake of estimation,remove LZ:
+data<-data[,-which(names(data) %in% c("LZ_1","LZ_2","Y_1"))]
+#names(data)[14]<-"LZ_1"
 
 #Generate appropriate models:
 #spec<-make.sim.spec_SingA_TimeOrdL(2)
@@ -44,8 +49,8 @@ result.c <- medltmle(data=data,
                      QLform=NULL,
                      QZform=NULL,
                      gform=NULL,
-                     qzform=NULL,
-                     qLform=NULL,
+                     qzform=c("Z_1~LA_1+A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1", "Z_2~LA_2+A"),
+                     qLform=c("LA_1~A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1","LA_2~LA_1+A+Z_2+LZ_1","Y_2~Z_2+LA_2+A"),
                      abar=abar,
                      abar.prime=abar.prime,
                      gbounds=c(.01,.99),
@@ -59,7 +64,9 @@ result.c <- medltmle(data=data,
                      gcomp=FALSE,
                      iptw.only=FALSE,
                      IC.variance.only=TRUE,
-                     observation.weights=NULL
+                     observation.weights=NULL,
+                     estimand="NE",
+                     time.end=end.time
 )
 
 #Test TMLE

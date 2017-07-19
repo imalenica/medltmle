@@ -20,11 +20,13 @@ Install the most recent _stable release_ from GitHub:
   ```
   require(medltmle)
   set.seed(2)
+  
+  end.time=2
   ```
 
 Generate some simulated data. 
   ```
-   data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
+   data<-GenerateData(n=400, end.time=end.time, abar=NULL,abar.prime=NULL)
   ```
 
 Generate simple models for conditional densities and iterative expectations:
@@ -54,10 +56,12 @@ IPTW and TMLE estimate of the natural mediation effect.
                            qLform=spec$qL.c,
                            abar=rep(abar,end.time),
                            abar.prime=rep(abar.prime,end.time),
-                           estimand="NE"
+                           estimand="NE",
+                           time.end=end.time
                            )
 
   ```
+---
 
 ## License
 &copy; 2017-2018 Ivana Malenica & Wenjing Zheng

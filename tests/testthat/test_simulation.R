@@ -8,13 +8,14 @@ library(parallel)
 library(speedglm)
 library(Matrix)
 library(pracma)
+library(reshape)
 
 context("Overall Test for medltmle")
 
 #Load all scripts
-#setwd(here("R"))
-#file.sources = list.files(pattern="*.R")
-#sapply(file.sources,source,.GlobalEnv)
+setwd(here("R"))
+file.sources = list.files(pattern="*.R")
+sapply(file.sources,source,.GlobalEnv)
 
 #Set seed:
 set.seed(2)
@@ -36,6 +37,8 @@ result.c <- medltmle(data=data,
                            Znodes=names(data)[grep('^Z',names(data))],
                            Lnodes=names(data)[grep('^L',names(data))],
                            Ynodes=names(data)[grep('^Y',names(data))],
+                           Dnodes=NULL,
+                           W2nodes=NULL,
                            survivalOutcome = T,
                            QLform=spec$QL.c,
                            QZform=spec$QZ.c,
@@ -55,7 +58,9 @@ result.c <- medltmle(data=data,
                            gcomp=FALSE,
                            iptw.only=FALSE,
                            IC.variance.only=FALSE,
-                           observation.weights=NULL
+                           observation.weights=NULL,
+                           estimand="NE",
+                           time.end=end.time
                            )
 
 #Test TMLE
