@@ -16,6 +16,49 @@ Install the most recent _stable release_ from GitHub:
   
 ---
 
+## Example with Simulated Data
+  ```
+  require(medltmle)
+  set.seed(2)
+  ```
+
+Generate some simulated data. 
+  ```
+   data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
+  ```
+
+Generate simple models for conditional densities and iterative expectations:
+  ```
+   spec<-make.sim.spec(2)
+  ```
+
+Define counterfactual exposures.
+  ```
+  abar <- 1
+  abar.prime <- 0
+  ```
+
+IPTW and TMLE estimate of the natural mediation effect.
+  ```
+  result.c <- medltmle(data=data,
+                           Anodes=names(data)[grep('^A',names(data))],
+                           Cnodes=names(data)[grep('^C',names(data))],
+                           Znodes=names(data)[grep('^Z',names(data))],
+                           Lnodes=names(data)[grep('^L',names(data))],
+                           Ynodes=names(data)[grep('^Y',names(data))],
+                           survivalOutcome = T,
+                           QLform=spec$QL.c,
+                           QZform=spec$QZ.c,
+                           gform=spec$g.c,
+                           qzform=spec$qz.c,
+                           qLform=spec$qL.c,
+                           abar=rep(abar,end.time),
+                           abar.prime=rep(abar.prime,end.time),
+                           estimand="NE"
+                           )
+
+  ```
+
 ## License
 &copy; 2017-2018 Ivana Malenica & Wenjing Zheng
 
