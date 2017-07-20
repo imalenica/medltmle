@@ -231,8 +231,8 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
 
   if (is.Qform) {
     if(is.QLform){
-      lhs <- rep("Q.kplus1", length(nodes$LW2))
-      node.set <- nodes$LW2
+      lhs <- rep("Q.kplus1", length(nodes$LY))
+      node.set <- nodes$LY
     }else{
       lhs <- rep("Q.kplus1", length(nodes$Z))
       node.set <- nodes$Z
