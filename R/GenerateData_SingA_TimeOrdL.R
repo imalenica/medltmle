@@ -55,8 +55,7 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
   #Set A and order the baseline covariates.
   covs_order<-timeOrder_baseline(data=covs,A=6)
 
-  LA <- LZ <- C <- Z <- D <- matrix(NA, nrow=n, ncol=end.time)
-  Y<-matrix(NA, nrow=n, ncol=1)
+  LA <- LZ <- C <- Z <- D <- Y  <- matrix(NA, nrow=n, ncol=end.time)
 
   uncensored.alive <- rep(TRUE, n)
 
@@ -110,10 +109,10 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
     if(t==1) {
       LZ[uncensored.alive,t] <- 10+3*covs_order$B2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t]
     }else {
-      LZ[uncensored.alive,t] <- 10+3*covs_order$B2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t] -0.2*LZ[uncensored.alive,t-1]
+      LZ[uncensored.alive,t] <- 10+3*covs_order$B2.2.W1[uncensored.alive]+covs_order$A[uncensored.alive]+0.7*Z[uncensored.alive,t] -0.02*LZ[uncensored.alive,t-1]
     }
 
-    Y[uncensored.alive]<-ifelse(LZ[uncensored.alive,t]<8.5,1,0)
+    Y[uncensored.alive, t]<-ifelse(LZ[uncensored.alive,t]<12,1,0)
 
     ## Y: deterministic function of LZ.
     #if(t==end.time){
@@ -145,7 +144,7 @@ GenerateData_SingA_TimeOrdL <- function(n, end.time, abar=NULL,abar.prime=NULL) 
 
     for (t in 1:(end.time)) {
 
-      d <- data.frame(d, .BinaryToCensoring(is.uncensored=C[, t]), D[, t], LA[,t],Z[,t],LZ[,t],Y)
+      d <- data.frame(d, .BinaryToCensoring(is.uncensored=C[,t]),D[,t],LA[,t],Z[,t],LZ[,t],Y[,t])
       names(d)[ncol(d) - 5] <- paste0("C_", t)
       names(d)[ncol(d) - 4] <- paste0("D_", t)
       names(d)[ncol(d) - 3] <- paste0("LA_", t)

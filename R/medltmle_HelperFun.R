@@ -166,20 +166,23 @@ NodeToIndex <- function(data, node) {
 
 #' CreateLYNodes
 #'
-#' Get the LY nodes without "blocks" of L/Y nodes uninterrupted by A/C/Z nodes
+#' Get the LY nodes without "blocks" of L/Y nodes uninterrupted by A/C/Z nodes.
 #'
-#' @param data TO DO
-#' @param nodes TO DO
-#' @param check.Qform TO DO
-#' @param Qform TO DO
+#' @param data Original wide-form data.
+#' @param nodes List object containing A,C,L,Y,D,W2,AC,ACD,ACZ,Z node index.
+#' @param check.Qform Logical variable indicating whether the corresponding Q forms need to be edited.
+#' @param Qform If \code{check.Qform} is set to \code{TRUE}, specify the Q forms.
 #'
-#' @return Returns LYnodes.
+#' @return Returns LY nodes that contain A/C/Z nodes between them.
 #'
+CreateLYNodes(data, nodes, check.Qform=FALSE)
 
 CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
-  LYnodes <- sort(c(nodes$L, nodes$Y))
+
+  LYnodes <- sort(c(nodes$W2, nodes$L, nodes$Y))
   #if there are no A/C nodes between two or more LY nodes, only the first LY node in the block is considered an LY node
   nodes.to.remove <- NULL
+
   if (length(LYnodes) > 1) {
     for (i in 1:(length(LYnodes) - 1)) {
       cur.node <- LYnodes[i]
@@ -189,6 +192,7 @@ CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
       }
     }
   }
+
   new.LYnodes <- setdiff(LYnodes, nodes.to.remove)
   if (check.Qform) {
     removed.Qform.index <- NULL
@@ -198,12 +202,14 @@ CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
         removed.Qform.index <- c(removed.Qform.index, index)
       }
     }
+
     if (! is.null(removed.Qform.index)) {
       message("L/Y nodes (after removing blocks)  : ", names(data)[new.LYnodes], "\n")
       message("Qform names                        : ", names(Qform), "\n")
       message(paste("The following nodes are not being considered as L/Y nodes because they are part of a block of L/Y nodes. They are being dropped from Qform:\n"), paste(names(Qform)[removed.Qform.index], "\n", collapse=" "))
       Qform <- Qform[-removed.Qform.index]
     }
+
     return(list(LYnodes=new.LYnodes, Qform=Qform))
   }
   return(new.LYnodes)
@@ -238,17 +244,18 @@ CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes=NULL,Dnodes=
   Dnodes <- NodeToIndex(data, Dnodes)
   W2nodes <- NodeToIndex(data, W2nodes)
 
-  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, D=Dnodes, W2=W2nodes, AC=sort(c(Anodes, Cnodes)), ACD=sort(c(Anodes, Cnodes, Dnodes)))
+  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, D=Dnodes, W2=W2nodes, AC=sort(c(Anodes, Cnodes)), ACD=sort(c(Anodes, Cnodes, Dnodes)), LW2=sort(c(Lnodes, W2nodes)))
 
   if(!is.null(Znodes)){
     Znodes <- NodeToIndex(data, Znodes)
     nodes$Z <- Znodes
   }
 
-  nodes$ACZ <- sort(c(Anodes, Cnodes, Znodes))
+  nodes$ACZ<-sort(c(Anodes, Cnodes, Znodes))
   nodes$baseline <- seq(1, min(c(nodes$A, nodes$L, nodes$C, nodes$Y,nodes$Z)) - 1)
   #if there are no A/C nodes between two or more LY nodes, only the first LY node in the block is considered an LY node
   nodes$LY <- CreateLYNodes(data, nodes, check.Qform=FALSE)
+
   return(nodes)
 
 }
@@ -897,7 +904,7 @@ timeOrder_baseline<-function(data, A){
         }
       }
     }
-    data<-cbind.data.frame(data_temp,A=data$A)
+    data<-cbind.data.frame(data_temp[,1:(as.numeric(ord_A)+1)], A=data$A, data_temp[,(as.numeric(ord_A)+2):ncol(data_temp)])
   }
 
   return(data)

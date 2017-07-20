@@ -157,6 +157,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 
   #If QLform, QZform, qzform and gform are not specified, return default form.
   #Each formula will consist of all parent nodes except censoring (both C and D, if available) and event nodes.
+  #W2 should be under QLform.
 
   if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
   if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
@@ -230,8 +231,8 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
 
   if (is.Qform) {
     if(is.QLform){
-      lhs <- rep("Q.kplus1", length(nodes$L))
-      node.set <- nodes$L
+      lhs <- rep("Q.kplus1", length(nodes$LW2))
+      node.set <- nodes$LW2
     }else{
       lhs <- rep("Q.kplus1", length(nodes$Z))
       node.set <- nodes$Z

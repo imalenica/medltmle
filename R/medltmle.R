@@ -35,6 +35,7 @@
 #' @param rule Specify rule for the intervention.
 #' @param Yrange Specify range for the outcome.
 #' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
+#' @param time.end How many time points in the longitudinal data?
 #'
 #' @return Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
@@ -47,7 +48,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                            deterministic.g.function=NULL, deterministic.Q.function=NULL,
                            stratify=FALSE, SL.library=NULL,
                            estimate.time=TRUE, gcomp=FALSE,
-                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, estimand="SE") {
+                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, estimand="SE", time.end, past) {
 
   #Implement rule and deterministic g function option. TO DO.
   if(!is.null(rule))stop('rule option not implemented yet')
@@ -59,13 +60,13 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
   inputs <- CreateMedInputs(data=data, Anodes=Anodes, Cnodes=Cnodes, Lnodes=Lnodes, Ynodes=Ynodes, Znodes=Znodes, Dnodes=Dnodes,W2nodes=W2nodes,
                                   QLform=QLform, QZform=QZform, gform=msm.inputs$gform, qLform=qLform, qzform=qzform,
                                   Yrange=Yrange, gbounds=gbounds, SL.library=SL.library, stratify=stratify,
-                                  regimes=msm.inputs$regimes,regimes.prime=msm.inputs$regimes.prime,
+                                  regimes=msm.inputs$regimes, regimes.prime=msm.inputs$regimes.prime,
                                   working.msm=msm.inputs$working.msm, summary.measures=msm.inputs$summary.measures,
                                   final.Ynodes=msm.inputs$final.Ynodes, msm.weights=msm.inputs$msm.weights,
                                   estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only,
                                   deterministic.Q.function=deterministic.Q.function, deterministic.g.function=deterministic.g.function,
                                   IC.variance.only=IC.variance.only,
-                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, estimand=estimand)
+                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, estimand=estimand, past=time.end, time.end=time.end)
   #fixme
   print(tracemem(inputs))
   result <- ltmleMediation(inputs)
