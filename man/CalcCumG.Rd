@@ -12,7 +12,7 @@ CalcCumG(g, gbounds)
 \item{gbounds}{Lower and upper bounds for g.}
 }
 \value{
-Returns G.
+Returns cummulative G for multiple time points.
 }
 \description{
 Calculate bounded cumulative G.

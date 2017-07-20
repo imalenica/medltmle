@@ -175,7 +175,6 @@ NodeToIndex <- function(data, node) {
 #'
 #' @return Returns LY nodes that contain A/C/Z nodes between them.
 #'
-CreateLYNodes(data, nodes, check.Qform=FALSE)
 
 CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
 

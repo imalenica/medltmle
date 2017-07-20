@@ -85,7 +85,6 @@ MainCalcsMediation <- function(inputs) {
       print(Sys.time())
       #Update the initial estimate of all the nodes, up to the last one. Get IC and last Qstar. (mean of which is the TMLE).
       #If updating did not happen for some reason, will return gcomp.
-      #HEREE
       fixed.tmle <- FixedTimeTMLEMediation(inputs, nodes = SubsetNodes(inputs$all.nodes, final.Ynode=inputs$final.Ynodes[j]), msm.weights = drop3(all.msm.weights[, , j, drop=FALSE]), combined.summary.measures = dropn(inputs$combined.summary.measures[, , , j, drop=FALSE], n=4), g.abar.list = g.abar.list, g.abar.prime.list=g.abar.prime.list, cum.qz.abar=cum.qz.abar, cum.qz.abar.prime=cum.qz.abar.prime, cum.qL.abar=cum.qL.abar, cum.qL.abar.prime=cum.qL.abar.prime, estimand)
       #If there are multiple final nodes, will sum up the ICs.
       IC <- IC + fixed.tmle$IC
@@ -1057,7 +1056,7 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
 #' @param cum.qL.abar.prime Cumulative estimate for L nodes under abar.prime regime.
 #' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
-#' @return Return...
+#' @return Returns updated Q for each node that needed to be fluctuated with associated epsilon and corresponding influence curve.
 #'
 
 FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.measures, g.abar.list , g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar=NULL, cum.qL.abar.prime=NULL, estimand){
@@ -1066,8 +1065,9 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
     #combined.summary.measures: n x num.measures x num.regimes
     #(num.measures=num.summary.measures + num.baseline.covariates)
-    #nodes$LY vs nodes$L ltmle vs. medltmle
-    LYZnodes <- sort(c(nodes$L, nodes$Z, nodes$W2))
+
+    #Only need updates for nodes following A/C/Z
+    LYZnodes <- sort(c(nodes$LY, nodes$Z))
     data <- inputs$data
 
     #Number of regimes
@@ -1109,7 +1109,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
       uncensored <- IsUncensored(inputs$uncensored, nodes$C, cur.node)
 
       ## if at L node: UPDAYE Q_L!
-      if(cur.node %in% nodes$LY){
+      if(cur.node %in% nodes$LY && !cur.node %in% nodes$W2){
 
         intervention.match <- InterventionMatch(inputs$intervention.match, nodes$A, cur.node)
 
@@ -1226,51 +1226,54 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
       if(cur.node %in% nodes$W2){
 
-        #Samples for which intervention matches abar.prime. Important for stratify=TRUE
-        intervention.match <- InterventionMatch(inputs$intervention.match.prime, nodes$A, cur.node)
+        intervention.match <- InterventionMatch(inputs$intervention.match, nodes$A, cur.node)
 
         if (inputs$stratify) {
 
-          #Subset to uncensored, alive and exposure matching the rule samples.
           subs <- uncensored & intervention.match & !deterministic.list.origdata$is.deterministic #n x num.regimes
 
         } else {
 
-          #Subset to uncensored and alive samples.
+          #Uncensored and non-deterministic samples
           subs <- uncensored & !deterministic.list.origdata$is.deterministic
 
         }
 
-        #Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        #Initial estimate of Q.k for the current node.
+        #Obtained by estimating E(Qstar.kplus1|past) by either SL or regression.
+        #If this is the last node, only pass the first column as a vector
 
-        #Get initial estimate of Q from SL or regressing Qstar.kplus1 (estimate from the previous step) on past.
-        #Evaluate the fitted function at the observed mediatior and covariates and the intervened exposure.
-        Q.est <- Estimate(inputs, form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        #Covariates: in default setting, all but the current node. Y is current node + 1
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        #Initial estimate of Q.k for the current node
         logitQ <- Q.est$predicted.values
+        #Fit
         fit.Q[[i]] <- Q.est$fit
 
-        #Get the closest AC nodes to the current node
+        #Closest AC and Z node to the current node
         ACnode.index  <- which.max(nodes$AC[nodes$AC < cur.node])
-        #Get the closest L node to the current node.
-        Lnode.index <- which.max(nodes$LY[nodes$LY < cur.node])
+        Znode.index <- which.max(nodes$Z[nodes$Z < cur.node])
 
-        #Update QMediation. Clever covariate for Z will need g and cumulative conditional density of L.
-        update.list <- iation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.prime.list$cum.g[, ACnode.index, ],cum.q.ratio=if(length(Lnode.index)==0) 1 else cum.qL.abar$cum.g.block[,Lnode.index,]/cum.qL.abar.prime$cum.g.block[,Lnode.index,], inputs$working.msm, uncensored, intervention.match, deterministic.list.origdata$is.deterministic, msm.weights, inputs$gcomp, inputs$observation.weights)
+        #Update Q.k to get Qstar.k
+        #HEREEEE
+        update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=1, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
         Qstar <- update.list$Qstar
-        #Update Qstar so that deterministic samples are included
+        #Update Qstar for samples that are deterministic.
         Qstar[Q.est$is.deterministic] <- Q.est$deterministic.Q[Q.est$is.deterministic]
 
-        #Calculate the influence curve and its relative error
+        #Calculate the influence curve and relative error
         curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
-        curIC.relative.error <- abs(colSums(curIC)) / mean.summary.measures
+        curIC.relative.error <- abs(colSums(curIC, na.rm=TRUE)) / mean.summary.measures
 
-        #If TMLE does not solve the score equation, try manually to fix it and update IC calculation.
+        #If any IC relative error is large (sum of the IC is not ~0) and we don't want gcomp estimate, fix score equation.
         if (any(curIC.relative.error > 0.001) && !inputs$gcomp) {
 
           cat("fixing: ", curIC.relative.error, "\n")
           SetSeedIfRegressionTesting()
+          #Sometimes GLM does not converge and the updating step of the TMLE does not solve the score equation.
           fix.score.list <- FixScoreEquation(Qstar.kplus1, update.list$h.g.ratio, uncensored, intervention.match, Q.est$is.deterministic, Q.est$deterministic.Q, update.list$off, update.list$X, regimes.with.positive.weight)
           Qstar <- fix.score.list$Qstar
+          #Recalculate the IC with a new Qstar
           curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
           update.list$fit <- fix.score.list$fit
 

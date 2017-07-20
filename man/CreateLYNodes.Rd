@@ -7,17 +7,17 @@
 CreateLYNodes(data, nodes, check.Qform, Qform)
 }
 \arguments{
-\item{data}{TO DO}
+\item{data}{Original wide-form data.}
 
-\item{nodes}{TO DO}
+\item{nodes}{List object containing A,C,L,Y,D,W2,AC,ACD,ACZ,Z node index.}
 
-\item{check.Qform}{TO DO}
+\item{check.Qform}{Logical variable indicating whether the corresponding Q forms need to be edited.}
 
-\item{Qform}{TO DO}
+\item{Qform}{If \code{check.Qform} is set to \code{TRUE}, specify the Q forms.}
 }
 \value{
-Returns LYnodes.
+Returns LY nodes that contain A/C/Z nodes between them.
 }
 \description{
-Get the LY nodes without "blocks" of L/Y nodes uninterrupted by A/C/Z nodes
+Get the LY nodes without "blocks" of L/Y nodes uninterrupted by A/C/Z nodes.
 }

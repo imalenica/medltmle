@@ -32,8 +32,8 @@ FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
 \item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
-Return...
+Returns updated Q for each node that needed to be fluctuated with associated epsilon and corresponding influence curve.
 }
 \description{
-TMLE Mediation
+Update initial estimates of each node in the iterative expectation representation.
 }

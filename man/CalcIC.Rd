@@ -12,7 +12,7 @@ CalcIC(Qstar.kplus1, Qstar, h.g.ratio, uncensored, intervention.match,
 
 \item{Qstar}{Possibly targeted estimate of Q for the current node.}
 
-\item{h.g.ratio}{I() * h * observation.weights * cum.q.ratio / g}
+\item{h.g.ratio}{I() * h * observation.weights * cum.q.ratio / g.}
 
 \item{uncensored}{Uncensored samples}
 

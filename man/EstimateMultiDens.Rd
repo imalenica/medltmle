@@ -4,7 +4,8 @@
 \alias{EstimateMultiDens}
 \title{EstimateMultiDens}
 \usage{
-EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens)
+EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens,
+  estimand)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}

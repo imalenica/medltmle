@@ -11,7 +11,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
   deterministic.g.function = NULL, deterministic.Q.function = NULL,
   stratify = FALSE, SL.library = NULL, estimate.time = TRUE,
   gcomp = FALSE, iptw.only = FALSE, IC.variance.only = FALSE,
-  observation.weights = NULL, estimand = "SE")
+  observation.weights = NULL, estimand = "SE", time.end, past)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -71,6 +71,8 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 \item{observation.weights}{Provide weight for observations}
 
 \item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
+
+\item{time.end}{How many time points in the longitudinal data?}
 }
 \value{
 Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
