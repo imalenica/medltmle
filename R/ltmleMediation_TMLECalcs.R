@@ -47,24 +47,36 @@ MainCalcsMediation <- function(inputs) {
   #Consitional density estimates using GLM or SuperLearner.
 
   #Estimate propensity score under both regimes.
-  g.abar.list <- EstimateG(inputs, regimes.use =  'regimes',estimand)
-  g.abar.prime.list <- EstimateG(inputs, regimes.use =  'regimes.prime',estimand)
-
+  g.abar.list <- EstimateG(inputs, regimes.use =  'regimes')
   #Estimate p_z(z|past, A=a)
-  cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T, estimand)
-  cum.qz.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = T, estimand)
+  cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T)
+  #Estimate p_l(l|past, A=a)
+  if(inputs$estimand=="NE"){
+    cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
+  }
 
-  if(estimand=="NE"){
 
-    #Estimate p_l(l|past, A=a)
-    cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F,estimand)
-    cum.qL.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = F,estimand)
+  if(!setequal(inputs$regimes,inputs$regimes.prime)){
+    g.abar.prime.list <- EstimateG(inputs, regimes.use =  'regimes.prime')
+    cum.qz.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = T)
+
+    if(inputs$estimand=="NE"){
+      cum.qL.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = F)
+    }
+
+  }else{
+    g.abar.prime.list <- g.abar.list
+    cum.qz.abar.prime <- cum.qz.abar
+
+    if(inputs$estimand=="NE"){
+      cum.qL.abar.prime <- cum.qL.abar
+    }
 
   }
 
   #Calculate IPTW estimate
   #TO DO: SE IPTW
-  iptw <- CalcIPTWMediation(inputs, cum.g.abar =  g.abar.list$cum.g, cum.qz.abar = cum.qz.abar$cum.g, cum.qz.abar.prime = cum.qz.abar.prime$cum.g, msm.weights=all.msm.weights, estimand)
+  iptw <- CalcIPTWMediation(inputs, cum.g.abar =  g.abar.list$cum.g, cum.qz.abar = cum.qz.abar$cum.g, cum.qz.abar.prime = cum.qz.abar.prime$cum.g, msm.weights=all.msm.weights)
 
   # remove any nodes after final.Ynode
   SubsetNodes <- function(nodes, final.Ynode) {
@@ -85,7 +97,7 @@ MainCalcsMediation <- function(inputs) {
       print(Sys.time())
       #Update the initial estimate of all the nodes, up to the last one. Get IC and last Qstar. (mean of which is the TMLE).
       #If updating did not happen for some reason, will return gcomp.
-      fixed.tmle <- FixedTimeTMLEMediation(inputs, nodes = SubsetNodes(inputs$all.nodes, final.Ynode=inputs$final.Ynodes[j]), msm.weights = drop3(all.msm.weights[, , j, drop=FALSE]), combined.summary.measures = dropn(inputs$combined.summary.measures[, , , j, drop=FALSE], n=4), g.abar.list = g.abar.list, g.abar.prime.list=g.abar.prime.list, cum.qz.abar=cum.qz.abar, cum.qz.abar.prime=cum.qz.abar.prime, cum.qL.abar=cum.qL.abar, cum.qL.abar.prime=cum.qL.abar.prime, estimand)
+      fixed.tmle <- FixedTimeTMLEMediation(inputs, nodes = SubsetNodes(inputs$all.nodes, final.Ynode=inputs$final.Ynodes[j]), msm.weights = drop3(all.msm.weights[, , j, drop=FALSE]), combined.summary.measures = dropn(inputs$combined.summary.measures[, , , j, drop=FALSE], n=4), g.abar.list = g.abar.list, g.abar.prime.list=g.abar.prime.list, cum.qz.abar=cum.qz.abar, cum.qz.abar.prime=cum.qz.abar.prime, cum.qL.abar=cum.qL.abar, cum.qL.abar.prime=cum.qL.abar.prime)
       #If there are multiple final nodes, will sum up the ICs.
       IC <- IC + fixed.tmle$IC
       #ICs for each final Y node seperately.
@@ -232,12 +244,11 @@ GetMsmWeights <- function(inputs) {
 #'
 #' @param inputs Output of \code{CreateMedInputs}
 #' @param regimes.use Indicate which regime to follow.
-#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
 #' @return Returns estimate of conditional density for each A nodes, bounded and unbounded cumulative g.
 #'
 
-EstimateG <- function(inputs,regimes.use,estimand) {
+EstimateG <- function(inputs,regimes.use) {
 
   #Which regime to use
   inputs$regimes <- inputs[[regimes.use]]
@@ -332,7 +343,7 @@ EstimateG <- function(inputs,regimes.use,estimand) {
     #prob.A.is.1 is prob(a=1), gmat is prob(a=abar)
     #if abar is just the usual a=1 for all, it will equal prob.A.is.1
     #cur.abar can be NA after censoring/death if treatment is dynamic
-    if (cur.node %in% nodes$A && estimand!="SE") {
+    if (cur.node %in% nodes$A && inputs$estimand!="SE") {
 
       #Regime for current A node:
       #for simple 1/0 type intervention, we will have that a=1 and a=abar are the same.
@@ -768,14 +779,13 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
 #' @param use.regimes TO DO
 #' @param use.intervention.match TO DO
 #' @param is.Z.dens Indicates whether the conditional density being estimated is for the Z node.
-#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
 #' @return Returns estimate of Z and L conditional densities.
 #'
 #'
 
 #KAKO3
-EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.dens,estimand){
+EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.dens){
 
   #Specify regime
   inputs$regimes <- inputs[[use.regimes]]
@@ -842,7 +852,7 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
 
     }
 
-    if(estimand=="SE" & is.Z.dens){
+    if(inputs$estimand=="SE" & is.Z.dens){
 
       #Probability of Z=1 under intervention regime, no matter the regime.
       cur.abar <- matrix(1, nrow(inputs$data), num.regimes)
@@ -905,12 +915,11 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
 #' @param cum.qz.abar Cumulative Q for Z obtained from \code{CalcCumG} with regime abar.
 #' @param cum.qz.abar.prime Cumulative Q for Z obtained from \code{CalcCumG} with regime abar.prime.
 #' @param msm.weights Marginal Structural Model weights for each sample.
-#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
 #' @return Returns IPTW estimate and normalized influence curve for IPTW.
 #'
 
-CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime, msm.weights, estimand) {
+CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime, msm.weights) {
 
   if (isTRUE(attr(inputs$data, "called.from.estimate.variance", exact=TRUE))) {
     return(list(beta=NA, IC=matrix(NA, 1, 1)))
@@ -1054,14 +1063,13 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
 #' @param cum.qz.abar.prime Cumulative estimate for Z nodes under abar.prime regime.
 #' @param cum.qL.abar Cumulative estimate for L nodes under abar regime.
 #' @param cum.qL.abar.prime Cumulative estimate for L nodes under abar.prime regime.
-#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
 #'
 #' @return Returns updated Q for each node that needed to be fluctuated with associated epsilon and corresponding influence curve.
 #'
 
-FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.measures, g.abar.list , g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar=NULL, cum.qL.abar.prime=NULL, estimand){
+FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.measures, g.abar.list , g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar=NULL, cum.qL.abar.prime=NULL){
 
-  if(estimand=="NE"){
+  if(inputs$estimand=="NE"){
 
     #combined.summary.measures: n x num.measures x num.regimes
     #(num.measures=num.summary.measures + num.baseline.covariates)
@@ -1293,7 +1301,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
 
     #LATER
-  }else if(estimand=="SE"){
+  }else if(inputs$estimand=="SE"){
 
     LYnodes<-sort(c(nodes$LY))
     data <- inputs$data

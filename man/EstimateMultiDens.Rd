@@ -4,8 +4,7 @@
 \alias{EstimateMultiDens}
 \title{EstimateMultiDens}
 \usage{
-EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens,
-  estimand)
+EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}
@@ -15,8 +14,6 @@ EstimateMultiDens(inputs, use.regimes, use.intervention.match, is.Z.dens,
 \item{use.intervention.match}{TO DO}
 
 \item{is.Z.dens}{Indicates whether the conditional density being estimated is for the Z node.}
-
-\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
 }
 \value{
 Returns estimate of Z and L conditional densities.

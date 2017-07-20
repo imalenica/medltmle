@@ -11,7 +11,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
   deterministic.g.function = NULL, deterministic.Q.function = NULL,
   stratify = FALSE, SL.library = NULL, estimate.time = TRUE,
   gcomp = FALSE, iptw.only = FALSE, IC.variance.only = FALSE,
-  observation.weights = NULL, estimand = "SE", time.end, past)
+  observation.weights = NULL, estimand, time.end, past)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}

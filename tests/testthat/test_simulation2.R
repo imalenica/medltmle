@@ -32,10 +32,8 @@ data$LZ_2<-ifelse(data$LZ_2<11.466,1,0)
 
 #Some parameters:
 end.time=2
-abar <- 1
-abar.prime <- 0
 
-result.c <- medltmle(data=data,
+result_11 <- medltmle(data=data,
                      Anodes=names(data)[grep('^A',names(data))],
                      Cnodes=names(data)[grep('^C',names(data))],
                      Dnodes=names(data)[grep('^D',names(data))],
@@ -49,8 +47,8 @@ result.c <- medltmle(data=data,
                      gform=NULL,
                      qzform=c("Z_1~LA_1+A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1", "Z_2~LA_2+A"),
                      qLform=c("LA_1~A+B6.W2+B5.2.W2+B5.1.W2","LZ_1~A+LA_1+Z_1","Y_1~Z_1+LA_1+A+LZ_1","LA_2~LA_1+A+Z_2","LZ_2~LA_2+A+Z_2","Y_2~Z_2+LA_2+A+LZ_2"),
-                     abar=abar,
-                     abar.prime=abar.prime,
+                     abar=1,
+                     abar.prime=1,
                      gbounds=c(.01,.99),
                      deterministic.g.function = NULL,
                      stratify=FALSE,
@@ -67,8 +65,114 @@ result.c <- medltmle(data=data,
                      time.end=end.time
 )
 
-#Test TMLE
-#test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],0.9611661, tolerance = 0.01))
+result_10 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Dnodes=names(data)[grep('^D',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      W2nodes=names(data)[grep('W2',names(data))],
+                      survivalOutcome = F,
+                      QLform=NULL,
+                      QZform=NULL,
+                      gform=NULL,
+                      qzform=c("Z_1~LA_1+A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1", "Z_2~LA_2+A"),
+                      qLform=c("LA_1~A+B6.W2+B5.2.W2+B5.1.W2","LZ_1~A+LA_1+Z_1","Y_1~Z_1+LA_1+A+LZ_1","LA_2~LA_1+A+Z_2","LZ_2~LA_2+A+Z_2","Y_2~Z_2+LA_2+A+LZ_2"),
+                      abar=1,
+                      abar.prime=0,
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=TRUE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
 
-#Test IPW
-#test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],0.9566909, tolerance = 0.01))
+result_01 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Dnodes=names(data)[grep('^D',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      W2nodes=names(data)[grep('W2',names(data))],
+                      survivalOutcome = F,
+                      QLform=NULL,
+                      QZform=NULL,
+                      gform=NULL,
+                      qzform=c("Z_1~LA_1+A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1", "Z_2~LA_2+A"),
+                      qLform=c("LA_1~A+B6.W2+B5.2.W2+B5.1.W2","LZ_1~A+LA_1+Z_1","Y_1~Z_1+LA_1+A+LZ_1","LA_2~LA_1+A+Z_2","LZ_2~LA_2+A+Z_2","Y_2~Z_2+LA_2+A+LZ_2"),
+                      abar=0,
+                      abar.prime=1,
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=TRUE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
+
+result_00 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Dnodes=names(data)[grep('^D',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      W2nodes=names(data)[grep('W2',names(data))],
+                      survivalOutcome = F,
+                      QLform=NULL,
+                      QZform=NULL,
+                      gform=NULL,
+                      qzform=c("Z_1~LA_1+A+B6.W2+B5.2.W2+B5.1.W2+B3.1.W1", "Z_2~LA_2+A"),
+                      qLform=c("LA_1~A+B6.W2+B5.2.W2+B5.1.W2","LZ_1~A+LA_1+Z_1","Y_1~Z_1+LA_1+A+LZ_1","LA_2~LA_1+A+Z_2","LZ_2~LA_2+A+Z_2","Y_2~Z_2+LA_2+A+LZ_2"),
+                      abar=0,
+                      abar.prime=0,
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=TRUE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
+
+#Natural Indirect Effect:
+NIE<-result_11$estimates[1]-result_10$estimates[1]
+
+#Natural Direct Effect:
+NDE<-result_10$estimates[1]-result_00$estimates[1]
+
+#Overall Natural Effect:
+NE<-NIE+NDE
+
+#Test TMLE NIE
+test_that("TMLE estimate of NIE for the simulation 2 matches expected", expect_equal(NIE[[1]], 0.00291363, tolerance = 0.01))
+
+#Test TMLE NDE
+test_that("TMLE estimate of NDE for the simulation 2 matches expected", expect_equal(NDE[[1]], -0.0301333, tolerance = 0.01))
+

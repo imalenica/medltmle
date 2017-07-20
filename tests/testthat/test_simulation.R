@@ -28,10 +28,8 @@ spec<-make.sim.spec(2)
 
 #Some parameters:
 end.time=2
-abar <- 1
-abar.prime <- 0
 
-result.c <- medltmle(data=data,
+result_10 <- medltmle(data=data,
                            Anodes=names(data)[grep('^A',names(data))],
                            Cnodes=names(data)[grep('^C',names(data))],
                            Znodes=names(data)[grep('^Z',names(data))],
@@ -45,8 +43,8 @@ result.c <- medltmle(data=data,
                            gform=spec$g.c,
                            qzform=spec$qz.c,
                            qLform=spec$qL.c,
-                           abar=rep(abar,end.time),
-                           abar.prime=rep(abar.prime,end.time),
+                           abar=rep(1,end.time),
+                           abar.prime=rep(0,end.time),
                            gbounds=c(.01,.99),
                            deterministic.g.function = NULL,
                            stratify=FALSE,
@@ -63,11 +61,114 @@ result.c <- medltmle(data=data,
                            time.end=end.time
                            )
 
-#Test TMLE
-test_that("TMLE estimate for the simulation matches expected", expect_equal(result.c$estimates[1],
-                                                                            0.9611661, tolerance = 0.01))
+result_00 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      Dnodes=NULL,
+                      W2nodes=NULL,
+                      survivalOutcome = T,
+                      QLform=spec$QL.c,
+                      QZform=spec$QZ.c,
+                      gform=spec$g.c,
+                      qzform=spec$qz.c,
+                      qLform=spec$qL.c,
+                      abar=rep(0,end.time),
+                      abar.prime=rep(0,end.time),
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=FALSE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
 
-#Test IPW
-test_that("IPW estimate for the simulation matches expected", expect_equal(result.c$estimates[2],
-                                                                           0.9566909, tolerance = 0.01))
+result_11 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      Dnodes=NULL,
+                      W2nodes=NULL,
+                      survivalOutcome = T,
+                      QLform=spec$QL.c,
+                      QZform=spec$QZ.c,
+                      gform=spec$g.c,
+                      qzform=spec$qz.c,
+                      qLform=spec$qL.c,
+                      abar=rep(1,end.time),
+                      abar.prime=rep(1,end.time),
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=FALSE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
+
+result_01 <- medltmle(data=data,
+                      Anodes=names(data)[grep('^A',names(data))],
+                      Cnodes=names(data)[grep('^C',names(data))],
+                      Znodes=names(data)[grep('^Z',names(data))],
+                      Lnodes=names(data)[grep('^L',names(data))],
+                      Ynodes=names(data)[grep('^Y',names(data))],
+                      Dnodes=NULL,
+                      W2nodes=NULL,
+                      survivalOutcome = T,
+                      QLform=spec$QL.c,
+                      QZform=spec$QZ.c,
+                      gform=spec$g.c,
+                      qzform=spec$qz.c,
+                      qLform=spec$qL.c,
+                      abar=rep(0,end.time),
+                      abar.prime=rep(1,end.time),
+                      gbounds=c(.01,.99),
+                      deterministic.g.function = NULL,
+                      stratify=FALSE,
+                      SL.library=NULL,
+                      estimate.time=FALSE,
+                      deterministic.Q.function=NULL,
+                      rule=NULL,
+                      Yrange=NULL,
+                      gcomp=FALSE,
+                      iptw.only=FALSE,
+                      IC.variance.only=FALSE,
+                      observation.weights=NULL,
+                      estimand="NE",
+                      time.end=end.time
+)
+
+#Natural Indirect Effect:
+NIE<-result_11$estimates[1]-result_10$estimates[1]
+
+#Natural Direct Effect:
+NDE<-result_10$estimates[1]-result_00$estimates[1]
+
+#Overall Natural Effect:
+NE<-NIE+NDE
+
+#Test TMLE NIE
+test_that("TMLE estimate of NIE for the simulation 1 matches expected", expect_equal(NIE[[1]], -0.02720144, tolerance = 0.01))
+
+#Test TMLE NDE
+test_that("TMLE estimate of NDE for the simulation 1 matches expected", expect_equal(NDE[[1]], 0.04102935, tolerance = 0.01))
 

@@ -61,6 +61,11 @@ IPTW and TMLE estimate of the natural mediation effect.
                            estimand="NE",
                            time.end=end.time
                            )
+                           
+  result.c$estimates
+  
+      tmle     iptw 
+  0.550915 0.527677 
 
   ```
 ---
