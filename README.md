@@ -3,7 +3,7 @@
 
 ## Description
 
-`medltmle` estimates natural and stochastic mediation effect for a longitudinal setting with time-varying mediators. The package implements several estimators of the direct and indirect mediation effect over multiple time-points, adjusting for measured time-varying confounding and informative right-censoring. Currently available estimators include TMLE for longitudinal data, IPW, and longitudinal G-formula.
+`medltmle` estimates natural and stochastic mediation effect for a longitudinal setting with time-varying mediators. The package implements several estimators of the direct and indirect mediation effect over multiple time-points, adjusting for measured time-varying confounding and informative right-censoring. Currently available estimators include TMLE for longitudinal data, IPTW, and longitudinal G-comp.
 
 Future release will support long format and `stremr` for more elaborate longitudinal data. 
 
