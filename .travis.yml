@@ -1,0 +1,30 @@
+branches:
+  only:
+  - master
+  - develop
+
+env:
+  global:
+    - R_BUILD_ARGS="--no-build-vignettes --no-manual"
+    - R_CHECK_ARGS="--no-build-vignettes --no-manual"
+
+language: r
+sudo: required
+cache: packages
+warnings_are_errors: true
+
+r:
+  - oldrel
+  - release
+  - devel
+
+r_github_packages:
+  - jimhester/covr
+
+after_success:
+  - Rscript -e "covr::codecov(line_exclusions = list('R/plots.R', 'R/utils.R'))"
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
