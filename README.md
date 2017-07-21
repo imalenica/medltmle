@@ -10,7 +10,11 @@ Description
 
 `medltmle` estimates the natural mediation effect for a longitudinal setting with time-varying mediators. This R package implements several estimators of the data dependent parameter (SE) and non-data dependent parameter (NE) for direct and indirect mediation effects over multiple time points, adjusting for measured time-varying confounding and informative right-censoring. The theoretical justifications for using either of the aforementioned parameters are outlined in the vignette.
 
-Currently available estimators include 1. The TMLE for longitudinal data 2. Inverse Probability of Treatment Weighted (IPTW) 3. The longitudinal G-computation
+Currently available estimators include
+
+1.  TMLE for longitudinal data
+2.  The longitudinal G-computation
+3.  Inverse Probability of Treatment Weighted (IPTW)
 
 Future releases will support longitudinal data in long format and will integrate with the [`stremr` package](https://github.com/osofr/stremr) in order to handle more elaborate longitudinal data structures.
 
@@ -87,23 +91,23 @@ result.c <- suppressMessages(
                        time.end = end.time
                       )
               )
-#> [1] "<0x7f818d988c70>"
-#> tracemem[0x7f818d988c70 -> 0x7f818d982120]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7f818d982120 -> 0x7f818d9828c0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7f818d982120 -> 0x7f818d8e8920]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7f818d982120 -> 0x7f8188cc1110]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  4 
-#> tracemem[0x7f818d982120 -> 0x7f818d9acf00]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7f818d982120 -> 0x7f818d996190]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7f818d982120 -> 0x7f818da15870]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  4 
-#> [1] "2017-07-21 11:27:43 PDT"
+#> [1] "<0x7fd5a31911a0>"
+#> tracemem[0x7fd5a31911a0 -> 0x7fd5a3191f30]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a31926d0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3280a10]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3219f30]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  1 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  2 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  3 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  4 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3276690]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a315ee20]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7fd5a3191f30 -> 0x7fd5a331a780]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  1 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  2 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  3 
+#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  4 
+#> [1] "2017-07-21 11:30:07 PDT"
 
 # let's examine the estimates
 result.c$estimates

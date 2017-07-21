@@ -33,9 +33,10 @@ justifications for using either of the aforementioned parameters are outlined in
 the vignette.
 
 Currently available estimators include
-1. The TMLE for longitudinal data
-2. Inverse Probability of Treatment Weighted (IPTW)
-3. The longitudinal G-computation
+
+1. TMLE for longitudinal data
+2. The longitudinal G-computation
+3. Inverse Probability of Treatment Weighted (IPTW)
 
 Future releases will support longitudinal data in long format and will integrate
 with the [`stremr` package](https://github.com/osofr/stremr) in order to handle
