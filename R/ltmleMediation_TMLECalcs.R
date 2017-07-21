@@ -466,6 +466,7 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
       })
 
       #Evaluate the fitted function at observed mediator and covariates histories at the intervened exposure => Q.k
+      #TRUE if no row missings
       predicted.values <- ProcessSLPrediction(m$SL.predict, newX.list$new.subs, try.result)
 
     }
@@ -489,6 +490,7 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
     }
 
     predicted.values <- rep(NA, nrow(newdata))
+    #Only samples that had no rows missing before
     predicted.values[new.subs] <- pred
 
     if (max(predicted.values, na.rm=T) > 1 || min(predicted.values, na.rm=T) < 0) {
@@ -523,7 +525,8 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
   GetNewX <- function(newdata1) {
     new.mod.frame <- model.frame(f, data = newdata1, drop.unused.levels = TRUE, na.action = na.pass)
     newX.temp <- model.matrix(terms(f), new.mod.frame)
-    new.subs <- !rowAnyMissings(newX.temp) #remove NA values from newdata - these will output to NA anyway and cause errors in SuperLearner
+    #remove NA values from newdata - these will output to NA anyway and cause errors in SuperLearner
+    new.subs <- !rowAnyMissings(newX.temp)
     newX <- as.data.frame(newX.temp[new.subs, , drop=FALSE])
     if (ncol(X) == 1) { #fixme - prob not needed, intercept will be added unless -1 in form, could check for this in ProcessSLPred
       #SuperLearner crashes if there are screening algorithms and only one column - add a constant
@@ -646,7 +649,7 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
 
   #SL does not support quasibinomial(), change to binomial().
   if (!use.glm) {
-    if (identical(family, quasibinomial())) family <- binomial()
+    if (identical(family$family, "quasibinomial")) family <- binomial()
     if (!is.null(offst)) stop("offset in formula not supported with SuperLearner")
     X <- as.data.frame(X)
   }
@@ -756,7 +759,7 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
     if (calc.meanL) prob.A.is.1.meanL[deterministic.g.list.newdata$is.deterministic, regime.index, ] <- deterministic.g.list.newdata$prob1
     is.deterministic[, regime.index] <- deterministic.list.newdata$is.deterministic
     if (!called.from.estimate.g) deterministic.Q[deterministic.list.newdata$is.deterministic, regime.index] <- deterministic.list.newdata$Q
-    if (!use.glm && !isTRUE(attr(SL.library, "return.fit", exact = TRUE))) m <- summary(m)
+    #if (!use.glm && !isTRUE(attr(SL.library, "return.fit", exact = TRUE))) m <- summary(m)
     fit[[regime.index]] <- m
     if (multiple.subs) subs.index <- subs.index + 1
     if (multiple.Qstar) Qstar.index <- Qstar.index + 1
@@ -1137,6 +1140,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         #If this is the last node, only pass the first column as a vector
 
         #Covariates: in default setting, all but the current node. Y is current node + 1
+        #HEREEE
         Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         #Initial estimate of Q.k for the current node
         logitQ <- Q.est$predicted.values
@@ -1197,6 +1201,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
         #Get initial estimate of Q from SL or regressing Qstar.kplus1 (estimate from the previous step) on past.
         #Evaluate the fitted function at the observed mediatior and covariates and the intervened exposure.
+        #Problem if one of the levele in Qstar.kplus1 is not there
         Q.est <- Estimate(inputs, form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         logitQ <- Q.est$predicted.values
         fit.Q[[i]] <- Q.est$fit
@@ -1263,7 +1268,6 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         Znode.index <- which.max(nodes$Z[nodes$Z < cur.node])
 
         #Update Q.k to get Qstar.k
-        #HEREEEE
         update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=1, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
         Qstar <- update.list$Qstar
         #Update Qstar for samples that are deterministic.

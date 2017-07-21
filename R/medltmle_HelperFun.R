@@ -267,10 +267,10 @@ CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes=NULL,Dnodes=
 #'
 #' Get Super Learner library by type (Q or g).
 #'
-#' @param SL.library TO DO
-#' @param estimate.type TO DO
+#' @param SL.library List containing two elements: Super Learner algorithms for Q estimation, and Super Learner algorithms for g estimation.
+#' @param estimate.type Q or g library.
 #'
-#' @return Returns Super Learner library.
+#' @return Returns Super Learner library for Q or g.
 #'
 
 GetLibrary <- function(SL.library, estimate.type) {
@@ -968,3 +968,4 @@ dataConvert<-function(data,nBCov,type){
   return(newdata)
 
 }
+

@@ -7,12 +7,12 @@
 GetLibrary(SL.library, estimate.type)
 }
 \arguments{
-\item{SL.library}{TO DO}
+\item{SL.library}{List containing two elements: Super Learner algorithms for Q estimation, and Super Learner algorithms for g estimation.}
 
-\item{estimate.type}{TO DO}
+\item{estimate.type}{Q or g library.}
 }
 \value{
-Returns Super Learner library.
+Returns Super Learner library for Q or g.
 }
 \description{
 Get Super Learner library by type (Q or g).
