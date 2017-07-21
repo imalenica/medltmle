@@ -33,7 +33,7 @@
 #' @param summary.measures Summary measures as output by the GetMediationMSMInputsForLtmle function.
 #' @param final.Ynodes Final Y node(s).
 #' @param msm.weights MSM weights.
-#' @param estimand Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).
+#' @param estimand Specifies if the estimand is data dependent (SE) or not (NE). The two correspond to the data-dependent stochastic effect and stochastic effect fully conditional on the past.
 #' @param past Number indicating Markov order for the conditional densities.
 #' @param time.end Total number of time points.
 #'

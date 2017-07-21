@@ -74,7 +74,7 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 
 \item{observation.weights}{Provide weight for observations}
 
-\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
+\item{estimand}{Specifies if the estimand is data dependent (SE) or not (NE). The two correspond to the data-dependent stochastic effect and stochastic effect fully conditional on the past.}
 
 \item{past}{Number indicating Markov order for the conditional densities.}
 
