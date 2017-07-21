@@ -3,7 +3,7 @@
 R/`medltmle`
 ============
 
-[![Travis-CI Build Status](https://travis-ci.org/podTockom/medltmle.svg?branch=master)](https://travis-ci.org/podTockom/medltmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/medltmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/medltmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/medltmle/master.svg)](https://codecov.io/github/podTockom/medltmle?branch=master) [![CRAN](http://www.r-pkg.org/badges/version/medltmle)](http://www.r-pkg.org/pkg/medltmle) [![CRAN downloads](https://cranlogs.r-pkg.org/badges/medltmle)](https://CRAN.R-project.org/package=medltmle) \[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)\](<http://www.repostatus.org/#wip> [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+[![Travis-CI Build Status](https://travis-ci.org/podTockom/medltmle.svg?branch=master)](https://travis-ci.org/podTockom/medltmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/medltmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/medltmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/medltmle/master.svg)](https://codecov.io/github/podTockom/medltmle?branch=master) [![CRAN](http://www.r-pkg.org/badges/version/medltmle)](http://www.r-pkg.org/pkg/medltmle) [![CRAN downloads](https://cranlogs.r-pkg.org/badges/medltmle)](https://CRAN.R-project.org/package=medltmle) [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 Description
 -----------
@@ -87,23 +87,23 @@ result.c <- suppressMessages(
                        time.end = end.time
                       )
               )
-#> [1] "<0x7ff7520a63b0>"
-#> tracemem[0x7ff7520a63b0 -> 0x7ff752097030]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7ff752097030 -> 0x7ff7520977d0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7ff752097030 -> 0x7ff74d6e56d0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7ff752097030 -> 0x7ff7522a12c0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  4 
-#> tracemem[0x7ff752097030 -> 0x7ff752284850]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7ff752097030 -> 0x7ff7520dcfd0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7ff752097030 -> 0x7ff74d738a10]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:21:29 2017 EstimateLYnodes node  4 
-#> [1] "2017-07-21 11:21:29 PDT"
+#> [1] "<0x7f818d988c70>"
+#> tracemem[0x7f818d988c70 -> 0x7f818d982120]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7f818d982120 -> 0x7f818d9828c0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7f818d982120 -> 0x7f818d8e8920]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7f818d982120 -> 0x7f8188cc1110]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  1 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  2 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  3 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  4 
+#> tracemem[0x7f818d982120 -> 0x7f818d9acf00]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7f818d982120 -> 0x7f818d996190]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> tracemem[0x7f818d982120 -> 0x7f818da15870]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  1 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  2 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  3 
+#> Fri Jul 21 11:27:43 2017 EstimateLYnodes node  4 
+#> [1] "2017-07-21 11:27:43 PDT"
 
 # let's examine the estimates
 result.c$estimates
