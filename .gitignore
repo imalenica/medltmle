@@ -1,3 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
+.Ruserdata
+README.html
+vignettes/*.html

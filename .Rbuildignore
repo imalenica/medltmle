@@ -1,2 +1,15 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+^README-.*\.png$
+^README\.html$
+^README\.md$
+^\.travis\.yml$
+^appveyor\.yml$
+^codecov\.yml$
+^_pkgdown\.yml$
+^\.gitignore$
+^\Makefile$
+^CONTRIBUTING\.md$
+^cran-comments\.md$
+^docs$
