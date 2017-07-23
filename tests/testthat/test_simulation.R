@@ -172,3 +172,8 @@ test_that("TMLE estimate of NIE for the simulation 1 matches expected", expect_e
 #Test TMLE NDE
 test_that("TMLE estimate of NDE for the simulation 1 matches expected", expect_equal(NDE[[1]], 0.04102935, tolerance = 0.01))
 
+#Check summary_medltmle function:
+res<-summary_medltmle(result_11,result_10,result_10,result_00,type="NE")
+res$NDE
+res$NIE
+res$NE
