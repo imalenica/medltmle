@@ -804,9 +804,8 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     dens.nodes <- nodes$Z
     dens.forms <- inputs$qzform
   }else{
-    #Make more general
-    dens.nodes <- sort(c(nodes$L,nodes$Y))
-    #dens.nodes <- sort(c(nodes$LY))
+    #dens.nodes <- sort(c(nodes$L,nodes$Y))
+    dens.nodes <- sort(c(nodes$LY))
     dens.forms <- inputs$qLform
 
   }
