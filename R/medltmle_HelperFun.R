@@ -992,16 +992,16 @@ summary_medltmle<-function(nie1,nie2,nde1,nde2,type="NE"){
   #Natural Indirect Effect
   #TMLE or GComp
   param_nie_tmle<-nie1$estimates[1]-nie2$estimates[1]
-  var_nie_tmle<-var(nie1$IC$tmle-nie2$IC$tmle, na.rm = TRUE)/sum(!is.na(nie1$IC$tmle))
-  se_nie_tmle<-sqrt(var_nie_tmle)
+  var_nie_tmle<-var(nie1$IC$tmle-nie2$IC$tmle, na.rm = TRUE)
+  se_nie_tmle<-sqrt(var_nie_tmle/length(nie1$IC$tmle))
 
   CI_nie_tmle_l<-param_nie_tmle-1.96*se_nie_tmle
   CI_nie_tmle_u<-param_nie_tmle+1.96*se_nie_tmle
 
   #IPTW
   param_nie_iptw<-nie1$estimates[2]-nie2$estimates[2]
-  var_nie_iptw<-var(nie1$IC$iptw-nie2$IC$iptw, na.rm=TRUE)/sum(!is.na(nie1$IC$iptw))
-  se_nie_iptw<-sqrt(var_nie_iptw)
+  var_nie_iptw<-var(nie1$IC$iptw-nie2$IC$iptw, na.rm=TRUE)
+  se_nie_iptw<-sqrt(var_nie_iptw/length(nie1$IC$iptw))
 
   CI_nie_iptw_l<-param_nie_iptw-1.96*se_nie_iptw
   CI_nie_iptw_u<-param_nie_iptw+1.96*se_nie_iptw
@@ -1016,16 +1016,16 @@ summary_medltmle<-function(nie1,nie2,nde1,nde2,type="NE"){
   #Natural Direct Effect
   #TMLE
   param_nde_tmle<-nde1$estimates[1]-nde2$estimates[1]
-  var_nde_tmle<-var(nde1$IC$tmle-nde2$IC$tmle, na.rm=TRUE)/sum(!is.na(nde1$IC$tmle))
-  se_nde_tmle<-sqrt(var_nde_tmle)
+  var_nde_tmle<-var(nde1$IC$tmle-nde2$IC$tmle, na.rm=TRUE)
+  se_nde_tmle<-sqrt(var_nde_tmle/length(nde1$IC$tmle))
 
   CI_nde_tmle_l<-param_nde_tmle-1.96*se_nde_tmle
   CI_nde_tmle_u<-param_nde_tmle+1.96*se_nde_tmle
 
   #IPTW
   param_nde_iptw<-nde1$estimates[2]-nde2$estimates[2]
-  var_nde_iptw<-var(nde1$IC$iptw-nde2$IC$iptw, na.rm=TRUE)/sum(!is.na(nde1$IC$iptw))
-  se_nde_iptw<-sqrt(var_nde_iptw)
+  var_nde_iptw<-var(nde1$IC$iptw-nde2$IC$iptw, na.rm=TRUE)
+  se_nde_iptw<-sqrt(var_nde_iptw/length(nde1$IC$iptw))
 
   CI_nde_iptw_l<-param_nde_iptw-1.96*se_nde_iptw
   CI_nde_iptw_u<-param_nde_iptw+1.96*se_nde_iptw
@@ -1040,16 +1040,16 @@ summary_medltmle<-function(nie1,nie2,nde1,nde2,type="NE"){
   #Total effect
   #TMLE
   param_tmle<-param_nie_tmle+param_nde_tmle
-  var_tmle<-var(nie1$IC$tmle-nde2$IC$tmle, na.rm=TRUE)/sum(!is.na(nie1$IC$tmle))
-  se_tmle<-sqrt(var_tmle)
+  var_tmle<-var(nie1$IC$tmle-nde2$IC$tmle, na.rm=TRUE)
+  se_tmle<-sqrt(var_tmle/length(nie1$IC$tmle))
 
   CI_tmle_l<-param_tmle-1.96*se_tmle
   CI_tmle_u<-param_tmle+1.96*se_tmle
 
   #IPTW
   param_iptw<-param_nie_iptw+param_nde_iptw
-  var_iptw<-var(nie1$IC$iptw-nde2$IC$iptw, na.rm=TRUE)/sum(!is.na(nie1$IC$iptw))
-  se_iptw<-sqrt(var_iptw)
+  var_iptw<-var(nie1$IC$iptw-nde2$IC$iptw, na.rm=TRUE)
+  se_iptw<-sqrt(var_iptw/length(nie1$IC$iptw))
 
   CI_iptw_l<-param_iptw-1.96*se_iptw
   CI_iptw_u<-param_iptw+1.96*se_iptw
