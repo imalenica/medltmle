@@ -1459,10 +1459,63 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         fit.Qstar[[i]] <- update.list$fit
       }#done with updating Q_Z.
 
-      ## if at W2 node: UPDAYE Q_W2!
+      if(cur.node %in% nodes$W2){
 
+        intervention.match <- InterventionMatch(inputs$intervention.match, nodes$A, cur.node)
 
+        if (inputs$stratify) {
 
+          subs <- uncensored & intervention.match & !deterministic.list.origdata$is.deterministic #n x num.regimes
+
+        } else {
+
+          #Uncensored and non-deterministic samples
+          subs <- uncensored & !deterministic.list.origdata$is.deterministic
+
+        }
+
+        #Initial estimate of Q.k for the current node.
+        #Obtained by estimating E(Qstar.kplus1|past) by either SL or regression.
+        #If this is the last node, only pass the first column as a vector
+
+        #Covariates: in default setting, all but the current node. Y is current node + 1
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        #Initial estimate of Q.k for the current node
+        logitQ <- Q.est$predicted.values
+        #Fit
+        fit.Q[[i]] <- Q.est$fit
+
+        #Closest AC and Z node to the current node
+        ACnode.index  <- which.max(nodes$AC[nodes$AC < cur.node])
+        Znode.index <- which.max(nodes$Z[nodes$Z < cur.node])
+
+        #Update Q.k to get Qstar.k
+        update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=1, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
+        Qstar <- update.list$Qstar
+        #Update Qstar for samples that are deterministic.
+        Qstar[Q.est$is.deterministic] <- Q.est$deterministic.Q[Q.est$is.deterministic]
+
+        #Calculate the influence curve and relative error
+        curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
+        curIC.relative.error <- abs(colSums(curIC, na.rm=TRUE)) / mean.summary.measures
+
+        #If any IC relative error is large (sum of the IC is not ~0) and we don't want gcomp estimate, fix score equation.
+        if (any(curIC.relative.error > 0.001) && !inputs$gcomp) {
+
+          cat("fixing: ", curIC.relative.error, "\n")
+          SetSeedIfRegressionTesting()
+          #Sometimes GLM does not converge and the updating step of the TMLE does not solve the score equation.
+          fix.score.list <- FixScoreEquation(Qstar.kplus1, update.list$h.g.ratio, uncensored, intervention.match, Q.est$is.deterministic, Q.est$deterministic.Q, update.list$off, update.list$X, regimes.with.positive.weight)
+          Qstar <- fix.score.list$Qstar
+          #Recalculate the IC with a new Qstar
+          curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
+          update.list$fit <- fix.score.list$fit
+
+        }
+
+        Qstar.kplus1 <- Qstar
+        fit.Qstar[[i]] <- update.list$fit
+      }#done with updating Q_W2.
 
       #TO DO: NON_IC VARIANCE.
       #est.var <- est.var + EstimateVariance(inputs, nodes, combined.summary.measures, regimes.with.positive.weight, uncensored, alive=!deterministic.list.origdata$is.deterministic, Qstar, Qstar.kplus1, cur.node, msm.weights, LYnode.index, ACnode.index, g.list$cum.g, g.list$prob.A.is.1, g.list$cum.g.meanL, g.list$cum.g.unbounded, g.list$cum.g.meanL.unbounded, inputs$observation.weights, is.last.LYnode=(LYnode.index==length(nodes$LY)), intervention.match) #fixme - remove intervention.match if not using est.var.iptw
