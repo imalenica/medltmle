@@ -9,7 +9,7 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
   deterministic.g.function, SL.library, regimes, regimes.prime, working.msm,
   summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp,
   iptw.only, deterministic.Q.function, IC.variance.only, observation.weights,
-  estimand, past, time.end)
+  CSE, past, time.end)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -74,7 +74,7 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 
 \item{observation.weights}{Provide weight for observations}
 
-\item{estimand}{Specifies if the estimand is data dependent (SE) or not (NE). The two correspond to the data-dependent stochastic effect and stochastic effect fully conditional on the past.}
+\item{CSE}{Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).}
 
 \item{past}{Number indicating Markov order for the conditional densities.}
 

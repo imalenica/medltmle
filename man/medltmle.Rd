@@ -11,7 +11,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
   deterministic.g.function = NULL, deterministic.Q.function = NULL,
   stratify = FALSE, SL.library = NULL, estimate.time = TRUE,
   gcomp = FALSE, iptw.only = FALSE, IC.variance.only = FALSE,
-  observation.weights = NULL, estimand, time.end, past)
+  observation.weights = NULL, CSE, time.end, past)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -70,7 +70,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 
 \item{observation.weights}{Provide weight for observations}
 
-\item{estimand}{Specifies which estimand to estimate. Options are: natural effect (NE), stochastic effect (SE), or controlled effect (CE).}
+\item{CSE}{Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).}
 
 \item{time.end}{How many time points in the longitudinal data?}
 }

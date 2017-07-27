@@ -51,7 +51,7 @@ MainCalcsMediation <- function(inputs) {
   #Estimate p_z(z|past, A=a)
   cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T)
   #Estimate p_l(l|past, A=a)
-  if(inputs$estimand=="NE"){
+  if(inputs$CSE){
     cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
   }
 
@@ -60,7 +60,7 @@ MainCalcsMediation <- function(inputs) {
     g.abar.prime.list <- EstimateG(inputs, regimes.use =  'regimes.prime')
     cum.qz.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = T)
 
-    if(inputs$estimand=="NE"){
+    if(inputs$CSE){
       cum.qL.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = F)
     }
 
@@ -68,7 +68,7 @@ MainCalcsMediation <- function(inputs) {
     g.abar.prime.list <- g.abar.list
     cum.qz.abar.prime <- cum.qz.abar
 
-    if(inputs$estimand=="NE"){
+    if(inputs$CSE){
       cum.qL.abar.prime <- cum.qL.abar
     }
 
@@ -343,7 +343,7 @@ EstimateG <- function(inputs,regimes.use) {
     #prob.A.is.1 is prob(a=1), gmat is prob(a=abar)
     #if abar is just the usual a=1 for all, it will equal prob.A.is.1
     #cur.abar can be NA after censoring/death if treatment is dynamic
-    if (cur.node %in% nodes$A && inputs$estimand!="SE") {
+    if (cur.node %in% nodes$A && inputs$CSE) {
 
       #Regime for current A node:
       #for simple 1/0 type intervention, we will have that a=1 and a=abar are the same.
@@ -804,7 +804,6 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     dens.nodes <- nodes$Z
     dens.forms <- inputs$qzform
   }else{
-    #dens.nodes <- sort(c(nodes$L,nodes$Y))
     dens.nodes <- sort(c(nodes$LY))
     dens.forms <- inputs$qLform
 
@@ -854,7 +853,7 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
 
     }
 
-    if(inputs$estimand=="SE" & is.Z.dens){
+    if(!inputs$CSE & is.Z.dens){
 
       #Probability of Z=1 under intervention regime, no matter the regime.
       cur.abar <- matrix(1, nrow(inputs$data), num.regimes)
@@ -1071,7 +1070,7 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
 
 FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.measures, g.abar.list , g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime, cum.qL.abar=NULL, cum.qL.abar.prime=NULL){
 
-  if(inputs$estimand=="NE"){
+  if(inputs$CSE){
 
     #combined.summary.measures: n x num.measures x num.regimes
     #(num.measures=num.summary.measures + num.baseline.covariates)
@@ -1139,7 +1138,6 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         #If this is the last node, only pass the first column as a vector
 
         #Covariates: in default setting, all but the current node. Y is current node + 1
-        #HEREEE
         Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         #Initial estimate of Q.k for the current node
         logitQ <- Q.est$predicted.values
@@ -1304,7 +1302,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
 
     #LATER
-  }else if(inputs$estimand=="SE"){
+  }else if(!inputs$CSE){
 
     LYnodes<-sort(c(nodes$LY))
     data <- inputs$data
