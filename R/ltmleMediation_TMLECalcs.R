@@ -343,7 +343,7 @@ EstimateG <- function(inputs,regimes.use) {
     #prob.A.is.1 is prob(a=1), gmat is prob(a=abar)
     #if abar is just the usual a=1 for all, it will equal prob.A.is.1
     #cur.abar can be NA after censoring/death if treatment is dynamic
-    if (cur.node %in% nodes$A && inputs$CSE) {
+    if (cur.node %in% nodes$A) {
 
       #Regime for current A node:
       #for simple 1/0 type intervention, we will have that a=1 and a=abar are the same.
@@ -804,7 +804,8 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     dens.nodes <- nodes$Z
     dens.forms <- inputs$qzform
   }else{
-    dens.nodes <- sort(c(nodes$LY))
+    dens.nodes <- sort(c(nodes$L,nodes$Y))
+    #dens.nodes <- sort(c(nodes$LY))
     dens.forms <- inputs$qLform
 
   }

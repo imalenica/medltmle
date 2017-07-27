@@ -61,7 +61,7 @@ result_11 <- medltmle(data=data,
                      iptw.only=FALSE,
                      IC.variance.only=TRUE,
                      observation.weights=NULL,
-                     estimand="NE",
+                     CSE=TRUE,
                      time.end=end.time
 )
 
@@ -93,7 +93,7 @@ result_10 <- medltmle(data=data,
                       iptw.only=FALSE,
                       IC.variance.only=TRUE,
                       observation.weights=NULL,
-                      estimand="NE",
+                      CSE=TRUE,
                       time.end=end.time
 )
 
@@ -125,7 +125,7 @@ result_01 <- medltmle(data=data,
                       iptw.only=FALSE,
                       IC.variance.only=TRUE,
                       observation.weights=NULL,
-                      estimand="NE",
+                      CSE=TRUE,
                       time.end=end.time
 )
 
@@ -157,7 +157,7 @@ result_00 <- medltmle(data=data,
                       iptw.only=FALSE,
                       IC.variance.only=TRUE,
                       observation.weights=NULL,
-                      estimand="NE",
+                      CSE=TRUE,
                       time.end=end.time
 )
 
