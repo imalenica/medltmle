@@ -53,11 +53,10 @@ end.time = 2
 n <- 400
 
 # simulate data
-data <- GenerateData(n = n, end.time = end.time,
-                     abar = NULL, abar.prime = NULL)
+data <- GenerateData(n = n, end.time = end.time)
 ```
 
-Next, we'll need to generate simple models for conditional densities and iterative expectations, and define counterfactual exposures:
+Next, we can generate simple models for conditional densities and iterative expectations, and define counterfactual exposures:
 
 ``` r
 # define models
@@ -71,8 +70,8 @@ abar.prime <- 0
 Having gone through the above steps, we can now obtain IPTW and TMLE estimates of the *natural mediation effect*:
 
 ``` r
-# let's fit the L-TMLE for the mediation parameter
-result.c <- suppressMessages(
+# let's fit the longitudinal TMLE for the mediation parameter
+result_10 <- suppressMessages(
               medltmle(data = data,
                        Anodes = names(data)[grep("^A", names(data))],
                        Cnodes = names(data)[grep("^C", names(data))],
@@ -87,32 +86,33 @@ result.c <- suppressMessages(
                        qLform = spec$qL.c,
                        abar = rep(abar, end.time),
                        abar.prime = rep(abar.prime, end.time),
-                       estimand = "NE",
+                       CSE=TRUE,
                        time.end = end.time
                       )
               )
-#> [1] "<0x7fd5a31911a0>"
-#> tracemem[0x7fd5a31911a0 -> 0x7fd5a3191f30]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a31926d0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3280a10]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3219f30]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  4 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a3276690]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a315ee20]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> tracemem[0x7fd5a3191f30 -> 0x7fd5a331a780]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle withCallingHandlers suppressMessages eval eval withVisible withCallingHandlers handle timing_fn evaluate_call evaluate in_dir block_exec call_block process_group.block process_group withCallingHandlers process_file <Anonymous> <Anonymous> 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  1 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  2 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  3 
-#> Fri Jul 21 11:30:07 2017 EstimateLYnodes node  4 
-#> [1] "2017-07-21 11:30:07 PDT"
+              
+#>[1] "<0x115fba1f0>"
+#>tracemem[0x115fba1f0 -> 0x115fba490]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle #>withCallingHandlers suppressMessages 
+#>tracemem[0x115fba490 -> 0x115fba5e0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x115fba490 -> 0x10186bb20]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x115fba490 -> 0x10d66e660]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  1 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  2 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  3 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  4 
+#>tracemem[0x115fba490 -> 0x1088473f0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x115fba490 -> 0x1088c7440]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x115fba490 -> 0x10f277e90]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  1 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  2 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  3 
+#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  4 
+#>[1] "2017-07-26 23:13:13 PDT"
 
-# let's examine the estimates
-result.c$estimates
-#>      tmle      iptw 
-#> 0.8903333 0.9439669
+# let's examine the estimates:
+result_10$estimates
+#>     tmle      iptw 
+#>0.8921417 0.9439669
 ```
 
 ------------------------------------------------------------------------
