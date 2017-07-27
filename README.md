@@ -8,7 +8,7 @@ R/`medltmle`
 Description
 -----------
 
-`medltmle` estimates the natural mediation effect for a longitudinal setting with time-varying mediators. This R package implements several estimators of the data dependent parameter (SE) and non-data dependent parameter (NE) for direct and indirect mediation effects over multiple time points, adjusting for measured time-varying confounding and informative right-censoring. The theoretical justifications for using either of the aforementioned parameters are outlined in the vignette.
+`medltmle` estimates the natural mediation effect for a longitudinal setting with time-varying mediators. This R package implements several estimators of the data dependent parameter and non-data dependent parameter (fully conditional on the past) for direct and indirect mediation effects over multiple time points, adjusting for measured time-varying confounding and informative right-censoring. The theoretical justifications for using either of the aforementioned parameters are outlined in the vignette.
 
 Currently available estimators include
 
@@ -70,7 +70,7 @@ abar.prime <- 0
 Having gone through the above steps, we can now obtain IPTW and TMLE estimates of the *natural mediation effect*:
 
 ``` r
-# let's fit the longitudinal TMLE for the mediation parameter
+# let's fit the longitudinal TMLE for the fully conditional on the past mediation parameter:
 result_10 <- suppressMessages(
               medltmle(data = data,
                        Anodes = names(data)[grep("^A", names(data))],
