@@ -80,7 +80,7 @@ n <- 400
 data <- GenerateData(n = n, end.time = end.time)
 ```
 
-Next, can generate simple models for conditional densities and
+Next, we can generate simple models for conditional densities and
 iterative expectations, and define counterfactual exposures:
 
 ```{r models-counterfacts}

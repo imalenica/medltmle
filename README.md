@@ -91,28 +91,28 @@ result_10 <- suppressMessages(
                       )
               )
               
-#>[1] "<0x115fba1f0>"
-#>tracemem[0x115fba1f0 -> 0x115fba490]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle #>withCallingHandlers suppressMessages 
-#>tracemem[0x115fba490 -> 0x115fba5e0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
-#>tracemem[0x115fba490 -> 0x10186bb20]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
-#>tracemem[0x115fba490 -> 0x10d66e660]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  1 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  2 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  3 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  4 
-#>tracemem[0x115fba490 -> 0x1088473f0]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
-#>tracemem[0x115fba490 -> 0x1088c7440]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
-#>tracemem[0x115fba490 -> 0x10f277e90]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  1 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  2 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  3 
-#>Wed Jul 26 23:13:13 2017 EstimateLYnodes node  4 
-#>[1] "2017-07-26 23:13:13 PDT"
+#>"<0x10f267b40>"
+#>tracemem[0x10f267b40 -> 0x10f27c490]: MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation medltmle #>withCallingHandlers suppressMessages 
+#>tracemem[0x10f27c490 -> 0x10c900350]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x10f27c490 -> 0x10c948570]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x10f27c490 -> 0x1088f6ce0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  1 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  2 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  3 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  4 
+#>tracemem[0x10f27c490 -> 0x101b3d780]: EstimateG MainCalcsMediation LtmleMediationMSMFromInputs ltmleMediation #>medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x10f27c490 -> 0x10c99f6a0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>tracemem[0x10f27c490 -> 0x1088b31b0]: EstimateMultiDens MainCalcsMediation LtmleMediationMSMFromInputs #>ltmleMediation medltmle withCallingHandlers suppressMessages 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  1 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  2 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  3 
+#>Wed Jul 26 23:35:43 2017 EstimateLYnodes node  4 
+#>[1] "2017-07-26 23:35:43 PDT"
 
 # let's examine the estimates:
 result_10$estimates
 #>     tmle      iptw 
-#>0.8921417 0.9439669
+#>0.8903333 0.9439669
 ```
 
 ------------------------------------------------------------------------
