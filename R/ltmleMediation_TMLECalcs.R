@@ -52,7 +52,7 @@ MainCalcsMediation <- function(inputs) {
   cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T)
   #Estimate p_l(l|past, A=a)
   if(inputs$CSE){
-    cum.qL.abar <- ns(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
+    cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
   }
 
 
@@ -805,7 +805,6 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     dens.forms <- inputs$qzform
   }else{
     dens.nodes <- sort(c(nodes$L,nodes$Y))
-    #dens.nodes <- sort(c(nodes$LY))
     dens.forms <- inputs$qLform
 
   }
@@ -853,20 +852,9 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
 
     }
 
-    if(!inputs$CSE & is.Z.dens){
-
-      #Probability of Z=1 under intervention regime, no matter the regime.
-      cur.abar <- matrix(1, nrow(inputs$data), num.regimes)
-      g[, i, ] <- CalcG(prob.A.is.1=AsMatrix(prob.is.1[, i, ]), cur.abar=cur.abar, deterministic.newdata=g.est$is.deterministic)
-
-    }else{
-
       #Probability of getting the observed values
       cur.vals <- AsMatrix(inputs$data[,cur.node])
       g[, i, ] <- CalcG(prob.A.is.1=AsMatrix(prob.is.1[, i, ]), cur.abar=cur.vals, deterministic.newdata=g.est$is.deterministic)
-
-    }
-
  }
 
   for (regime.index in 1:num.regimes) {
@@ -876,7 +864,7 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
     cum.g.unbounded[, , regime.index] <- cum.g.list$unbounded
   }
 
-  ret.list <- list(cum.g=cum.g, cum.g.unbounded=cum.g.unbounded,prob.is.1=prob.is.1)
+  ret.list <- list(cum.g=cum.g, cum.g.unbounded=cum.g.unbounded,prob.is.1=prob.is.1, g=g)
 
   ## if L node, qL for blocks of L node.
   #For this ex, it will return LA1,Y1,LA2,Y2.
@@ -899,6 +887,7 @@ EstimateMultiDens <- function(inputs,use.regimes,use.intervention.match,is.Z.den
 
     ret.list$cum.g.block <- cum.g[,max.Lnodes.col,,drop=FALSE]
     ret.list$cum.g.unbounded.block <- cum.g.unbounded[,max.Lnodes.col,,drop=FALSE]
+    ret.list$g.block <- g[,max.Lnodes.col,,drop=FALSE]
   }
   return(ret.list)
 }
@@ -946,6 +935,7 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
     final.Ynode <- inputs$final.Ynodes[j]
     #Returns the intervention match for the closest A node.
     #It will carry forward from the last A point if not available at the next (did the sample ever follow?)
+    #T if censored right away
     intervention.match <- InterventionMatch(inputs$intervention.match, nodes$A, cur.node=final.Ynode)
     #Check censoring for the closest C node (to Y)
     uncensored <- IsUncensored(inputs$uncensored, nodes$C, final.Ynode)
@@ -1007,7 +997,6 @@ CalcIPTWMediation <- function(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime
   #working.msm: Estimate coefficient for S1 (beta) for the simple example.
   #Scale weights- large weights might cause convergence problems
   #speedglm crashes
-  #*.vec is for samples that are uncensored and match intervention
   m.glm <- glm(formula(inputs$working.msm), family=quasibinomial(), data=data.frame(Y=Y.vec, X.mat, weight.vec), weights=as.vector(scale(weight.vec, center=FALSE)))
   beta <- coef(m.glm)
 
