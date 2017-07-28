@@ -51,28 +51,18 @@ MainCalcsMediation <- function(inputs) {
   #Estimate: for NDD: p_z(z=observed|past, A=a), DD: p_z(z=1|past,A=a)
   cum.qz.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = T)
   #Estimate p_l(l|past, A=a)
-  if(inputs$CSE){
-    cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
-  }
-
+  cum.qL.abar <- EstimateMultiDens(inputs,use.regimes='regimes',use.intervention.match = 'intervention.match',is.Z.dens = F)
 
   if(!setequal(inputs$regimes,inputs$regimes.prime)){
     g.abar.prime.list <- EstimateG(inputs, regimes.use =  'regimes.prime')
     cum.qz.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = T)
-
-    if(inputs$CSE){
-      cum.qL.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = F)
-    }
+    cum.qL.abar.prime <- EstimateMultiDens(inputs,use.regimes='regimes.prime',use.intervention.match = 'intervention.match.prime',is.Z.dens = F)
 
   }else{
     g.abar.prime.list <- g.abar.list
     cum.qz.abar.prime <- cum.qz.abar
-
-    if(inputs$CSE){
-      cum.qL.abar.prime <- cum.qL.abar
+    cum.qL.abar.prime <- cum.qL.abar
     }
-
-  }
 
   #Calculate IPTW estimate
   #TO DO: SE IPTW
