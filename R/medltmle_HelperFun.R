@@ -1064,3 +1064,12 @@ summary_medltmle<-function(nie1,nie2,nde1,nde2,type="NE"){
   return(list(NDE=res_nde,NIE=res_nie,NE=res_ne))
 
 }
+
+################################
+# set()
+################################
+
+set <- function(orig,item.name,newval){
+  orig[[item.name]] <- newval
+  orig
+}

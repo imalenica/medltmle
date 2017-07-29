@@ -9,7 +9,7 @@
 #'
 #' @export make.sim.spec
 
-make.sim.spec <- function(timepoint, YisL=FALSE){
+make.sim.spec <- function(timepoint, YisL=TRUE){
 
   if(YisL){
 

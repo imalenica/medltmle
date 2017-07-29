@@ -1178,7 +1178,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         #Get initial estimate of Q from SL or regressing Qstar.kplus1 (estimate from the previous step) on past.
         #Evaluate the fitted function at the observed mediatior and covariates and the intervened exposure.
         #Problem if one of the levele in Qstar.kplus1 is not there
-        Q.est <- Estimate(inputs, form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         logitQ <- Q.est$predicted.values
         fit.Q[[i]] <- Q.est$fit
 
@@ -1282,6 +1282,8 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
   }else if(!inputs$CSE){
 
     #Only need updates for nodes following A/C/Z
+
+    #BUT: If we marginalize over LA essentially, will need to skip this update
     LYZnodes <- sort(c(nodes$LY, nodes$Z))
     data <- inputs$data
 
@@ -1343,7 +1345,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         #Initial estimate of Q.k for the current node.
         #Obtained by estimating E(Qstar.kplus1|past) by either SL or regression.
         #If this is the last node, only pass the first column as a vector
-        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else  , family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         #Initial estimate of Q.k for the current node
         logitQ <- Q.est$predicted.values
         #Fit
@@ -1399,11 +1401,14 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
         }
 
+
+
+
         #Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
 
         #Get initial estimate of Q from SL or regressing Qstar.kplus1 (estimate from the previous step) on past.
         #Evaluate the fitted function at the observed mediatior and covariates and the intervened exposure.
-        Q.est <- Estimate(inputs, form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         logitQ <- Q.est$predicted.values
         fit.Q[[i]] <- Q.est$fit
 

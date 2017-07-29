@@ -24,7 +24,7 @@ set.seed(2)
 data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
 
 #Generate appropriate models:
-spec<-make.sim.spec(2)
+spec<-make.sim.spec(2, YisL=FALSE)
 
 #Some parameters:
 end.time=2
@@ -58,7 +58,8 @@ result_10 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=FALSE,
-                      time.end=end.time
+                      time.end=end.time,
+                      YisL=TRUE
 )
 
 result_00 <- medltmle(data=data,

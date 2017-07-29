@@ -25,7 +25,7 @@ data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
 
 #Generate appropriate models:
 #Note that since Y is not part of L, need a model for it as well in Q.
-spec<-make.sim.spec(2, YisL=FALSE)
+spec<-make.sim.spec(2)
 
 #Some parameters:
 end.time=2
@@ -60,7 +60,7 @@ result_10 <- medltmle(data=data,
                            observation.weights=NULL,
                            CSE=TRUE,
                            time.end=end.time,
-                           YisL=FALSE
+                           YisL=TRUE
                            )
 
 result_00 <- medltmle(data=data,
@@ -92,8 +92,7 @@ result_00 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time,
-                      YisL=FALSE
+                      time.end=end.time
 )
 
 result_11 <- medltmle(data=data,
@@ -125,8 +124,7 @@ result_11 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time,
-                      YisL=FALSE
+                      time.end=end.time
 )
 
 result_01 <- medltmle(data=data,
@@ -158,8 +156,7 @@ result_01 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time,
-                      YisL=FALSE
+                      time.end=end.time
 )
 
 #Natural Indirect Effect:
