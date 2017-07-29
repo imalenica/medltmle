@@ -24,7 +24,8 @@ set.seed(2)
 data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
 
 #Generate appropriate models:
-spec<-make.sim.spec(2)
+#Note that since Y is not part of L, need a model for it as well in Q.
+spec<-make.sim.spec(2, YisL=FALSE)
 
 #Some parameters:
 end.time=2
