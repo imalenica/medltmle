@@ -670,11 +670,11 @@ ConvertCensoringNodesToBinary <- function(data, Cnodes) {
 #'
 #' Set the Anodes of data to regime[, , regime.index] up to cur.node
 #'
-#' @param data TO DO
-#' @param regimes TO DO
-#' @param Anodes TO DO
-#' @param regime.index TO DO
-#' @param cur.node TO DO
+#' @param data \code{data.frame} object containing the data.
+#' @param regimes which regime should the intervention nodes follow.
+#' @param Anodes column indexes for A nodes in the data.
+#' @param regime.index index of the regime set to follow.
+#' @param cur.node current node
 #'
 #' @return Returns data with Anodes set to regime.
 #'
@@ -682,6 +682,31 @@ ConvertCensoringNodesToBinary <- function(data, Cnodes) {
 SetA <- function(data, regimes, Anodes, regime.index, cur.node) {
   Anode.index <- which(Anodes < cur.node)
   data[, Anodes[Anode.index]] <- regimes[, Anode.index, regime.index]
+  return(data)
+}
+
+################################
+# SetALA()
+################################
+
+#' SetALA
+#'
+#' Set the Anodes of data to regime[, , regime.index] up to cur.node, and the closet LA node to specified values.
+#'
+#' @param data \code{data.frame} object containing the data.
+#' @param regimes which regime should the intervention nodes follow.
+#' @param Anodes column indexes for A nodes in the data.
+#' @param regime.index index of the regime set to follow.
+#' @param cur.node current node
+#' @param regimes_add additional regime set for a node after the mediator.
+#'
+#' @return Returns data with Anodes and LAnodes set to regime.
+#'
+
+SetALA <- function(data, regimes, Anodes, regime.index, cur.node, regimes_add) {
+  Anode.index <- which(Anodes < cur.node)
+  data[, Anodes[Anode.index]] <- regimes[, Anode.index, regime.index]
+  data[,cur.node-1]<-regimes_add
   return(data)
 }
 

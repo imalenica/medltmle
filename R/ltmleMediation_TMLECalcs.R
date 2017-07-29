@@ -406,11 +406,13 @@ EstimateG <- function(inputs,regimes.use) {
 #' @param called.from.estimate.g Logical TO DO
 #' @param regimes.meanL TO DO
 #' @param regimes.with.positive.weight Regimes with positve weights. Defaults to \code{1:num.regimes}.
+#' @param CSE_Z Logical indicating whether this is a Z estimation for the data-dependent parameter.
+#' @param regimes_add If CSE_Z is TRUE, must specify at what value the node after the mediator should be estimated at.
 #'
 #' @return Returns predicted values for the fit as well as the fit as well as indicators for which samples are deterministic and their values.
 #' If specified, it also returns the probability of A=1 given mean L.
 
-Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node, calc.meanL, called.from.estimate.g, regimes.meanL, regimes.with.positive.weight) {
+Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node, calc.meanL, called.from.estimate.g, regimes.meanL, regimes.with.positive.weight, CSE_Z=FALSE, regimes_add=NULL) {
 
   #Fit and predict using GLM or SuperLearner.
   FitAndPredict <- function() {
@@ -663,7 +665,12 @@ Estimate <- function(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.
   for (regime.index in regimes.with.positive.weight) {
 
     #Returns data with Anodes set to regime. If estimating A, will not change (or if the current node is before the first intervention).
-    newdata <- SetA(data = data.with.Qstar, regimes = inputs$regimes, Anodes = nodes$A, regime.index = regime.index, cur.node = cur.node)
+
+    if(CSE_Z){
+      newdata <- SetALA(data = data.with.Qstar, regimes = inputs$regimes, Anodes = nodes$A, regime.index = regime.index, cur.node = cur.node, regimes_add=rep(regimes_add,nrow(data.with.Qstar)))
+    }else{
+      newdata <- SetA(data = data.with.Qstar, regimes = inputs$regimes, Anodes = nodes$A, regime.index = regime.index, cur.node = cur.node)
+    }
 
     if (calc.meanL) {
       if (!is.null(regimes.meanL)) {
@@ -1326,7 +1333,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
       uncensored <- IsUncensored(inputs$uncensored, nodes$C, cur.node)
 
       ##UPDAYE Q_L
-      if(cur.node %in% nodes$LY){
+      if(cur.node %in% nodes$LY && !cur.node %in% nodes$W2){
 
         #Only relevant for stratify: samples that match the rule.
         intervention.match <- InterventionMatch(inputs$intervention.match, nodes$A, cur.node)
@@ -1401,14 +1408,21 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
         }
 
+        #Works for binary LA and Z: Needs better solution.
+        #HERE
+        estZ<-inputs$data[cur.node]
+        names(estZ)<-"Q.kplus1"
+        pZ1_LA1 <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z=TRUE, regimes_add = 1)
+        pZ1_LA1 <- plogis(pZ1_LA1$predicted.values)
 
-
+        pZ1_LA0 <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z=TRUE, regimes_add = 0)
+        pZ1_LA10 <- plogis(pZ1_LA0$predicted.values)
 
         #Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
 
         #Get initial estimate of Q from SL or regressing Qstar.kplus1 (estimate from the previous step) on past.
         #Evaluate the fitted function at the observed mediatior and covariates and the intervened exposure.
-        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z=TRUE)
         logitQ <- Q.est$predicted.values
         fit.Q[[i]] <- Q.est$fit
 

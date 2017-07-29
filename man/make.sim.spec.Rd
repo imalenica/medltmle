@@ -4,7 +4,7 @@
 \alias{make.sim.spec}
 \title{make.sim.spec}
 \usage{
-make.sim.spec(timepoint, YisL = FALSE)
+make.sim.spec(timepoint, YisL = TRUE)
 }
 \arguments{
 \item{timepoint}{Specifies the final time point.}

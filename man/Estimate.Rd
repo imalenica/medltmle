@@ -6,7 +6,7 @@
 \usage{
 Estimate(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node,
   calc.meanL, called.from.estimate.g, regimes.meanL,
-  regimes.with.positive.weight)
+  regimes.with.positive.weight, CSE_Z = FALSE, regimes_add = NULL)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}.}
@@ -32,6 +32,10 @@ Estimate(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node,
 \item{regimes.meanL}{TO DO}
 
 \item{regimes.with.positive.weight}{Regimes with positve weights. Defaults to \code{1:num.regimes}.}
+
+\item{CSE_Z}{Logical indicating whether this is a Z estimation for the data-dependent parameter.}
+
+\item{regimes_add}{If CSE_Z is TRUE, must specify at what value the node after the mediator should be estimated at.}
 }
 \value{
 Returns predicted values for the fit as well as the fit as well as indicators for which samples are deterministic and their values.
