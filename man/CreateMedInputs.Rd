@@ -9,7 +9,7 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
   deterministic.g.function, SL.library, regimes, regimes.prime, working.msm,
   summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp,
   iptw.only, deterministic.Q.function, IC.variance.only, observation.weights,
-  CSE, past, time.end)
+  CSE, past, time.end, YisL)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -79,6 +79,8 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 \item{past}{Number indicating Markov order for the conditional densities.}
 
 \item{time.end}{Total number of time points.}
+
+\item{YisL}{Logical indicating whether Y is a function of time-varying covariates.}
 }
 \value{
 Returns output ready for ltmleMediation.

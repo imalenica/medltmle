@@ -1343,7 +1343,7 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         #Initial estimate of Q.k for the current node.
         #Obtained by estimating E(Qstar.kplus1|past) by either SL or regression.
         #If this is the last node, only pass the first column as a vector
-        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else Qstar.kplus1, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$LY==cur.node)], Qstar.kplus1=if (i == length(LYZnodes)) Qstar.kplus1[, 1] else  , family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
         #Initial estimate of Q.k for the current node
         logitQ <- Q.est$predicted.values
         #Fit

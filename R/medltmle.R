@@ -36,6 +36,7 @@
 #' @param Yrange Specify range for the outcome.
 #' @param CSE Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).
 #' @param time.end How many time points in the longitudinal data?
+#' @param YisL Logical indicating whether Y is a function of time-varying covariate.
 #'
 #' @return Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
@@ -48,7 +49,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                            deterministic.g.function=NULL, deterministic.Q.function=NULL,
                            stratify=FALSE, SL.library=NULL,
                            estimate.time=TRUE, gcomp=FALSE,
-                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, CSE, time.end, past) {
+                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, CSE, time.end, past, YisL=TRUE) {
 
   #Implement rule and deterministic g function option. TO DO.
   if(!is.null(rule))stop('rule option not implemented yet')
@@ -66,7 +67,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                                   estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only,
                                   deterministic.Q.function=deterministic.Q.function, deterministic.g.function=deterministic.g.function,
                                   IC.variance.only=IC.variance.only,
-                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, CSE=CSE, past=1, time.end=time.end)
+                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, CSE=CSE, past=1, time.end=time.end, YisL=YisL)
   #fixme
   print(tracemem(inputs))
   result <- ltmleMediation(inputs)

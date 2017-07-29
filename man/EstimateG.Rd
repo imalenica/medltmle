@@ -12,7 +12,7 @@ EstimateG(inputs, regimes.use)
 \item{regimes.use}{Indicate which regime to follow.}
 }
 \value{
-Returns estimate of conditional density for each A nodes, bounded and unbounded cumulative g.
+Returns estimate of conditional density for each A node, bounded and unbounded cumulative g.
 }
 \description{
 Estimation of conditional densities of A nodes (g)

@@ -4,10 +4,12 @@
 \alias{make.sim.spec}
 \title{make.sim.spec}
 \usage{
-make.sim.spec(timepoint)
+make.sim.spec(timepoint, YisL = FALSE)
 }
 \arguments{
 \item{timepoint}{Specifies the final time point.}
+
+\item{YisL}{Logical indicating whether final outcome is a function of the time-varying covariate.}
 }
 \value{
 Returns a list with models for each time point and covariate.

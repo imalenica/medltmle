@@ -11,7 +11,7 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
   deterministic.g.function = NULL, deterministic.Q.function = NULL,
   stratify = FALSE, SL.library = NULL, estimate.time = TRUE,
   gcomp = FALSE, iptw.only = FALSE, IC.variance.only = FALSE,
-  observation.weights = NULL, CSE, time.end, past)
+  observation.weights = NULL, CSE, time.end, past, YisL = TRUE)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -73,6 +73,8 @@ medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
 \item{CSE}{Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).}
 
 \item{time.end}{How many time points in the longitudinal data?}
+
+\item{YisL}{Logical indicating whether Y is a function of time-varying covariate.}
 }
 \value{
 Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}

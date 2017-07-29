@@ -5,7 +5,7 @@
 \title{GetDefaultFormMediation}
 \usage{
 GetDefaultFormMediation(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform,
-  past, time.end, stratify, survivalOutcome, showMessage)
+  past, time.end, stratify, survivalOutcome, YisL = YisL, showMessage)
 }
 \arguments{
 \item{data}{Available data in a \code{Data.Frame} format.}
@@ -27,6 +27,8 @@ GetDefaultFormMediation(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform,
 \item{stratify}{Logical indicating whether to straify.}
 
 \item{survivalOutcome}{Logical indicating if the outcome a survival outcome.}
+
+\item{YisL}{Logical indicating whether Y is a function of time-varying covariates.}
 
 \item{showMessage}{Logical indicating whether to show comments while executing.}
 }

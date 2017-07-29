@@ -36,14 +36,14 @@
 #' @param CSE Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).
 #' @param past Number indicating Markov order for the conditional densities.
 #' @param time.end Total number of time points.
-#'
+#' @param YisL Logical indicating whether Y is a function of time-varying covariates.
 #'
 #' @return Returns output ready for ltmleMediation.
 #'
 #' @export CreateMedInputs
 #'
 
-CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights, CSE, past, time.end) {
+CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange, deterministic.g.function, SL.library, regimes, regimes.prime, working.msm, summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only, observation.weights, CSE, past, time.end, YisL) {
 
   if (is.list(regimes)) {
 
@@ -159,11 +159,11 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
   #Each formula will consist of all parent nodes except censoring (both C and D, if available) and event nodes.
   #W2 should be under QLform.
 
-  if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
-  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE)
+  if (is.null(qLform)) qLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=TRUE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE, YisL=YisL)
+  if (is.null(qzform)) qzform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=TRUE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE, YisL=YisL)
+  if (is.null(gform)) gform <- GetDefaultFormMediation(data, all.nodes, is.Qform=FALSE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE, YisL=YisL)
+  if (is.null(QZform)) QZform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = FALSE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE, YisL=YisL)
+  if (is.null(QLform)) QLform <- GetDefaultFormMediation(data, all.nodes, is.Qform=TRUE, is.QLform = TRUE,is.qzform=FALSE, is.qLform=FALSE, past=past, time.end=time.end, stratify, survivalOutcome, showMessage=TRUE, YisL=YisL)
 
   # Convert to main terms MSM.
   # Ex: If working.msm is "Y ~ X1*X2", convert to "Y ~ -1 + S1 + S2 + S3 + S4" where
@@ -196,7 +196,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
   }
 
   #inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=check.results$uncensored, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime)
-  inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=uncensored.array, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime, CSE=CSE, past=past,time.end=time.end)
+  inputs <- list(data=data, all.nodes=all.nodes, survivalOutcome=survivalOutcome, QLform=QLform, QZform=QZform, gform=gform, qzform=qzform, qLform=qLform, gbounds=gbounds, Yrange=Yrange, deterministic.g.function=deterministic.g.function, SL.library.Q=SL.library.Q, SL.library.g=SL.library.g, regimes=regimes, regimes.prime=regimes.prime,working.msm=main.terms$msm, combined.summary.measures=main.terms$summary.measures, final.Ynodes=final.Ynodes, stratify=stratify, msm.weights=msm.weights, estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only, deterministic.Q.function=deterministic.Q.function, binaryOutcome=binaryOutcome, transformOutcome=transformOutcome, IC.variance.only=IC.variance.only, observation.weights=observation.weights, baseline.column.names=main.terms$baseline.column.names, beta.names=main.terms$beta.names, uncensored=uncensored.array, intervention.match=intervention.match, intervention.match.prime=intervention.match.prime, CSE=CSE, past=past,time.end=time.end, YisL=YisL)
   class(inputs) <- "medltmleInputs"
   return(inputs)
 
@@ -222,12 +222,13 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
 #' @param time.end Total number of time points.
 #' @param stratify Logical indicating whether to straify.
 #' @param survivalOutcome Logical indicating if the outcome a survival outcome.
+#' @param YisL Logical indicating whether Y is a function of time-varying covariates.
 #' @param showMessage Logical indicating whether to show comments while executing.
 #'
 #' @return Returns default Q or g formula if not specified.
 #'
 
-GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform, past, time.end, stratify, survivalOutcome, showMessage) {
+GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform, past, time.end, stratify, survivalOutcome, YisL=YisL, showMessage) {
 
   if (is.Qform) {
     if(is.QLform){
@@ -319,6 +320,57 @@ GetDefaultFormMediation <- function(data, nodes, is.Qform, is.QLform, is.qzform,
       }
 
     names(form)[i] <- names(data)[cur.node]
+  }
+
+  if(is.QLform && !YisL){
+
+    lhs <- rep("Q.kplus1", 1)
+    cur.node <- tail(nodes$Y,n=1)
+
+    i=length(form)+1
+
+    if (cur.node == 1) {
+      #no parent nodes
+      form[i] <- paste(lhs, "~ 1")
+    } else if(past!=time.end){
+
+      if((base+group) >= cur.node){
+
+        parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+
+      }else{
+
+        parent.node.names <- names(data)[setdiff((cur.node - 1):(cur.node-group), stratify.nodes)]
+
+        #Check for A:
+        if(length(grep("^A", parent.node.names))==0){
+
+          #Pick the closest A
+          Anode.index <- which(nodes$A < cur.node)
+          parent.node.names<-c(names(data[nodes$A[Anode.index]]), parent.node.names)
+
+        }
+      }
+
+      if (length(parent.node.names) == 0) {
+        form[i] <- paste(lhs, "~ 1")
+      } else {
+        form[i] <- paste(lhs, "~", paste(parent.node.names, collapse=" + "))
+      }
+
+      #Include all covariates.
+    }else if(past == time.end){
+      parent.node.names <- names(data)[setdiff(1:(cur.node - 1), stratify.nodes)]
+
+      if (length(parent.node.names) == 0) {
+        form[i] <- paste(lhs, "~ 1")
+      } else {
+        form[i] <- paste(lhs, "~", paste(parent.node.names, collapse=" + "))
+      }
+    }
+
+    names(form)[i] <- names(data)[cur.node]
+
   }
 
   if (showMessage) {

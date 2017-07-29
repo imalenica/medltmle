@@ -59,7 +59,8 @@ result_10 <- medltmle(data=data,
                            IC.variance.only=FALSE,
                            observation.weights=NULL,
                            CSE=TRUE,
-                           time.end=end.time
+                           time.end=end.time,
+                           YisL=FALSE
                            )
 
 result_00 <- medltmle(data=data,
@@ -91,7 +92,8 @@ result_00 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time
+                      time.end=end.time,
+                      YisL=FALSE
 )
 
 result_11 <- medltmle(data=data,
@@ -123,7 +125,8 @@ result_11 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time
+                      time.end=end.time,
+                      YisL=FALSE
 )
 
 result_01 <- medltmle(data=data,
@@ -155,7 +158,8 @@ result_01 <- medltmle(data=data,
                       IC.variance.only=FALSE,
                       observation.weights=NULL,
                       CSE=TRUE,
-                      time.end=end.time
+                      time.end=end.time,
+                      YisL=FALSE
 )
 
 #Natural Indirect Effect:
