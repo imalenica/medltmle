@@ -171,22 +171,22 @@ NDE<-result_10$estimates[1]-result_00$estimates[1]
 NE<-NIE+NDE
 
 #Test TMLE NIE
-test_that("TMLE estimate of NIE for the simulation 2 matches expected", expect_equal(NIE[[1]], 0.00291363, tolerance = 0.01))
+test_that("TMLE estimate of NIE for the simulation 2 matches expected", expect_equal(NIE[[1]],  0.00291363, tolerance = 0.01))
 
 #Test TMLE NDE
 test_that("TMLE estimate of NDE for the simulation 2 matches expected", expect_equal(NDE[[1]], -0.0301333, tolerance = 0.01))
 
 #Check summary_medltmle function:
-res<-summary_medltmle(nie1=result_11,nie2=result_10,nde1=result_10,nde2=result_00,type="NE")
+res<-summary_medltmle(nie1=result_11,nie2=result_10,nde1=result_10,nde2=result_00)
 
 res_NDE<-res$NDE
 res_NIE<-res$NIE
 res_NE<-res$NE
 
-#Test TMLE NIE variance
-test_that("TMLE variance of NIE for the simulation 1 matches expected", expect_equal(res_NIE[1,2], 0.0001386654, tolerance = 0.01))
+#Test TMLE NIE SE
+test_that("TMLE SE of NIE for the simulation 1 matches expected", expect_equal(res_NIE[1,2], 0.01146235, tolerance = 0.01))
 
-#Test TMLE NDE variance
-test_that("TMLE variance of NDE for the simulation 1 matches expected", expect_equal(res_NDE[1,2], 0.003277371, tolerance = 0.01))
+#Test TMLE NDE SE
+test_that("TMLE SE of NDE for the simulation 1 matches expected", expect_equal(res_NDE[1,2], 0.0557253, tolerance = 0.01))
 
 
