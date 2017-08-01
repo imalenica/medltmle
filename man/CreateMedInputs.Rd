@@ -81,6 +81,8 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 \item{time.end}{Total number of time points.}
 
 \item{YisL}{Logical indicating whether Y is a function of time-varying covariates.}
+
+\item{Inodes}{names of columns containing I covariates (instrument) (character).}
 }
 \value{
 Returns output ready for ltmleMediation.

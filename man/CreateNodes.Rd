@@ -4,8 +4,8 @@
 \alias{CreateNodes}
 \title{CreateNodes}
 \usage{
-CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes = NULL,
-  Dnodes = NULL, W2nodes = NULL)
+CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes = NULL,
+  Znodes = NULL, Dnodes = NULL, W2nodes = NULL)
 }
 \arguments{
 \item{data}{Available data in a wide format.}
@@ -17,6 +17,8 @@ CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes = NULL,
 \item{Lnodes}{Character variable with covariate nodes.}
 
 \item{Ynodes}{Character variable with outcome nodes.}
+
+\item{Inodes}{Character variable with instrumental nodes.}
 
 \item{Znodes}{Character variable with mediator nodes.}
 
