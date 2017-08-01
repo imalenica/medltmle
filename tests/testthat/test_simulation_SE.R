@@ -24,7 +24,7 @@ set.seed(2)
 data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
 
 #Generate appropriate models:
-spec<-make.sim.spec(2, YisL=FALSE)
+spec<-make.sim.spec(2)
 
 #Some parameters:
 end.time=2
@@ -35,6 +35,7 @@ result_10 <- medltmle(data=data,
                       Znodes=names(data)[grep('^Z',names(data))],
                       Lnodes=names(data)[grep('^L',names(data))],
                       Ynodes=names(data)[grep('^Y',names(data))],
+                      Inodes=NULL,
                       Dnodes=NULL,
                       W2nodes=NULL,
                       survivalOutcome = T,
@@ -59,7 +60,9 @@ result_10 <- medltmle(data=data,
                       observation.weights=NULL,
                       CSE=FALSE,
                       time.end=end.time,
-                      YisL=TRUE
+                      YisL=TRUE,
+                      past=1
+
 )
 
 result_00 <- medltmle(data=data,

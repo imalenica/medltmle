@@ -11,6 +11,7 @@
 #' @param Znodes names of columns containing Z covariates (mediator) (character).
 #' @param Cnodes names of columns containing C covariates (censoring) (character).
 #' @param Lnodes names of columns containing L covariates (covariate) (character).
+#' @param Inodes names of columns containing I covariates (instrument) (character).
 #' @param Ynodes names of columns containing Y covariates (outcome) (character).
 #' @param W2nodes names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).
 #' @param Dnodes names of columns containing D covariates (death indicator) (character).
@@ -37,19 +38,20 @@
 #' @param CSE Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).
 #' @param time.end How many time points in the longitudinal data?
 #' @param YisL Logical indicating whether Y is a function of time-varying covariate.
+#' @param past Number indicating Markov order for the conditional densities.
 #'
 #' @return Returns estimate of \eqn{E[Y_{\tau}(a, \overline{\Gamma}^{a^'})]}
 #'
 #' @export medltmle
 
-medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2nodes=NULL,Dnodes=NULL,
+medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, Inodes=NULL, W2nodes=NULL,Dnodes=NULL,
                            survivalOutcome=NULL,
                            QLform=NULL, QZform=NULL,gform=NULL, qzform=NULL, qLform=NULL,
                            abar, abar.prime,  rule=NULL, gbounds=c(0.01, 1), Yrange=NULL,
                            deterministic.g.function=NULL, deterministic.Q.function=NULL,
                            stratify=FALSE, SL.library=NULL,
                            estimate.time=TRUE, gcomp=FALSE,
-                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, CSE, time.end, past, YisL=TRUE) {
+                           iptw.only=FALSE, IC.variance.only=FALSE, observation.weights=NULL, CSE, time.end, past=1, YisL=TRUE) {
 
   #Implement rule and deterministic g function option. TO DO.
   if(!is.null(rule))stop('rule option not implemented yet')
@@ -67,7 +69,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, W2n
                                   estimate.time=estimate.time, gcomp=gcomp, iptw.only=iptw.only,
                                   deterministic.Q.function=deterministic.Q.function, deterministic.g.function=deterministic.g.function,
                                   IC.variance.only=IC.variance.only,
-                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, CSE=CSE, past=1, time.end=time.end, YisL=YisL)
+                                  observation.weights=observation.weights, survivalOutcome=survivalOutcome, CSE=CSE, past=past, time.end=time.end, YisL=YisL)
   #fixme
   print(tracemem(inputs))
   result <- ltmleMediation(inputs)

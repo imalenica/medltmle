@@ -228,22 +228,24 @@ CreateLYNodes <- function(data, nodes, check.Qform, Qform) {
 #' @param Lnodes Character variable with covariate nodes.
 #' @param Ynodes Character variable with outcome nodes.
 #' @param Znodes Character variable with mediator nodes.
+#' @param Inodes Character variable with instrumental nodes.
 #' @param Dnodes Character variable with death as censoring nodes.
 #' @param W2nodes Character variable with baseline nodes after treatment that need to be fluctuated during the TMLE procedure.
 #'
 #' @return Returns all nodes in a format necessary for further functions.
 #'
 
-CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes,Znodes=NULL,Dnodes=NULL,W2nodes=NULL) {
+CreateNodes <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes=NULL,Znodes=NULL,Dnodes=NULL,W2nodes=NULL) {
 
   Anodes <- NodeToIndex(data, Anodes)
   Cnodes <- NodeToIndex(data, Cnodes)
   Lnodes <- NodeToIndex(data, Lnodes)
   Ynodes <- NodeToIndex(data, Ynodes)
+  Inodes <- NodeToIndex(data, Inodes)
   Dnodes <- NodeToIndex(data, Dnodes)
   W2nodes <- NodeToIndex(data, W2nodes)
 
-  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, D=Dnodes, W2=W2nodes, AC=sort(c(Anodes, Cnodes)), ACD=sort(c(Anodes, Cnodes, Dnodes)), LW2=sort(c(Lnodes, W2nodes)))
+  nodes <- list(A=Anodes, C=Cnodes, L=Lnodes, Y=Ynodes, I=Inodes, D=Dnodes, W2=W2nodes, AC=sort(c(Anodes, Cnodes)), ACD=sort(c(Anodes, Cnodes, Dnodes)), LW2=sort(c(Lnodes, W2nodes)))
 
   if(!is.null(Znodes)){
     Znodes <- NodeToIndex(data, Znodes)

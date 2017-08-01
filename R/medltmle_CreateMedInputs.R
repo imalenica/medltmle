@@ -8,6 +8,7 @@
 #' @param Cnodes names of columns containing C covariates (censoring) (character).
 #' @param Lnodes names of columns containing L covariates (covariate) (character).
 #' @param Ynodes names of columns containing Y covariates (outcome) (character).
+#' @param Inodes names of columns containing I covariates (instrument) (character).
 #' @param W2nodes names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).
 #' @param Dnodes names of columns containing D covariates (death indicator) (character).
 #' @param survivalOutcome logical variable specifying if the outcome is survival.
@@ -106,7 +107,7 @@ CreateMedInputs <- function(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes
   }
 
   #Sort nodes
-  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes)
+  all.nodes <- CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes, Znodes, Dnodes, W2nodes)
   #remove blocks
   QLform <- CreateLYNodes(data, all.nodes, check.Qform=TRUE, Qform=QLform)$Qform
   #Convert censoring nodes into factors
