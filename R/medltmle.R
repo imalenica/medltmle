@@ -15,26 +15,26 @@
 #' @param Ynodes names of columns containing Y covariates (outcome) (character).
 #' @param W2nodes names of columns containing W2 covariates (baseline covariates in need of fluctuation) (character).
 #' @param Dnodes names of columns containing D covariates (death indicator) (character).
-#' @param survivalOutcome logical variable specifying if the outcome is survival.
-#' @param QLform Q forms for L covariates.
-#' @param QZform Q forms for Z covariates.
-#' @param gform g form for intervention (if there is a censoring variable, include C as well).
+#' @param survivalOutcome If TRUE, then Y nodes are indicators of an event, and if Y at some time point is 1, then all following should be 1. Required to be TRUE or FALSE if outcomes are binary and there are multiple Ynodes.
+#' @param QLform character vector of regression formulas for Q corresponding to L covariates.
+#' @param QZform character vector of regression formulas for Q corresponding to Z covariates.
+#' @param gform character vector of regression formulas for g or a matrix/array of prob(A=1).
 #' @param qzform g form for Z covariates.
 #' @param qLform g form for L covariates.
-#' @param abar Intervention. Dimension should correspond to the number of intervention nodes available.
-#' @param abar.prime Control for the exposure. Dimension should correspond to the number of intervention nodes available.
-#' @param gbounds Bounds for the propensity score.
-#' @param deterministic.g.function Logical specifying if g is a deterministic function.
-#' @param stratify Logical enabling stratified outcome.
-#' @param SL.library SuperLearner library for estimation.
-#' @param estimate.time Measure time to fun function.
-#' @param deterministic.Q.function Logical specifying if Q is a deterministic function.
-#' @param gcomp Logical indicating whether to use Gcomp instead (no updating if TRUE).
-#' @param iptw.only Use IPTW estimator only
+#' @param abar binary vector (numAnodes x 1) or matrix (n x numAnodes) of counterfactual treatment or a list of length 2.
+#' @param abar.prime binary vector (numAnodes x 1) or matrix (n x numAnodes) of counterfactual treatment or a list of length 2.
+#' @param gbounds lower and upper bounds on estimated cumulative probabilities for g-factors. Vector of length 2, order unimportant.
+#' @param deterministic.g.function optional information on A and C nodes that are given deterministically. Default NULL indicates no deterministic links.
+#' @param stratify if TRUE stratify on following abar when estimating Q and g. If FALSE, pool over abar.
+#' @param SL.library optional character vector of libraries to pass to SuperLearner. NULL indicates glm should be called instead of SuperLearner. 'default' indicates a standard set of libraries. May be separately specified for Q and g.
+#' @param estimate.time if TRUE, run an initial estimate using only 50 observations and use this to print a very rough estimate of the total time to completion. No action if there are fewer than 50 observations.
+#' @param deterministic.Q.function optional information on Q given deterministically. See 'Details'. Default NULL indicates no deterministic links.
+#' @param gcomp if TRUE, run the maximum likelihood based G-computation estimate instead of TMLE.
+#' @param iptw.only by default (iptw.only = FALSE), both TMLE and IPTW are run in ltmle and ltmleMSM. If iptw.only = TRUE, only IPTW is run, which is faster.
 #' @param IC.variance.only Only estimate variance through the influence curve
-#' @param observation.weights Provide weight for observations
-#' @param rule Specify rule for the intervention.
-#' @param Yrange Specify range for the outcome.
+#' @param observation.weights observation (sampling) weights. Vector of length n. If NULL, assumed to be all 1.
+#' @param rule a function to be applied to each row (a named vector) of data that returns a numeric vector of length numAnodes.
+#' @param Yrange NULL or a numerical vector where the min and max of Yrange specify the range of all Y nodes.
 #' @param CSE Logical specifying if the estimand is estimated by fully conditioning on the past (TRUE), or with the data-dependent estimate (FALSE).
 #' @param time.end How many time points in the longitudinal data?
 #' @param YisL Logical indicating whether Y is a function of time-varying covariate.

@@ -65,7 +65,7 @@ SL.glmnet.caret1 <- function(...,method="glmnet",tuneLength=m, trControl=trainCo
 
 
 #Simple SuperLearner libraries:
-lib <- list(Q=c("SL.glm", "SL.mean","SL.step", "SL.nnet"),g=c("SL.glm","SL.mean","SL.step","SL.glmnet.caret1"))
+lib <- list(Q=c("SL.glm", "SL.mean","SL.step", "SL.nnet"),g=c("SL.glm","SL.mean","SL.step","SL.glmnet"))
 
 result_10 <- medltmle(data=data,
                       Anodes=names(data)[grep('^A',names(data))],
