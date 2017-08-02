@@ -713,6 +713,31 @@ SetALA <- function(data, regimes, Anodes, regime.index, cur.node, regimes_add) {
 }
 
 ################################
+# SetZ()
+################################
+
+#' SetZ
+#'
+#' Set the Anodes of data to regime[, , regime.index] up to cur.node, and the current Z node to specified values.
+#'
+#' @param data \code{data.frame} object containing the data.
+#' @param regimes which regime should the intervention nodes follow.
+#' @param Anodes column indexes for A nodes in the data.
+#' @param regime.index index of the regime set to follow.
+#' @param cur.node current node
+#' @param regimes_add additional regime set for a node after the mediator.
+#'
+#' @return Returns data with Anodes and Znodes set to regime.
+#'
+
+SetZ <- function(data, regimes, Anodes, regime.index, cur.node, regimes_add) {
+  Anode.index <- which(Anodes < cur.node)
+  data[, Anodes[Anode.index]] <- regimes[, Anode.index, regime.index]
+  data[,cur.node]<-regimes_add
+  return(data)
+}
+
+################################
 # SuppressGivenWarnings
 ################################
 
