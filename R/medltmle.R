@@ -60,7 +60,7 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, Ino
   #Note that MSM is not implemented, yet. TO DO.
   msm.inputs <- CreateMedMSMInputs(data, abar=abar, abar.prime = abar.prime, rule = rule, gform=gform)
 
-  inputs <- CreateMedInputs(data=data, Anodes=Anodes, Cnodes=Cnodes, Lnodes=Lnodes, Ynodes=Ynodes, Znodes=Znodes, Dnodes=Dnodes,W2nodes=W2nodes,
+  inputs <- CreateMedInputs(data=data, Anodes=Anodes, Cnodes=Cnodes, Lnodes=Lnodes, Ynodes=Ynodes, Inodes=Inodes, Znodes=Znodes, Dnodes=Dnodes,W2nodes=W2nodes,
                                   QLform=QLform, QZform=QZform, gform=msm.inputs$gform, qLform=qLform, qzform=qzform,
                                   Yrange=Yrange, gbounds=gbounds, SL.library=SL.library, stratify=stratify,
                                   regimes=msm.inputs$regimes, regimes.prime=msm.inputs$regimes.prime,
