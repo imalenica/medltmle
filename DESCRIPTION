@@ -16,7 +16,8 @@ Import:
     matrixStats,
     parallel,
     pracma,
-    reshape
+    reshape, 
+    Matrix
 License: MIT + file LICENSE
 URL: https://github.com/podTockom/medltmle
 BugReports: https://github.com/podTockom/medltmle/issues
