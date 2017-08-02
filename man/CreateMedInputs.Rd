@@ -4,12 +4,12 @@
 \alias{CreateMedInputs}
 \title{CreateMedInputs}
 \usage{
-CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
-  survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds, Yrange,
-  deterministic.g.function, SL.library, regimes, regimes.prime, working.msm,
-  summary.measures, final.Ynodes, stratify, msm.weights, estimate.time, gcomp,
-  iptw.only, deterministic.Q.function, IC.variance.only, observation.weights,
-  CSE, past, time.end, YisL)
+CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes, Znodes, Dnodes,
+  W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds,
+  Yrange, deterministic.g.function, SL.library, regimes, regimes.prime,
+  working.msm, summary.measures, final.Ynodes, stratify, msm.weights,
+  estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only,
+  observation.weights, CSE, past, time.end, YisL)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}
@@ -21,6 +21,8 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 \item{Lnodes}{names of columns containing L covariates (covariate) (character).}
 
 \item{Ynodes}{names of columns containing Y covariates (outcome) (character).}
+
+\item{Inodes}{names of columns containing I covariates (instrument) (character).}
 
 \item{Znodes}{names of columns containing Z covariates (mediator) (character).}
 
@@ -81,8 +83,6 @@ CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Znodes, Dnodes, W2nodes,
 \item{time.end}{Total number of time points.}
 
 \item{YisL}{Logical indicating whether Y is a function of time-varying covariates.}
-
-\item{Inodes}{names of columns containing I covariates (instrument) (character).}
 }
 \value{
 Returns output ready for ltmleMediation.
