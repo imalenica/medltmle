@@ -1459,13 +1459,39 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         fit.Q[[i]] <- Q.est$fit
 
         #Define Stochastic Intervention:
-        Qstar <- QZ_0*PZ0 + QZ_1*PZ1
+        logitQ <- logit(QZ_0*PZ0 + QZ_1*PZ1)
 
-        #Update Qstar so that deterministic samples are included
+        #Closest AC node to the current node
+        ACnode.index  <- which.max(nodes$AC[nodes$AC < cur.node])
+
+        #Update Q.k to get Qstar.k
+
+        update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=1, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
+        Qstar <- update.list$Qstar
+        #Update Qstar for samples that are deterministic.
         Qstar[Q.est$is.deterministic] <- Q.est$deterministic.Q[Q.est$is.deterministic]
 
+        #Calculate the influence curve and relative error
+        curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
+        curIC.relative.error <- abs(colSums(curIC, na.rm=TRUE)) / mean.summary.measures
+
+        #If any IC relative error is large (sum of the IC is not ~0) and we don't want gcomp estimate, fix score equation.
+        if (any(curIC.relative.error > 0.001) && !inputs$gcomp) {
+
+          cat("fixing: ", curIC.relative.error, "\n")
+          SetSeedIfRegressionTesting()
+          #Sometimes GLM does not converge and the updating step of the TMLE does not solve the score equation.
+          fix.score.list <- FixScoreEquation(Qstar.kplus1, update.list$h.g.ratio, uncensored, intervention.match, Q.est$is.deterministic, Q.est$deterministic.Q, update.list$off, update.list$X, regimes.with.positive.weight)
+          Qstar <- fix.score.list$Qstar
+          #Recalculate the IC with a new Qstar
+          curIC <- CalcIC(Qstar.kplus1, Qstar, update.list$h.g.ratio, uncensored, intervention.match, regimes.with.positive.weight)
+          update.list$fit <- fix.score.list$fit
+
+        }
+
         Qstar.kplus1 <- Qstar
-        fit.Qstar[[i]] <- NULL
+        fit.Qstar[[i]] <- update.list$fit
+
       }#done with updating Q_Z.
 
       if(cur.node %in% nodes$W2){
