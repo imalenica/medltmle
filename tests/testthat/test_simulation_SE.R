@@ -10,7 +10,7 @@ library(Matrix)
 library(pracma)
 library(reshape)
 
-context("Overall Test for medltmle: Stochastic Effect")
+context("Overall Test for medltmle: Stochastic data-dependent parameter")
 
 #Load all scripts
 setwd(here("R"))
@@ -71,8 +71,6 @@ result_00 <- medltmle(data=data,
                       Znodes=names(data)[grep('^Z',names(data))],
                       Lnodes=names(data)[grep('^L',names(data))],
                       Ynodes=names(data)[grep('^Y',names(data))],
-                      Dnodes=NULL,
-                      W2nodes=NULL,
                       survivalOutcome = T,
                       QLform=spec$QL.c,
                       QZform=spec$QZ.c,
@@ -171,8 +169,22 @@ SDE<-result_10$estimates[1]-result_00$estimates[1]
 SE<-SIE+SDE
 
 #Test TMLE NIE
-#test_that("TMLE estimate of SIE for the simulation 1 matches expected", expect_equal(SIE[[1]], -0.02720144, tolerance = 0.01))
+test_that("TMLE estimate of SIE for the simulation 1 matches expected", expect_equal(SIE[[1]], -0.01546847, tolerance = 0.01))
 
 #Test TMLE NDE
-#test_that("TMLE estimate of SDE for the simulation 1 matches expected", expect_equal(SDE[[1]], 0.04102935, tolerance = 0.01))
+test_that("TMLE estimate of SDE for the simulation 1 matches expected", expect_equal(SDE[[1]], 0.04390731, tolerance = 0.01))
+
+#Check summary_medltmle function:
+res<-summary_medltmle(nie1=result_11,nie2=result_10,nde1=result_10,nde2=result_00)
+
+res_SDE<-res$NDE
+res_SIE<-res$NIE
+res_SE<-res$NE
+
+#Test TMLE NIE SE
+test_that("TMLE SE of SIE for the simulation 1 matches expected", expect_equal(res_SIE[1,2], 0.003009565, tolerance = 0.01))
+
+#Test TMLE NDE SE
+test_that("TMLE SE of SDE for the simulation 1 matches expected", expect_equal(res_SDE[1,2], 0.01202186, tolerance = 0.01))
+
 
