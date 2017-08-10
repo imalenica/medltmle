@@ -1,21 +1,21 @@
 ##############################
 # Test main medltmle functions
 ##############################
-library(here)
-library(SuperLearner)
-library(matrixStats)
-library(parallel)
-library(speedglm)
-library(Matrix)
-library(pracma)
-library(reshape)
+#library(here)
+#library(SuperLearner)
+#library(matrixStats)
+#library(parallel)
+#library(speedglm)
+#library(Matrix)
+#library(pracma)
+#library(reshape)
 
 context("Overall Test for medltmle")
 
 #Load all scripts
-setwd(here("R"))
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+#setwd(here("R"))
+#file.sources = list.files(pattern="*.R")
+#sapply(file.sources,source,.GlobalEnv)
 
 #Set seed:
 set.seed(2)

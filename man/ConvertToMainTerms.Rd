@@ -13,7 +13,7 @@ ConvertToMainTerms(data, msm, summary.measures, nodes)
 
 \item{summary.measures}{TO DO}
 
-\item{nodes}{}
+\item{nodes}{TO DO}
 }
 \value{
 Returns main terms Marginal Structural Model, summary measures, beta names and baseline column names.

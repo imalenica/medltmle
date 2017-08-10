@@ -1,23 +1,23 @@
 #########################################################
 # Test main medltmle functions on a different simulation
 #########################################################
-library(here)
-library(SuperLearner)
-library(matrixStats)
-library(parallel)
-library(speedglm)
-library(Matrix)
-library(pracma)
-library(stremr)
+#library(here)
+#library(SuperLearner)
+#library(matrixStats)
+#library(parallel)
+#library(speedglm)
+#library(Matrix)
+#library(pracma)
+#library(stremr)
 
 context("Overall Test for medltmle for simulation with a single exposure")
 #More specifically, we want to test the code when there is a single exposure and outcome, and baseline is time-dependent.
 #W2 will need to be fluctuated as well.
 
 #Load all scripts
-setwd(here("R"))
-file.sources = list.files(pattern="*.R")
-sapply(file.sources,source,.GlobalEnv)
+#setwd(here("R"))
+#file.sources = list.files(pattern="*.R")
+#sapply(file.sources,source,.GlobalEnv)
 
 #Set seed:
 set.seed(2)

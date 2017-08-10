@@ -6,21 +6,26 @@ Authors@R: c(person("Ivana", "Malenica", email = "imalenica@berkeley.edu",
              person("Wenjing", "Zheng", email = "wzheng@stat.berkeley.edu",
                     role = "aut")
             )
+Maintainer: Ivana Malenica <imalenica@berkeley.edu>
 Description: Estimates natural direct and indirect mediation effects for a
     longitudinal settings with time-varying mediators.
 Depends:
     R (>= 3.1.0)
-Import:
+Imports:
     SuperLearner,
     speedglm,
     matrixStats,
     parallel,
     pracma,
     reshape, 
-    Matrix
+Suggests:
+    testthat,
+    caret,
+    knitr
 License: MIT + file LICENSE
 URL: https://github.com/podTockom/medltmle
 BugReports: https://github.com/podTockom/medltmle/issues
 Encoding: UTF-8
+VignetteBuilder: knitr
 LazyData: true
 RoxygenNote: 6.0.1.9000

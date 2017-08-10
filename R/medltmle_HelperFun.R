@@ -429,7 +429,7 @@ TransformOutcomes <- function(data, nodes, Yrange) {
 #' @param data TO DO
 #' @param msm TO DO
 #' @param summary.measures TO DO
-#' @param nodes
+#' @param nodes TO DO
 #'
 #' @return Returns main terms Marginal Structural Model, summary measures, beta names and baseline column names.
 #'
@@ -500,7 +500,7 @@ CalcInterventionMatchArray <- function(data, regimes, Anodes) {
 #'
 #' @param data TO DO
 #' @param Cnodes TO DO
-#' @param as.deterministic.functions TO DO
+#' @param has.deterministic.functions TO DO
 #'
 #' @return Returns data with converted censoring nodes.
 #'
@@ -1122,5 +1122,14 @@ summary_medltmle<-function(nie1,nie2,nde1,nde2){
 
 set <- function(orig,item.name,newval){
   orig[[item.name]] <- newval
+  orig
+}
+
+################################
+# set2()
+################################
+
+set2 <- function(orig,item.name,newval){
+  orig[[item.name]][,,1] <- newval
   orig
 }

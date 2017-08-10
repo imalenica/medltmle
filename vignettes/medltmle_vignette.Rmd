@@ -121,7 +121,7 @@ result_11 <- suppressMessages(medltmle(data=data,
 
 \par 
 
-Note that Natural Direct Effect} is defined as: $$E[Y_{2}(1,\overline{\Gamma^0})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ whereas the Natural Indirect Effect is defined as: $$E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(1,\overline{\Gamma^0})]$$ finally, overall effect is just: $$E[Y_{2}(1)] - E[Y_{2}(0)] = E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ We can summarize the results using `summary_medltmle` function:
+Note that Natural Direct Effect} is defined as: $$E[Y_{2}(1,\overline{\Gamma^0})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ whereas the Natural Indirect Effect is defined as: $$E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(1,\overline{\Gamma^0})]$$ finally, overall effect is just: $$E[Y_{2}(1)] - E[Y_{2}(0)] = E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ We can summarize the results using `summary_medltmle` function. 
 
 
 ```{r}

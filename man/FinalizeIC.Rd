@@ -18,7 +18,7 @@ FinalizeIC(IC, combined.summary.measures, Qstar, m.beta, msm.weights,
 
 \item{msm.weights}{TO DO}
 
-\item{observation.weights}{}
+\item{observation.weights}{TO DO}
 }
 \value{
 Returns final Influence Curve.

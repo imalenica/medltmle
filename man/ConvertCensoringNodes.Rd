@@ -11,7 +11,7 @@ ConvertCensoringNodes(data, Cnodes, has.deterministic.functions = FALSE)
 
 \item{Cnodes}{TO DO}
 
-\item{as.deterministic.functions}{TO DO}
+\item{has.deterministic.functions}{TO DO}
 }
 \value{
 Returns data with converted censoring nodes.

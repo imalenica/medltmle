@@ -11,6 +11,12 @@
 #' @return Returns the influence curve for TMLE and IPTW estimators, marginal structural model fit, cumulative conditional density estimates for Qs and g,
 #' separate fits for each node, variance estimate if specified, IPTW estimate and final Qstar.
 #'
+#' @import matrixStats
+#' @import pracma
+#' @import reshape
+#' @import speedglm
+#' @import SuperLearner
+#'
 #' @export MainCalcsMediation
 
 MainCalcsMediation <- function(inputs) {
@@ -1283,11 +1289,6 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         fit.Qstar[[i]] <- update.list$fit
       }#done with updating Q_W2.
 
-      #TO DO: NON_IC VARIANCE.
-      #est.var <- est.var + EstimateVariance(inputs, nodes, combined.summary.measures, regimes.with.positive.weight, uncensored, alive=!deterministic.list.origdata$is.deterministic, Qstar, Qstar.kplus1, cur.node, msm.weights, LYnode.index, ACnode.index, g.list$cum.g, g.list$prob.A.is.1, g.list$cum.g.meanL, g.list$cum.g.unbounded, g.list$cum.g.meanL.unbounded, inputs$observation.weights, is.last.LYnode=(LYnode.index==length(nodes$LY)), intervention.match) #fixme - remove intervention.match if not using est.var.iptw
-
-      #Final IC will be sum of all separate ICs for each node.
-      #Naturally, if we choose to estimate conditional density of Z and W and flunctuate it, this variance estimate based on IC will be larger.
       IC <- IC + curIC
     }
 
@@ -1422,51 +1423,52 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
 
         }
 
-        ##########################################################
-        # Instrument between A and Z: Marginalize over instrument
-        # Works for binary Instrument and Z: Needs better solution.
-
-        #estZ<-inputs$data[cur.node]
-        #names(estZ)<-"Q.kplus1"
-        #E(Z=1|past, A=regime.prime)
-        #pZ1_LA1 <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z=TRUE, regimes_add = 1)
-        #pZ1_LA1 <- plogis(pZ1_LA1$predicted.values)
-        #pZ1_LA0 <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==cur.node)], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="link", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z=TRUE, regimes_add = 0)
-        #pZ1_LA0 <- plogis(pZ1_LA0$predicted.values)
-
-        #########################################
-        #Estimate of p(Z=1| past Z, A=abar.prime)
-
         #Which Z node is current node
         Znode.index  <- which(nodes$Z==cur.node)
 
-        if(Znode.index>1){
-          PZ1<-cum.qz.abar.prime$prob.is.1[,Znode.index,]*cum.qz.abar.prime$cum.g[,(Znode.index-1),]
-          PZ0<-(1-(cum.qz.abar.prime$prob.is.1[,Znode.index,]))*cum.qz.abar.prime$cum.g[,(Znode.index-1),]
-        }else{
-          PZ1<-cum.qz.abar.prime$prob.is.1[,Znode.index,]
-          PZ0<-(1-(cum.qz.abar.prime$prob.is.1[,Znode.index,]))
-        }
+        #Get P(Z=1) with intervention: note, need Z to be binary.
+        estZ<-inputs$data[cur.node]
+        names(estZ)<-"Q.kplus1"
+        PZ1<-Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QZform[which(nodes$Z==(cur.node))], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        PZ1<-PZ1$predicted.values
+        PZ0<-1-PZ1
 
-        #Regress node before the mediator and evaluate on Z=1 and Z=0
-        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QLform[which(nodes$L==(cur.node+1))], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z = TRUE, regimes_add = 1)
+      #density estimation
+      # if(Znode.index>1){
+          #PZ1<-cum.qz.abar.prime$prob.is.1[,Znode.index,]*cum.qz.abar.prime$cum.g[,(Znode.index-1),]
+          #PZ0<-(1-(cum.qz.abar.prime$prob.is.1[,Znode.index,]))*cum.qz.abar.prime$cum.g[,(Znode.index-1),]
+       # }else{
+          #PZ1<-cum.qz.abar.prime$prob.is.1[,Znode.index,]
+          #PZ0<-(1-(cum.qz.abar.prime$prob.is.1[,Znode.index,]))
+        #}
+
+        #Regress node after the mediator and evaluate with Z=1 and Z=0.
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$L==(cur.node+1))], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z = TRUE, regimes_add = 1)
         QZ_1 <- Q.est$predicted.values
 
-        Q.est <- Estimate(inputs = set(inputs,'regimes',inputs$regimes.prime), form = inputs$QLform[which(nodes$L==(cur.node+1))], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z = TRUE, regimes_add = 0)
+        Q.est <- Estimate(inputs, form = inputs$QLform[which(nodes$L==(cur.node+1))], Qstar.kplus1=Qstar.kplus1, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight, CSE_Z = TRUE, regimes_add = 0)
         QZ_0 <- Q.est$predicted.values
+
+        #Get P(Z=1) with no intervention
+        estZ<-inputs$data[cur.node]
+        names(estZ)<-"Q.kplus1"
+        Q_est <- Estimate(inputs = set2(inputs,'regimes', as.matrix(inputs$data[inputs$all.nodes$A])), form = inputs$QZform[which(nodes$Z==(cur.node))], Qstar.kplus1=estZ, family=quasibinomial(), subs=subs, type="response", nodes=nodes, called.from.estimate.g=FALSE, calc.meanL=FALSE, cur.node=cur.node, regimes.meanL=NULL, regimes.with.positive.weight=regimes.with.positive.weight)
+        QZ<-Q_est$predicted.values
 
         #Save last model...
         fit.Q[[i]] <- Q.est$fit
 
-        #Define Stochastic Intervention:
-        logitQ <- logit(QZ_0*PZ0 + QZ_1*PZ1)
+        #Define offset:
+        logitQ <- qlogis(QZ_0*PZ0 + QZ_1*PZ1)
+
+        #Estimate other parts of the weight:
+        h<-(I(inputs$data[cur.node]==1)*PZ1+I(inputs$data[cur.node]==0)*PZ0)/(I(inputs$data[cur.node]==1)*QZ+I(inputs$data[cur.node]==0)*(1-QZ))
 
         #Closest AC node to the current node
         ACnode.index  <- which.max(nodes$AC[nodes$AC < cur.node])
 
         #Update Q.k to get Qstar.k
-
-        update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=1, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
+        update.list <- UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g = if(length(ACnode.index)==0) 1 else g.abar.list$cum.g[, ACnode.index, ], cum.q.ratio=h, working.msm=inputs$working.msm, uncensored, intervention.match, is.deterministic=deterministic.list.origdata$is.deterministic, msm.weights, gcomp=inputs$gcomp, observation.weights=inputs$observation.weights)
         Qstar <- update.list$Qstar
         #Update Qstar for samples that are deterministic.
         Qstar[Q.est$is.deterministic] <- Q.est$deterministic.Q[Q.est$is.deterministic]
@@ -1552,11 +1554,6 @@ FixedTimeTMLEMediation <- function(inputs, nodes, msm.weights, combined.summary.
         fit.Qstar[[i]] <- update.list$fit
       }#done with updating Q_W2.
 
-      #TO DO: NON_IC VARIANCE.
-      #est.var <- est.var + EstimateVariance(inputs, nodes, combined.summary.measures, regimes.with.positive.weight, uncensored, alive=!deterministic.list.origdata$is.deterministic, Qstar, Qstar.kplus1, cur.node, msm.weights, LYnode.index, ACnode.index, g.list$cum.g, g.list$prob.A.is.1, g.list$cum.g.meanL, g.list$cum.g.unbounded, g.list$cum.g.meanL.unbounded, inputs$observation.weights, is.last.LYnode=(LYnode.index==length(nodes$LY)), intervention.match) #fixme - remove intervention.match if not using est.var.iptw
-
-      #Final IC will be sum of all separate ICs for each node.
-      #Naturally, if we choose to estimate conditional density of Z and W and flunctuate it, this variance estimate based on IC will be larger.
       IC <- IC + curIC
 
     }
@@ -1751,7 +1748,7 @@ UpdateQMediation <- function(Qstar.kplus1, logitQ, combined.summary.measures, cu
   weight.vec <- numeric(n * num.regimes)
   #Calculate sample weight for subset of samples as specified above (subsetting avoids problems with NA in cum.g)
   #Part of clever covariate:
-  weight.vec[subs.vec] <- (observation.weights * as.vector(msm.weights) * as.vector(cum.q.ratio)/ as.vector(cum.g))[subs.vec]
+  weight.vec[subs.vec] <- (observation.weights * as.vector(msm.weights) * as.vector(cum.q.ratio)/as.vector(cum.g))[subs.vec]
 
   if (anyNA(weight.vec)) stop("NA in weight.vec")
 
@@ -1917,7 +1914,7 @@ FitPooledMSM <- function(working.msm, Qstar, combined.summary.measures, msm.weig
 #' @param Qstar TO DO
 #' @param m.beta TO DO
 #' @param msm.weights TO DO
-#' @param observation.weights
+#' @param observation.weights TO DO
 #'
 #' @return Returns final Influence Curve.
 #'

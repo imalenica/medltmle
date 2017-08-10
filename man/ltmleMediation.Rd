@@ -10,7 +10,7 @@ ltmleMediation(inputs)
 \item{inputs}{Output of \code{CreateMedInputs}}
 }
 \value{
-Returns $\psi^{IPW}_n$, $\psi^{TMLE}_n$ and if specified $\psi^{NTsub}_n$ estimates,
+Returns $psi^{IPW}_n$, $psi^{TMLE}_n$ and if specified $psi^{NTsub}_n$ estimates,
 corresponding influence curve, cumulative conditional density with abar and abar.prime rule for g, QL and QZ (bounded and unbounded),
 fits for Q and Qstar and corresponding formulas, final Qstar estimates, logical indicating binary and/or transformed outcome.
 }
