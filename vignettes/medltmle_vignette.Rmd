@@ -1,0 +1,144 @@
+---
+title: "Estimation for Natural Mediation Effect in Longitudinal Data"
+author: "Ivana Malenica"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Generalized Cross-Validation with Origami}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+An exposure often acts on an outcome of interest directly and/or indirectly through the mediation of some intermediate variables. Identifying and quantifying these two types of effects is an important step in further understanding the causal mechanism. Overall, we might be interested in a direct effect question: what would be the effect of exposure on the outcome if the mediator acts as is exposure was absent? The `medltmle` focuses on the Natural Direct Effect parameter, where the overall effect of the exposure on the outcome can be decomposed into a Natural Direct Effect and Natural Indirect Effect. In general, `medltmle` addresses the need for causal mediation through conditional mediator distributions in general time-varying exposure and mediator settings with survival and non-survival outcomes. 
+
+The challenges in longitudinal mediation analysis are address by considering 3 different versions of the parameter:
+
+1. Stochastic intervention on the mediator fully conditional on the past.
+
+2. Data-dependent stochastic intervention on the mediator.
+
+3. Data-dependent stochastic mediation effect with an instrumental variable.
+
+Efficient influence curve under a locally saturated semiparametric model and robustness properties for all three are shown in a technical report. The `medltmle` supports three estimators:
+
+1. Nested non-targeted substitution estimator 
+
+2. Inverse Probability Weighted estimator
+
+3. Targeted Maximum Likelihood estimator 
+
+---
+
+##Stochastic intervention on the mediator fully conditional on the past
+
+We'll start by examining a simple simulated data set. In this case, we will generate data for $n=400$ samples and $2$ time points of the form: $$O=(W1,W2,C1,A1,LA1,Z1,LZ1,Y1,C2,A2,LA2,Z2,LZ2,Y2)$$ Note that $W$ variables are baseline covariates, $C$ is a censoring mechanism, $A$ is a time-varying exposure, $LA$ and $LZ$ are time-varying covariates, $Z$ is a time-varying mediator, and finally $Y$ is a survival outcome. This data structure allows for confounders of the exposure-outcome relation and exposure-induced confounders of the mediator-outcome relation, both within time and across time. The `medltmle` package additionally allows the user to define nodes $D$ for non-survival outcome and when treating death as a censoring variable, but we do not recomend it. In addition, `medltmle` also allows for time-dependency in the baseline covariates (see example below). 
+
+```{r, echo=FALSE}
+options(warn=-1)
+suppressMessages(library(SuperLearner))
+suppressMessages(library(matrixStats))
+suppressMessages(library(parallel))
+suppressMessages(library(speedglm))
+suppressMessages(library(Matrix))
+suppressMessages(library(pracma))
+suppressMessages(library(reshape))
+```
+
+```{r load_data}
+suppressMessages(library(medltmle))
+
+set.seed(2)
+end.time=2
+
+data<-GenerateData(n=400, end.time=2)
+```
+
+Since this is a simulated data set, we know the data-generating distribution. With function `make.sim.spec` we just let `medltmle` know what the correct set of covariates is. Note however, that this function is specific to the simulated data set, and is therefore not for general use. The `medltmle` allows you to specify a list of covariates you want to use for each part of the likelihood. If set to `NULL`, you can specify if you want to condition on the entire past, or impose Markov assumptions of a certain order (default is one time step in the past).  
+
+```{r}
+spec<-make.sim.spec(2)
+```
+
+With correct models specified for each, we run `medltmle` for the non-data dependent parameter with exposure set to $(1,0)$, $(0,0)$, and $(1,1)$. In this particular setting, we are estimating our parameter using general linear models. 
+
+```{r}
+result_10 <- suppressMessages(medltmle(data=data,
+                           Anodes=names(data)[grep('^A',names(data))],
+                           Cnodes=names(data)[grep('^C',names(data))],
+                           Znodes=names(data)[grep('^Z',names(data))],
+                           Lnodes=names(data)[grep('^L',names(data))],
+                           Ynodes=names(data)[grep('^Y',names(data))],
+                           survivalOutcome = T,
+                           QLform=spec$QL.c,
+                           QZform=spec$QZ.c,
+                           gform=spec$g.c,
+                           qzform=spec$qz.c,
+                           qLform=spec$qL.c,
+                           abar=rep(1,end.time),
+                           abar.prime=rep(0,end.time),
+                           CSE=TRUE,
+                           time.end=end.time
+                           ))
+
+result_00 <- suppressMessages(medltmle(data=data,
+                           Anodes=names(data)[grep('^A',names(data))],
+                           Cnodes=names(data)[grep('^C',names(data))],
+                           Znodes=names(data)[grep('^Z',names(data))],
+                           Lnodes=names(data)[grep('^L',names(data))],
+                           Ynodes=names(data)[grep('^Y',names(data))],
+                           survivalOutcome = T,
+                           QLform=spec$QL.c,
+                           QZform=spec$QZ.c,
+                           gform=spec$g.c,
+                           qzform=spec$qz.c,
+                           qLform=spec$qL.c,
+                           abar=rep(0,end.time),
+                           abar.prime=rep(0,end.time),
+                           CSE=TRUE,
+                           time.end=end.time
+                           ))
+
+result_11 <- suppressMessages(medltmle(data=data,
+                           Anodes=names(data)[grep('^A',names(data))],
+                           Cnodes=names(data)[grep('^C',names(data))],
+                           Znodes=names(data)[grep('^Z',names(data))],
+                           Lnodes=names(data)[grep('^L',names(data))],
+                           Ynodes=names(data)[grep('^Y',names(data))],
+                           survivalOutcome = T,
+                           QLform=spec$QL.c,
+                           QZform=spec$QZ.c,
+                           gform=spec$g.c,
+                           qzform=spec$qz.c,
+                           qLform=spec$qL.c,
+                           abar=rep(1,end.time),
+                           abar.prime=rep(1,end.time),
+                           CSE=TRUE,
+                           time.end=end.time
+                           ))
+
+```
+
+\par 
+
+Note that Natural Direct Effect} is defined as: $$E[Y_{2}(1,\overline{\Gamma^0})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ whereas the Natural Indirect Effect is defined as: $$E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(1,\overline{\Gamma^0})]$$ finally, overall effect is just: $$E[Y_{2}(1)] - E[Y_{2}(0)] = E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ We can summarize the results using `summary_medltmle` function:
+
+
+```{r}
+res<-summary_medltmle(nie1=result_11,nie2=result_10,nde1=result_10,nde2=result_00)
+
+res$NDE
+res$NIE
+res$NE
+```
+---
+
+## Session Information
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
+
+---
+
+## References
