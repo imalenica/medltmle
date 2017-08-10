@@ -71,8 +71,8 @@ medltmle <- function(data, Anodes, Znodes, Cnodes=NULL, Lnodes=NULL, Ynodes, Ino
                                   IC.variance.only=IC.variance.only,
                                   observation.weights=observation.weights, survivalOutcome=survivalOutcome, CSE=CSE, past=past, time.end=time.end, YisL=YisL)
   #fixme
-  Rprofmem(filename = "Rprofmem.out", append = FALSE, threshold = 0)
-  print(tracemem(inputs))
+  #Rprofmem(filename = "Rprofmem.out", append = FALSE, threshold = 0)
+  #print(tracemem(inputs))
   result <- ltmleMediation(inputs)
   result$call <- match.call()
   return(result)
