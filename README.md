@@ -130,7 +130,7 @@ The contents of this repository are distributed under the MIT license. See below
 
     The MIT License (MIT)
 
-    Copyright (c) 2017 Ivana Malenica and Wenjing Zheng
+    Copyright (c) 2017 Ivana Malenica
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
