@@ -5,6 +5,10 @@ R/`medltmle`
 
 [![Travis-CI Build Status](https://travis-ci.org/podTockom/medltmle.svg?branch=master)](https://travis-ci.org/podTockom/medltmle) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/podTockom/medltmle?branch=master&svg=true)](https://ci.appveyor.com/project/podTockom/medltmle) [![Coverage Status](https://img.shields.io/codecov/c/github/podTockom/medltmle/master.svg)](https://codecov.io/github/podTockom/medltmle?branch=master) [![CRAN](http://www.r-pkg.org/badges/version/medltmle)](http://www.r-pkg.org/pkg/medltmle) [![CRAN downloads](https://cranlogs.r-pkg.org/badges/medltmle)](https://CRAN.R-project.org/package=medltmle) [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
+> Machine learning-based summary of association with multivariate outcomes
+
+**Authors:** [Ivana Malenica](https://github.com/podTockom) and Wenjing Zheng
+
 Description
 -----------
 
@@ -120,7 +124,7 @@ result_10$estimates
 License
 -------
 
-© 2017 Ivana Malenica and Wenjing Zheng
+© 2017 Ivana Malenica
 
 The contents of this repository are distributed under the MIT license. See below for details:
 
