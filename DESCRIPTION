@@ -3,6 +3,8 @@ Title: Longitudinal Mediation Analysis with Time-varying Mediators
 Version: 0.0.1
 Authors@R: c(person("Ivana", "Malenica", email = "imalenica@berkeley.edu",
                     role = c("aut", "cre")),
+             person("Mark", "van der Laan", email = "laan@berkeley.edu",
+                    role = "aut"),       
              person("Wenjing", "Zheng", email = "wzheng@stat.berkeley.edu",
                     role = "aut")
             )
