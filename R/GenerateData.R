@@ -21,7 +21,7 @@ GenerateData <- function(n, end.time, abar=NULL,abar.prime=NULL) {
   rexpit <- function(x) rbinom(n=length(x), size=1, prob=plogis(x))
 
   CalcY <- function(W1,W2,A,LA,Z,LZ,prevLA=NULL) {
-    lin <- .2 +1.5*W2+1*LA + .2*LZ -.3*A-.3*Z  - .2*A*Z
+    lin <- -6 +1.5*W2+1*LA + .2*LZ -.3*A-.3*Z  - .2*A*Z
     if(!is.null(prevLA)) lin <- lin - .1*prevLA
 
     Y <- rexpit(lin)
@@ -51,8 +51,8 @@ GenerateData <- function(n, end.time, abar=NULL,abar.prime=NULL) {
     if(est.psi0){
       C[uncensored.alive,t] <- 1
     }else{
-      if(t==1) C[uncensored.alive,t] <- rexpit(1.5-.8*W2[uncensored.alive]-.4*W1[uncensored.alive])
-      else C[uncensored.alive,t] <- rexpit(1.5-.8*W2[uncensored.alive]+.5*A[uncensored.alive,t-1]-.4*LZ[uncensored.alive,t-1])
+      if(t==1) C[uncensored.alive,t] <- rexpit(3*W2[uncensored.alive]-.2*W1[uncensored.alive])
+      else C[uncensored.alive,t] <- rexpit(3*W2[uncensored.alive]-.5*A[uncensored.alive,t-1]-1.4*LZ[uncensored.alive,t-1])
     }
 
     #Update who died (note more might have died from outcome Y1 to now):

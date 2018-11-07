@@ -21,7 +21,7 @@ context("Overall Test for medltmle")
 set.seed(2)
 
 #Generate some simulated data:
-data<-GenerateData(n=400, end.time=2, abar=NULL,abar.prime=NULL)
+data<-GenerateData(n=1000, end.time=2, abar=NULL,abar.prime=NULL)
 
 #Generate appropriate models:
 #Note that since Y is not part of L, need a model for it as well in Q.
