@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-An exposure often acts on an outcome of interest directly and/or indirectly through the mediation of some intermediate variables. Identifying and quantifying these two types of effects is an important step in further understanding the causal mechanism. Overall, we might be interested in a direct effect question: what would be the effect of exposure on the outcome if the mediator acts as is exposure was absent? The `medltmle` focuses on the Natural Direct Effect parameter, where the overall effect of the exposure on the outcome can be decomposed into a Natural Direct Effect and Natural Indirect Effect. In general, `medltmle` addresses the need for causal mediation through conditional mediator distributions in general time-varying exposure and mediator settings with survival and non-survival outcomes. 
+An exposure often acts on an outcome of interest directly and/or indirectly through the mediation of some intermediate variables. Identifying and quantifying these two types of effects is an important step in further understanding the causal mechanism. Overall, we might be interested in an effect question: what would be the effect of an exposure on the outcome if the mediator acts as if the exposure was absent? The `medltmle` focuses on the Natural Effect parameter, where the overall effect of the exposure on the outcome can be decomposed into a Natural Direct Effect and Natural Indirect Effect. In general, `medltmle` addresses the need for causal mediation through conditional mediator distributions in general time-varying exposure and mediator settings with survival and non-survival outcomes. 
 
 The challenges in longitudinal mediation analysis are address by considering 3 different versions of the parameter:
 
@@ -32,9 +32,9 @@ Efficient influence curve under a locally saturated semiparametric model and rob
 
 ##Stochastic intervention on the mediator fully conditional on the past
 
-We'll start by examining a simple simulated data set. In this case, we will generate data for $n=400$ samples and $2$ time points of the form: $$O=(W1,W2,C1,A1,LA1,Z1,LZ1,Y1,C2,A2,LA2,Z2,LZ2,Y2)$$ Note that $W$ variables are baseline covariates, $C$ is a censoring mechanism, $A$ is a time-varying exposure, $LA$ and $LZ$ are time-varying covariates, $Z$ is a time-varying mediator, and finally $Y$ is a survival outcome. This data structure allows for confounders of the exposure-outcome relation and exposure-induced confounders of the mediator-outcome relation, both within time and across time. The `medltmle` package additionally allows the user to define nodes $D$ for non-survival outcome and when treating death as a censoring variable, but we do not recomend it. In addition, `medltmle` also allows for time-dependency in the baseline covariates (see example below). 
+We'll start by examining a simple simulated data set. In this case, we will generate data for $n=400$ samples and $2$ time points of the form: $$O=(W1,W2,C1,A1,LA1,Z1,LZ1,Y1,C2,A2,LA2,Z2,LZ2,Y2)$$ Note that $W$ variables are baseline covariates, $C$ is a censoring mechanism, $A$ is a time-varying exposure, $LA$ and $LZ$ are time-varying covariates, $Z$ is a time-varying mediator, and finally $Y$ is a survival outcome. This data structure allows for confounders of the exposure-outcome relation and exposure-induced confounders of the mediator-outcome relation, both within time and across time. The `medltmle` package additionally allows the user to define nodes $D$ for non-survival outcome when treating death as a censoring variable, but we do not recommend it. In addition, `medltmle` allows for time-dependency in the baseline covariates. 
 
-```{r, echo=FALSE, eval=FALSE}
+```{r, echo=FALSE, eval=TRUE}
 options(warn=-1)
 suppressMessages(library(SuperLearner))
 suppressMessages(library(matrixStats))
@@ -45,24 +45,30 @@ suppressMessages(library(pracma))
 suppressMessages(library(reshape))
 ```
 
-```{r, eval=FALSE}
+We can expect the generated data-generating mechanism in a bit more detail. Note that $L_0$ encodes two baseline 
+(binary) covariates, $W_1$ and $W_2$. Our intervention is includes both a censoring indicator and a binary
+exposure $A_t$; $LA_t$ encodes covariates at time $t$ that are directly affected by $A_t$ and may influence
+$Z_t$ and $L_t$. $Z_t$ is a binary mediator, whereas $L_t$ includes a time varying covariate  $LZ_t$ and a death indicator $Y_t$. 
+
+```{r, eval=TRUE}
 suppressMessages(library(medltmle))
 
 set.seed(2)
 end.time=2
 
 data<-GenerateData(n=400, end.time=2)
+head(data)
 ```
 
 Since this is a simulated data set, we know the data-generating distribution. With function `make.sim.spec` we just let `medltmle` know what the correct set of covariates is. Note however, that this function is specific to the simulated data set, and is therefore not for general use. The `medltmle` allows you to specify a list of covariates you want to use for each part of the likelihood. If set to `NULL`, you can specify if you want to condition on the entire past, or impose Markov assumptions of a certain order (default is one time step in the past).  
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 spec<-make.sim.spec(2)
 ```
 
 With correct models specified for each, we run `medltmle` for the non-data dependent parameter with exposure set to $(1,0)$, $(0,0)$, and $(1,1)$. In this particular setting, we are estimating our parameter using general linear models. 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 result_10 <- suppressMessages(medltmle(data=data,
                            Anodes=names(data)[grep('^A',names(data))],
                            Cnodes=names(data)[grep('^C',names(data))],
@@ -117,6 +123,7 @@ result_11 <- suppressMessages(medltmle(data=data,
                            time.end=end.time
                            ))
 
+result_10$estimates
 ```
 
 \par 
@@ -124,7 +131,7 @@ result_11 <- suppressMessages(medltmle(data=data,
 Note that Natural Direct Effect} is defined as: $$E[Y_{2}(1,\overline{\Gamma^0})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ whereas the Natural Indirect Effect is defined as: $$E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(1,\overline{\Gamma^0})]$$ finally, overall effect is just: $$E[Y_{2}(1)] - E[Y_{2}(0)] = E[Y_{2}(1, \overline{\Gamma^1})] - E[Y_{2}(0,\overline{\Gamma^0})]$$ We can summarize the results using `summary_medltmle` function. 
 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 res<-summary_medltmle(nie1=result_11,nie2=result_10,nde1=result_10,nde2=result_00)
 
 res$NDE
