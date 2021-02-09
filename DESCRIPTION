@@ -1,6 +1,6 @@
 Package: medltmle
 Title: Longitudinal Mediation Analysis with Time-varying Mediators
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: c(person("Ivana", "Malenica", email = "imalenica@berkeley.edu",
                     role = c("aut", "cre")),
              person("Mark", "van der Laan", email = "laan@berkeley.edu",
@@ -12,14 +12,14 @@ Maintainer: Ivana Malenica <imalenica@berkeley.edu>
 Description: Estimates natural direct and indirect mediation effects for a
     longitudinal settings with time-varying mediators.
 Depends:
-    R (>= 3.1.0)
+    R (>= 3.3.0)
 Imports:
     SuperLearner,
     speedglm,
     matrixStats,
     parallel,
     pracma,
-    reshape, 
+    reshape 
 Suggests:
     testthat,
     caret,
@@ -30,4 +30,4 @@ BugReports: https://github.com/podTockom/medltmle/issues
 Encoding: UTF-8
 VignetteBuilder: knitr
 LazyData: true
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 7.1.1

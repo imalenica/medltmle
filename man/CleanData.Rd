@@ -4,8 +4,13 @@
 \alias{CleanData}
 \title{CleanData}
 \usage{
-CleanData(data, nodes, deterministic.Q.function, survivalOutcome,
-  showMessage = TRUE)
+CleanData(
+  data,
+  nodes,
+  deterministic.Q.function,
+  survivalOutcome,
+  showMessage = TRUE
+)
 }
 \arguments{
 \item{data}{TO DO}

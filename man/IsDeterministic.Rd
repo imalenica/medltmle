@@ -4,8 +4,14 @@
 \alias{IsDeterministic}
 \title{IsDeterministic}
 \usage{
-IsDeterministic(data, cur.node, deterministic.Q.function, nodes,
-  called.from.estimate.g, survivalOutcome)
+IsDeterministic(
+  data,
+  cur.node,
+  deterministic.Q.function,
+  nodes,
+  called.from.estimate.g,
+  survivalOutcome
+)
 }
 \arguments{
 \item{data}{TO DO}

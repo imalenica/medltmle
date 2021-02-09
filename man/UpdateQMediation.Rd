@@ -4,9 +4,20 @@
 \alias{UpdateQMediation}
 \title{UpdateQMediation}
 \usage{
-UpdateQMediation(Qstar.kplus1, logitQ, combined.summary.measures, cum.g,
-  cum.q.ratio, working.msm, uncensored, intervention.match, is.deterministic,
-  msm.weights, gcomp, observation.weights)
+UpdateQMediation(
+  Qstar.kplus1,
+  logitQ,
+  combined.summary.measures,
+  cum.g,
+  cum.q.ratio,
+  working.msm,
+  uncensored,
+  intervention.match,
+  is.deterministic,
+  msm.weights,
+  gcomp,
+  observation.weights
+)
 }
 \arguments{
 \item{Qstar.kplus1}{Estimate of the expectation with respect to the distribution of the node one ahead of the current node given the past (dimension: n x num.regimes).}

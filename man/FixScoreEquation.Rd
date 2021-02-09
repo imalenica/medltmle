@@ -4,8 +4,17 @@
 \alias{FixScoreEquation}
 \title{FixScoreEquation}
 \usage{
-FixScoreEquation(Qstar.kplus1, h.g.ratio, uncensored, intervention.match,
-  is.deterministic, deterministic.Q, off, X, regimes.with.positive.weight)
+FixScoreEquation(
+  Qstar.kplus1,
+  h.g.ratio,
+  uncensored,
+  intervention.match,
+  is.deterministic,
+  deterministic.Q,
+  off,
+  X,
+  regimes.with.positive.weight
+)
 }
 \arguments{
 \item{Qstar.kplus1}{Estimate of the expectation with respect to the distribution of the node one ahead of the current node given the past (dimension: n x num.regimes).}

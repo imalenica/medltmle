@@ -4,11 +4,31 @@
 \alias{CheckMediationInputs}
 \title{CheckMediationInputs}
 \usage{
-CheckMediationInputs(data, nodes, survivalOutcome, QLform, QZform, qLform,
-  qzform, gform, gbounds, Yrange, deterministic.g.function, SL.library, regimes,
-  regimes.prime, working.msm, summary.measures, final.Ynodes, stratify,
-  msm.weights, deterministic.Q.function, observation.weights, gcomp,
-  IC.variance.only)
+CheckMediationInputs(
+  data,
+  nodes,
+  survivalOutcome,
+  QLform,
+  QZform,
+  qLform,
+  qzform,
+  gform,
+  gbounds,
+  Yrange,
+  deterministic.g.function,
+  SL.library,
+  regimes,
+  regimes.prime,
+  working.msm,
+  summary.measures,
+  final.Ynodes,
+  stratify,
+  msm.weights,
+  deterministic.Q.function,
+  observation.weights,
+  gcomp,
+  IC.variance.only
+)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}

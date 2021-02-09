@@ -4,12 +4,44 @@
 \alias{CreateMedInputs}
 \title{CreateMedInputs}
 \usage{
-CreateMedInputs(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes, Znodes, Dnodes,
-  W2nodes, survivalOutcome, QLform, QZform, gform, qzform, qLform, gbounds,
-  Yrange, deterministic.g.function, SL.library, regimes, regimes.prime,
-  working.msm, summary.measures, final.Ynodes, stratify, msm.weights,
-  estimate.time, gcomp, iptw.only, deterministic.Q.function, IC.variance.only,
-  observation.weights, CSE, past, time.end, YisL)
+CreateMedInputs(
+  data,
+  Anodes,
+  Cnodes,
+  Lnodes,
+  Ynodes,
+  Inodes,
+  Znodes,
+  Dnodes,
+  W2nodes,
+  survivalOutcome,
+  QLform,
+  QZform,
+  gform,
+  qzform,
+  qLform,
+  gbounds,
+  Yrange,
+  deterministic.g.function,
+  SL.library,
+  regimes,
+  regimes.prime,
+  working.msm,
+  summary.measures,
+  final.Ynodes,
+  stratify,
+  msm.weights,
+  estimate.time,
+  gcomp,
+  iptw.only,
+  deterministic.Q.function,
+  IC.variance.only,
+  observation.weights,
+  CSE,
+  past,
+  time.end,
+  YisL
+)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}

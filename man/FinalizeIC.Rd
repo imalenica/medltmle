@@ -4,8 +4,14 @@
 \alias{FinalizeIC}
 \title{FinalizeIC}
 \usage{
-FinalizeIC(IC, combined.summary.measures, Qstar, m.beta, msm.weights,
-  observation.weights)
+FinalizeIC(
+  IC,
+  combined.summary.measures,
+  Qstar,
+  m.beta,
+  msm.weights,
+  observation.weights
+)
 }
 \arguments{
 \item{IC}{TO DO}

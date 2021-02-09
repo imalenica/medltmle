@@ -4,7 +4,13 @@
 \alias{IsDeterministicG}
 \title{IsDeterministicG}
 \usage{
-IsDeterministicG(data, cur.node, deterministic.g.function, nodes, using.newdata)
+IsDeterministicG(
+  data,
+  cur.node,
+  deterministic.g.function,
+  nodes,
+  using.newdata
+)
 }
 \arguments{
 \item{data}{TO DO}

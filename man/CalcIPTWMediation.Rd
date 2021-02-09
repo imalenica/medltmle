@@ -4,8 +4,13 @@
 \alias{CalcIPTWMediation}
 \title{CalcIPTWMediation}
 \usage{
-CalcIPTWMediation(inputs, cum.g.abar, cum.qz.abar, cum.qz.abar.prime,
-  msm.weights)
+CalcIPTWMediation(
+  inputs,
+  cum.g.abar,
+  cum.qz.abar,
+  cum.qz.abar.prime,
+  msm.weights
+)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}

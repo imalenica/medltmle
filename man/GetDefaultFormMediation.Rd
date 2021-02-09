@@ -4,8 +4,20 @@
 \alias{GetDefaultFormMediation}
 \title{GetDefaultFormMediation}
 \usage{
-GetDefaultFormMediation(data, nodes, is.Qform, is.QLform, is.qzform, is.qLform,
-  past, time.end, stratify, survivalOutcome, YisL = YisL, showMessage)
+GetDefaultFormMediation(
+  data,
+  nodes,
+  is.Qform,
+  is.QLform,
+  is.qzform,
+  is.qLform,
+  past,
+  time.end,
+  stratify,
+  survivalOutcome,
+  YisL = YisL,
+  showMessage
+)
 }
 \arguments{
 \item{data}{Available data in a \code{Data.Frame} format.}

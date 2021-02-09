@@ -4,9 +4,18 @@
 \alias{FixedTimeTMLEMediation}
 \title{FixedTimeTMLEMediation}
 \usage{
-FixedTimeTMLEMediation(inputs, nodes, msm.weights, combined.summary.measures,
-  g.abar.list, g.abar.prime.list, cum.qz.abar, cum.qz.abar.prime,
-  cum.qL.abar = NULL, cum.qL.abar.prime = NULL)
+FixedTimeTMLEMediation(
+  inputs,
+  nodes,
+  msm.weights,
+  combined.summary.measures,
+  g.abar.list,
+  g.abar.prime.list,
+  cum.qz.abar,
+  cum.qz.abar.prime,
+  cum.qL.abar = NULL,
+  cum.qL.abar.prime = NULL
+)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}}

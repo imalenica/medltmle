@@ -9,7 +9,6 @@
 ^codecov\.yml$
 ^_pkgdown\.yml$
 ^\.gitignore$
-^\Makefile$
 ^CONTRIBUTING\.md$
 ^cran-comments\.md$
 ^docs$

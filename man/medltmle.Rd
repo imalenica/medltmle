@@ -4,15 +4,41 @@
 \alias{medltmle}
 \title{medltmle}
 \usage{
-medltmle(data, Anodes, Znodes, Cnodes = NULL, Lnodes = NULL, Ynodes,
-  Inodes = NULL, W2nodes = NULL, Dnodes = NULL, survivalOutcome = NULL,
-  QLform = NULL, QZform = NULL, gform = NULL, qzform = NULL,
-  qLform = NULL, abar, abar.prime, rule = NULL, gbounds = c(0.01, 1),
-  Yrange = NULL, deterministic.g.function = NULL,
-  deterministic.Q.function = NULL, stratify = FALSE, SL.library = NULL,
-  estimate.time = TRUE, gcomp = FALSE, iptw.only = FALSE,
-  IC.variance.only = FALSE, observation.weights = NULL, CSE, time.end,
-  past = 1, YisL = TRUE)
+medltmle(
+  data,
+  Anodes,
+  Znodes,
+  Cnodes = NULL,
+  Lnodes = NULL,
+  Ynodes,
+  Inodes = NULL,
+  W2nodes = NULL,
+  Dnodes = NULL,
+  survivalOutcome = NULL,
+  QLform = NULL,
+  QZform = NULL,
+  gform = NULL,
+  qzform = NULL,
+  qLform = NULL,
+  abar,
+  abar.prime,
+  rule = NULL,
+  gbounds = c(0.01, 1),
+  Yrange = NULL,
+  deterministic.g.function = NULL,
+  deterministic.Q.function = NULL,
+  stratify = FALSE,
+  SL.library = NULL,
+  estimate.time = TRUE,
+  gcomp = FALSE,
+  iptw.only = FALSE,
+  IC.variance.only = FALSE,
+  observation.weights = NULL,
+  CSE,
+  time.end,
+  past = 1,
+  YisL = TRUE
+)
 }
 \arguments{
 \item{data}{Dataframe containing the data in a wide format.}

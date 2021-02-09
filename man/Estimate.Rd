@@ -4,10 +4,23 @@
 \alias{Estimate}
 \title{Estimate}
 \usage{
-Estimate(inputs, form, subs, family, type, nodes, Qstar.kplus1, cur.node,
-  calc.meanL, called.from.estimate.g, regimes.meanL,
-  regimes.with.positive.weight, CSE_I = FALSE, CSE_Z = FALSE,
-  regimes_add = NULL)
+Estimate(
+  inputs,
+  form,
+  subs,
+  family,
+  type,
+  nodes,
+  Qstar.kplus1,
+  cur.node,
+  calc.meanL,
+  called.from.estimate.g,
+  regimes.meanL,
+  regimes.with.positive.weight,
+  CSE_I = FALSE,
+  CSE_Z = FALSE,
+  regimes_add = NULL
+)
 }
 \arguments{
 \item{inputs}{Output of \code{CreateMedInputs}.}

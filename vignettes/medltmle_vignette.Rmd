@@ -1,9 +1,8 @@
 ---
 title: "Estimation for Natural Mediation Effect in Longitudinal Data"
 author: "Ivana Malenica"
-output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Generalized Cross-Validation with Origami}
+  %\VignetteIndexEntry{Estimation for Natural Mediation Effect in Longitudinal Data}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

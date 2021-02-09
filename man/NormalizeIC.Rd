@@ -4,8 +4,14 @@
 \alias{NormalizeIC}
 \title{NormalizeIC}
 \usage{
-NormalizeIC(IC, combined.summary.measures, m.beta, msm.weights,
-  observation.weights, g.ratio)
+NormalizeIC(
+  IC,
+  combined.summary.measures,
+  m.beta,
+  msm.weights,
+  observation.weights,
+  g.ratio
+)
 }
 \arguments{
 \item{IC}{Estimate of the influence curve.}

@@ -4,8 +4,14 @@
 \alias{CalcIC}
 \title{CalcIC}
 \usage{
-CalcIC(Qstar.kplus1, Qstar, h.g.ratio, uncensored, intervention.match,
-  regimes.with.positive.weight)
+CalcIC(
+  Qstar.kplus1,
+  Qstar,
+  h.g.ratio,
+  uncensored,
+  intervention.match,
+  regimes.with.positive.weight
+)
 }
 \arguments{
 \item{Qstar.kplus1}{Estimate of the expectation with respect to the distribution of the node one ahead of the current node given the past (dimension: n x num.regimes).}

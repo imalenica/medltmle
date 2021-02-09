@@ -4,8 +4,17 @@
 \alias{CreateNodes}
 \title{CreateNodes}
 \usage{
-CreateNodes(data, Anodes, Cnodes, Lnodes, Ynodes, Inodes = NULL,
-  Znodes = NULL, Dnodes = NULL, W2nodes = NULL)
+CreateNodes(
+  data,
+  Anodes,
+  Cnodes,
+  Lnodes,
+  Ynodes,
+  Inodes = NULL,
+  Znodes = NULL,
+  Dnodes = NULL,
+  W2nodes = NULL
+)
 }
 \arguments{
 \item{data}{Available data in a wide format.}
