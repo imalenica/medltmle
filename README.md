@@ -7,7 +7,7 @@ R/`medltmle`
 
 > Estimation for Natural Mediation Effect in Longitudinal Data
 
-**Authors:** [Ivana Malenica](https://github.com/podTockom) and Wenjing Zheng
+**Authors:** [Ivana Malenica](imalenica) and Wenjing Zheng
 
 Description
 -----------
