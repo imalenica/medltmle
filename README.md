@@ -127,7 +127,7 @@ After using the medltmle R package, please cite the following:
 
 ``` r
 @software{malenica2018medltmle,
-      author = {Malenica, Ivana and Zheng, Wenjingand {van der Laan}, Mark J},
+      author = {Malenica, Ivana and Zheng, Wenjing and {van der Laan}, Mark J},
       title = {{medltmle}: Natural mediation effect for a longitudinal setting with time-varying mediators},
       year  = {2018},
       doi = {},
