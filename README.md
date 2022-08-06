@@ -20,8 +20,8 @@ license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://openso
 
 > Estimation for Natural Mediation Effect in Longitudinal Data
 
-**Authors:** [Ivana Malenica](https://github.com/imalenica), Wenjing
-Zheng and [Mark van der Laan](https://vanderlaan-lab.org)
+**Authors:** [Ivana Malenica](https://github.com/imalenica), [Wenjing
+Zheng]() and [Mark van der Laan](https://vanderlaan-lab.org)
 
 ## Description
 

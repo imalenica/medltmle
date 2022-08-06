@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 > Estimation for Natural Mediation Effect in Longitudinal Data
 
-**Authors:** [Ivana Malenica](https://github.com/imalenica), Wenjing Zheng and [Mark van der
+**Authors:** [Ivana Malenica](https://github.com/imalenica),  [Wenjing Zheng]() and [Mark van der
 Laan](https://vanderlaan-lab.org)
 
 ## Description
