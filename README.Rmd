@@ -71,7 +71,7 @@ issue](https://github.com/podTockom/medltmle/issues).
 To get an idea of how `medltmle` works, let's try using it with a simple
 simulated data set:
 
-```{r simulate}
+```{r simulate, eval=FALSE}
 # setup
 suppressMessages(library(medltmle))
 set.seed(67394)
@@ -87,7 +87,7 @@ data <- GenerateData(n = n, end.time = end.time)
 Next, we can generate simple models for conditional densities and
 iterative expectations, and define counterfactual exposures:
 
-```{r models-counterfacts}
+```{r models-counterfacts, eval=FALSE}
 # define models
 spec <- make.sim.spec(2)
 
@@ -99,7 +99,7 @@ abar.prime <- 0
 Having gone through the above steps, we can now obtain IPTW and TMLE estimates
 of the _natural mediation effect_:
 
-```{r estimate}
+```{r estimate, eval=FALSE}
 # let's fit the longitudinal TMLE for the mediation parameter
 result_10 <- suppressMessages(
               medltmle(data = data,
@@ -121,21 +121,37 @@ result_10 <- suppressMessages(
                       )
               )
 
-# let's examine the estimates
-result_10$estimates
+```
+
+---
+
+## Citation 
+
+After using the medltmle R package, please cite the following:
+
+```{r citation, eval=FALSE}
+
+@software{malenica2018medltmle,
+      author = {Malenica, Ivana and Zheng, Wenjingand {van der Laan}, Mark J},
+      title = {{medltmle}: Natural mediation effect for a longitudinal setting with time-varying mediators},
+      year  = {2018},
+      doi = {},
+      url = {https://github.com/imalenica/medltmle},
+      note = {R package version 0.1.0}
+    }
 ```
 
 ---
 
 ## License
-&copy; 2017 Ivana Malenica
+&copy; 2018 Ivana Malenica
 
 The contents of this repository are distributed under the MIT license. See
 below for details:
 ```
 The MIT License (MIT)
 
-Copyright (c) 2017 Ivana Malenica
+Copyright (c) 2018 Ivana Malenica
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
